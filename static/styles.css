@@ -87,6 +87,7 @@ body {
     padding: 0 12px;
     overflow: hidden;
     background: transparent;
+    border-radius: 50%;
 }
 
 /* Icon styles */
@@ -124,6 +125,7 @@ body {
 .sidebar.expanded .settings-btn {
     width: calc(100% - 32px);
     padding: 0 8px;
+    border-radius: 6px; /* Different border radius when expanded */
 }
 
 .sidebar.expanded .new-chat-btn span,
@@ -171,6 +173,7 @@ body {
     justify-content: center;
     width: 40px;
     padding: 0;
+    border-radius: 50%; /* Circular in collapsed state */
 }
 
 /* Update main content margin */
@@ -191,18 +194,18 @@ body {
 }
 
 .header {
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    background: var(--sidebar-color);
+    display: none;
 }
 
 .header-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     font-size: 1.25rem;
     color: var(--text-color);
     font-weight: 500;
+    margin-bottom: 2px;
+    padding: 4px 0;  /* Add slight padding for better touch target */
 }
 
 .chat-container {
@@ -273,7 +276,7 @@ body {
 }
 
 .input-field::placeholder {
-    color: var(--text-secondary);
+    color: var (--text-secondary);
 }
 
 .send-button {
@@ -337,40 +340,105 @@ body {
 
 .suggestion-chip:hover {
     background: var(--sidebar-color);
-    border-color: var(--primary-color);
+    border-color: var (--primary-color);
 }
 
 .model-dropdown {
     position: relative;
-    display: inline-block;
+    z-index: 1000;
+    width: fit-content;
+    margin: 16px;  /* Add margin to maintain spacing */
 }
 
 .model-dropdown-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    width: fit-content;  /* Match button width to content */
+    text-align: left;
+    cursor: pointer;
+}
+
+.model-dropdown-header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0;  /* Remove padding */
+}
+
+.selected-model-wrapper {
     display: flex;
     align-items: center;
-    padding: 8px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
+    gap: 4px;
+    padding: 4px 0;  /* Add slight padding for better touch target */
+}
+
+.selected-model {
     font-size: 0.875rem;
-    color: var(--secondary-color);
-    background: var(--background-color);
-    cursor: pointer;
-    gap: 8px;
-    transition: background 0.3s;
+    color: var(--text-secondary);
+}
+
+.model-dropdown-btn svg {
+    margin-left: 4px;
+    width: 14px;
+    height: 14px;
+}
+
+.model-dropdown-header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.selected-model-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.selected-model {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.model-dropdown-btn:hover .selected-model,
+.model-dropdown-btn:hover svg {
+    color: var(--text-color);
+}
+
+.model-dropdown-btn svg {
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.model-dropdown-btn:hover svg {
+    color: var(--text-color);
+}
+
+.model-dropdown:hover .model-dropdown-btn svg,
+.model-dropdown-btn[aria-expanded="true"] svg {
+    transform: rotate(180deg);
 }
 
 .model-dropdown-content {
-    display: none;
+    display: none;  /* Hide by default */
     position: absolute;
     top: 100%;
     left: 0;
-    width: 280px;
+    min-width: 280px;  /* Keep minimum width for dropdown menu */
     background: var(--background-color);
     border: 1px solid var(--border-color);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    overflow: hidden;
-    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 4px;
+}
+
+/* Remove any borders or backgrounds from the dropdown button if they exist */
+.model-dropdown-btn:hover,
+.model-dropdown-btn:focus {
+    background: none;
+    border: none;
+    outline: none;
 }
 
 .model-option {
@@ -378,29 +446,109 @@ body {
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    border-bottom: 1px solid var(--hover-background-color);
     position: relative;
-    transition: background 0.3s;
-}
-
-.model-option:last-child {
-    border-bottom: none;
+    transition: background 0.2s;
 }
 
 .model-option:hover {
-    background: #f8f9fa;
+    background: var(--hover-background-color);
 }
 
-.model-title {
-    font-size: 0.9375rem;
+.model-option.has-submenu::after {
+    content: "›";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: var(--text-secondary);
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 280px;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.model-option.has-submenu:hover > .submenu {
+    display: block;
+}
+
+.submenu .model-option {
+    border-radius: 0;
+}
+
+.submenu .model-option:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.submenu .model-option:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Update/add these styles */
+
+.model-dropdown {
+    position: relative;
+    z-index: 1000;
+}
+
+.model-dropdown-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.model-dropdown-header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1.25rem;
+    color: var(--text-color);
     font-weight: 500;
-    color: var(--secondary-color);
 }
 
-.model-subtitle {
-    font-size: 0.8125rem;
-    color: #5f6368;
+.selected-model-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.selected-model {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.model-dropdown:hover .model-dropdown-content,
+.model-dropdown-btn:focus + .model-dropdown-content {
+    display: block;
+}
+
+.model-dropdown-content {
+    top: calc(100% - 4px);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .new-label {
@@ -426,10 +574,6 @@ body {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--primary-color);
-}
-
-.model-dropdown:hover .model-dropdown-content {
-    display: block;
 }
 
 .sidebar.collapsed {
@@ -468,4 +612,107 @@ body {
 .sidebar:not(.expanded) .settings-btn:hover {
     background: var(--hover-background-color);
     border-color: var(--primary-color);
+}
+
+/* Add these styles to your existing CSS */
+
+.model-option.has-submenu {
+    position: relative;
+}
+
+.model-option.has-submenu::after {
+    content: "›";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: var(--text-secondary);
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 280px;
+    background: var(--background-color);
+    border: 1px solid var (--border-color);
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.model-option.has-submenu:hover > .submenu {
+    display: block;
+}
+
+.submenu .model-option {
+    border-radius: 0;
+}
+
+.submenu .model-option:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.submenu .model-option:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Update/add these styles */
+
+.model-dropdown {
+    position: relative;
+    z-index: 1000;
+}
+
+.model-dropdown-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.model-dropdown-header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1.25rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.selected-model-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.selected-model {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.model-dropdown:hover .model-dropdown-content,
+.model-dropdown-btn:focus + .model-dropdown-content {
+    display: block;
+}
+
+.model-dropdown-content {
+    top: calc(100% - 4px);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }

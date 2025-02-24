@@ -29,34 +29,70 @@
     </div>
 
     <main class="main-content">
-        <header class="header">
-            <div class="header-title">Pseudo</div>
-            <div class="model-dropdown">
-                <button class="model-dropdown-btn" aria-haspopup="true" aria-expanded="false">
-                    <span class="selected-model">Pseudo Auto</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M7 10l5 5 5-5z"/>
-                    </svg>
-                </button>
-                <div class="model-dropdown-content" role="menu">
-                    <div class="model-option selected" role="menuitem">
-                        <span class="model-title">Pseudo Auto</span>
+        <div class="model-dropdown">
+            <button class="model-dropdown-btn" aria-haspopup="true" aria-expanded="false">
+                <div class="model-dropdown-header">
+                    <div class="header-title">
+                        Pseudo
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
                     </div>
-                    <div class="model-option" role="menuitem">
-                        <span class="model-title">LLM</span>
-                        <span class="model-subtitle">Get everyday help</span>                    </div>
-                    <div class="model-option" role="menuitem">
-                        <span class="model-title">Text to Image</span>
-                        <span class="model-subtitle">Generate images from text</span>
+                    <div class="selected-model-wrapper">
+                        <span class="selected-model">Auto</span>
                     </div>
-                    <div class="model-option" role="menuitem">
-                        <span class="model-title">Code Assistant</span>
-                        <span class="model-subtitle">Help with coding tasks</span>
+                </div>
+            </button>
+            <div class="model-dropdown-content" role="menu">
+                <div class="model-option selected" role="menuitem">
+                    <span class="model-title">Auto</span>
+                    <span class="model-subtitle">Automatically select best model</span>
+                </div>
+                <div class="model-option has-submenu" role="menuitem">
+                    <span class="model-title">LLM</span>
+                    <span class="model-subtitle">Get everyday help</span>
+                    <div class="submenu">
+                        <div class="model-option" data-model="gpt-4">
+                            <span class="model-title">GPT-4</span>
+                            <span class="model-subtitle">Most capable GPT model</span>
+                        </div>
+                        <div class="model-option" data-model="claude-3">
+                            <span class="model-title">Claude 3</span>
+                            <span class="model-subtitle">Advanced reasoning</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-option has-submenu" role="menuitem">
+                    <span class="model-title">Text to Image</span>
+                    <span class="model-subtitle">Generate images from text</span>
+                    <div class="submenu">
+                        <div class="model-option" data-model="dall-e-3">
+                            <span class="model-title">DALL-E 3</span>
+                            <span class="model-subtitle">High quality images</span>
+                        </div>
+                        <div class="model-option" data-model="stable-diffusion">
+                            <span class="model-title">Stable Diffusion</span>
+                            <span class="model-subtitle">Fast generation</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-option has-submenu" role="menuitem">
+                    <span class="model-title">Code Assistant</span>
+                    <span class="model-subtitle">Help with coding tasks</span>
+                    <div class="submenu">
+                        <div class="model-option" data-model="copilot">
+                            <span class="model-title">GitHub Copilot</span>
+                            <span class="model-subtitle">Code completion</span>
+                        </div>
+                        <div class="model-option" data-model="code-llama">
+                            <span class="model-title">Code Llama</span>
+                            <span class="model-subtitle">Code generation</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </header>
-
+        </div>
+        
         <div class="welcome-screen">
             <h1 class="welcome-title">Welcome to Pseudo</h1>
             <p class="welcome-subtitle">How can I help you today?</p>
