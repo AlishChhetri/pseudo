@@ -4,8 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pseudo</title>
+    <link rel="stylesheet" href="../static/styles.css">
+    <link rel="icon" href="../static/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <h1>Welcome to Pseudo!</h1>
+    <button class="toggle-sidebar-btn" aria-label="Toggle sidebar">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+        </svg>
+    </button>
+    <div class="sidebar">
+        <button class="new-chat-btn" aria-label="Start a new chat">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20 13h-7v7h-2v-7H4v-2h7V4h2v7h7v2z"/>
+            </svg>
+            <span>New chat</span>
+        </button>
+        <button class="settings-btn" aria-label="Open settings">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12 8.5c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5-1.57-3.5-3.5-3.5zm0-5c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            <span>Settings</span>
+        </button>
+    </div>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="header-title">Pseudo</div>
+            <div class="model-dropdown">
+                <button class="model-dropdown-btn" aria-haspopup="true" aria-expanded="false">
+                    <span class="selected-model">Pseudo Auto</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
+                </button>
+                <div class="model-dropdown-content" role="menu">
+                    <div class="model-option selected" role="menuitem">
+                        <span class="model-title">Pseudo Auto</span>
+                    </div>
+                    <div class="model-option" role="menuitem">
+                        <span class="model-title">LLM</span>
+                        <span class="model-subtitle">Get everyday help</span>                    </div>
+                    <div class="model-option" role="menuitem">
+                        <span class="model-title">Text to Image</span>
+                        <span class="model-subtitle">Generate images from text</span>
+                    </div>
+                    <div class="model-option" role="menuitem">
+                        <span class="model-title">Code Assistant</span>
+                        <span class="model-subtitle">Help with coding tasks</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="welcome-screen">
+            <h1 class="welcome-title">Welcome to Pseudo</h1>
+            <p class="welcome-subtitle">How can I help you today?</p>
+            
+            <div class="suggestion-chips">
+                <button class="suggestion-chip">Help me write something</button>
+                <button class="suggestion-chip">Come up with creative ideas</button>
+                <button class="suggestion-chip">Explain a complex topic</button>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea 
+                    class="input-field" 
+                    placeholder="Enter a prompt here"
+                    rows="1"
+                    oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"
+                    aria-label="Enter a prompt"
+                ></textarea>
+                <button class="send-button" aria-label="Send message">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M3.4 20.4l17.45-7.48a1 1 0 000-1.84L3.4 3.6a.993.993 0 00-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script src="../static/js/script.js"></script>
 </body>
 </html>
