@@ -1,3 +1,17 @@
+const sidebar = document.querySelector('.sidebar');
+const sidebarToggle = document.querySelector('.sidebar-toggle');
+
+sidebarToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('expanded');
+    const isExpanded = sidebar.classList.contains('expanded');
+    sidebarToggle.setAttribute('aria-expanded', isExpanded);
+});
+
+document.querySelector('.settings-btn').addEventListener('click', () => {
+    // Add your settings logic here
+    console.log('Settings clicked');
+});
+
 const textarea = document.querySelector('.input-field');
 const sendButton = document.querySelector('.send-button');
 
@@ -20,22 +34,6 @@ document.querySelectorAll('.suggestion-chip').forEach(chip => {
     });
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const toggleBtn = document.querySelector('.toggle-sidebar-btn');
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-    const sidebarWidth = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-width');
-    const collapsedWidth = getComputedStyle(document.documentElement).getPropertyValue('--collapsed-width');
-
-    // Set initial state
-    sidebar.classList.remove('expanded');
-    mainContent.classList.remove('sidebar-expanded');
-
-    toggleBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('expanded');
-        mainContent.classList.toggle('sidebar-expanded');
-    });
-});
 
 // Update the model option click handler
 
