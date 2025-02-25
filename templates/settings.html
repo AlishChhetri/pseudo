@@ -3,26 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings</title>
     <link rel="stylesheet" href="../static/styles.css">
+    <title>API Settings</title>
+
 </head>
-<body>
-    <main class="main-content">
-        <h1>API Credentials</h1>
-        <form id="api-credentials-form">
-            <div class="form-group">
-                <label for="api-name">API Name</label>
-                <input type="text" id="api-name" name="api-name" required>
+<body class="settings-page">
+
+    <!-- HEADER -->
+    <div class="settings-header">
+        <button class="settings-back-button" onclick="window.location.href='/'">← Back</button>
+        <h1>API Settings</h1>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="settings-main-container">
+
+        <!-- API Credentials Form -->
+        <div class="settings-form-container">
+            <h2>Add API Credentials</h2>
+            <div class="settings-form-grid">
+                <div class="settings-input-group">
+                    <div class="settings-input-label">Mode</div>
+                    <input type="text" class="settings-input" placeholder="e.g., llm, vision, audio">
+                </div>
+                <div class="settings-input-group">
+                    <div class="settings-input-label">Provider</div>
+                    <input type="text" class="settings-input" placeholder="e.g., OpenAI, Google, Anthropic">
+                </div>
+                <div class="settings-input-group">
+                    <div class="settings-input-label">API Key</div>
+                    <input type="password" class="settings-input" placeholder="Enter your API key">
+                </div>
+                <div class="settings-input-group">
+                    <div class="settings-input-label">Organization ID (Optional)</div>
+                    <input type="text" class="settings-input" placeholder="Optional organization identifier">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="api-key">API Key</label>
-                <input type="text" id="api-key" name="api-key" required>
+            <button class="settings-save-button">Save Credentials</button>
+        </div>
+
+        <!-- Modes Overview with Providers -->
+        <div>
+            <h2 class="settings-section-title">API Modes</h2>
+            <div class="settings-modes-container">
+                <div class="settings-mode-card">
+                    <div class="settings-mode-title">Language Models</div>
+                    <div class="settings-providers-list">
+                        <div class="settings-provider-item">OpenAI</div>
+                        <div class="settings-provider-item">Anthropic</div>
+                        <div class="settings-provider-item">Cohere</div>
+                    </div>
+                </div>
+                <div class="settings-mode-card">
+                    <div class="settings-mode-title">Vision</div>
+                    <div class="settings-providers-list">
+                        <div class="settings-provider-item">Google</div>
+                        <div class="settings-provider-item">AWS Rekognition</div>
+                    </div>
+                </div>
+                <div class="settings-mode-card">
+                    <div class="settings-mode-title">Speech Recognition</div>
+                    <div class="settings-providers-list">
+                        <div class="settings-provider-item">Deepgram</div>
+                        <div class="settings-provider-item">Whisper</div>
+                    </div>
+                </div>
+                <div class="settings-mode-card">
+                    <div class="settings-mode-title">Translation</div>
+                    <div class="settings-providers-list">
+                        <div class="settings-provider-item">DeepL</div>
+                        <div class="settings-provider-item">Microsoft Translator</div>
+                    </div>
+                </div>
             </div>
-            <button type="submit">Save</button>
-        </form>
-        <h2>Added APIs</h2>
-        <ul id="api-list"></ul>
-    </main>
-    <script src="../static/js/settings.js"></script>
+        </div>
+    </div>
+
 </body>
 </html>
