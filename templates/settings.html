@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <main class="main-content">
+        <h1>API Credentials</h1>
+        <form id="api-credentials-form">
+            <div class="form-group">
+                <label for="api-name">API Name</label>
+                <input type="text" id="api-name" name="api-name" required>
+            </div>
+            <div class="form-group">
+                <label for="api-key">API Key</label>
+                <input type="text" id="api-key" name="api-key" required>
+            </div>
+            <button type="submit">Save</button>
+        </form>
+        <h2>Added APIs</h2>
+        <ul id="api-list"></ul>
+    </main>
+    <script src="../static/js/settings.js"></script>
+</body>
+</html>
