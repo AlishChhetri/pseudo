@@ -1,7 +1,11 @@
 {
     "modes": {
         "llm": {
-            "providers": {}
+            "providers": {
+                "test": {
+                    "api_key": "test"
+                }
+            }
         },
         "vision": {
             "providers": {}

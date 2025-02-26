@@ -566,16 +566,66 @@ body {
 }
 
 .settings-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.settings-input-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 20px;
 }
 
 .settings-input-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.tags-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  /* Changed from center to flex-start */
+    margin-top: 20px;
+}
+
+.settings-mode-tags {
+    display: flex;
+    justify-content: center;  /* Center the tags horizontally */
+    flex-wrap: nowrap;  /* Changed from wrap to nowrap */
+    gap: 12px;
+    padding: 4px;
+    width: 100%;
+    overflow-x: auto;  /* Added horizontal scroll if needed */
+}
+
+.settings-mode-tag {
+    flex: 0 0 auto;  /* Prevent tags from shrinking */
+    white-space: nowrap;  /* Prevent text wrapping in tags */
+}
+
+.settings-mode-tags::-webkit-scrollbar {
+    height: 4px;
+}
+
+.settings-mode-tags::-webkit-scrollbar-track {
+    background: var(--input-bg);
+    border-radius: 4px;
+}
+
+.settings-mode-tags::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.settings-mode-tags::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+.settings-input-group.full-width {
+    grid-column: 1 / -1;
 }
 
 .settings-input-label {
@@ -648,66 +698,85 @@ body {
     padding: 24px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    height: 300px; /* Fixed height */
     display: flex;
     flex-direction: column;
-    border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-}
-
-.settings-mode-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-    border-color: var(--primary-btn);
 }
 
 .settings-mode-title {
     font-size: 18px;
-    margin-bottom: 16px;
     font-weight: 600;
+    margin-bottom: 16px;
     color: var(--text-color);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.settings-mode-title::before {
-    content: '';
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    background-color: var(--primary-btn);
-    border-radius: 50%;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .settings-providers-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 8px; /* Space for scrollbar */
 }
 
-.settings-provider-item {
+/* Scrollbar styling */
+.settings-providers-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.settings-providers-list::-webkit-scrollbar-track {
     background: var(--input-bg);
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 500;
-    border: 1px solid var(--border-color);
-    transition: all 0.2s ease;
-    cursor: pointer;
+    border-radius: 4px;
+}
+
+.settings-providers-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.settings-providers-list::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+.settings-mode-tags {
+    display: flex;
+    flex-wrap: nowrap;  /* Changed from wrap to nowrap */
+    gap: 12px;
+    padding: 4px;
+    width: 100%;
+    overflow-x: auto;  /* Added horizontal scroll if needed */
+}
+
+.settings-mode-tag {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    flex: 0 0 auto;  /* Prevent tags from shrinking */
+    white-space: nowrap;  /* Prevent text wrapping in tags */
 }
 
-.settings-provider-item:hover {
+.settings-mode-tag:hover {
     background: var(--input-focus);
     border-color: var(--primary-btn);
 }
 
-.settings-provider-item::after {
-    content: '⋮';
-    color: var(--text-secondary);
-    font-size: 18px;
+.settings-mode-tag.active {
+    background: var(--primary-btn);
+    border-color: var(--primary-btn);
+    color: white;
+}
+
+.tag-icon {
+    font-size: 16px;
 }
 
 @media (max-width: 768px) {
@@ -727,6 +796,326 @@ body {
     .settings-mode-card {
         padding: 20px;
     }
+
+    .settings-input-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Add to your existing Settings Page Styles */
+
+.settings-provider-item {
+    background: var(--input-bg);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    position: relative; /* Important for dropdown positioning */
+}
+
+.settings-provider-item:hover {
+    border-color: var(--primary-btn);
+}
+
+.provider-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.provider-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.provider-actions {
+    position: relative;
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.action-btn:hover {
+    opacity: 1;
+}
+
+.provider-details {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.provider-details.hidden {
+    display: none;
+}
+
+.api-key-input {
+    flex: 1;
+}
+
+.update-key-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+/* Add to Settings Page Styles */
+
+.delete-confirm {
+    position: fixed; /* Changed from absolute to fixed */
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    margin-top: 10px;
+    transform: translate(8px, -120%) scale(0.95); /* Move up relative to click position */
+}
+
+.delete-confirm.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translate(8px, -120%) scale(1); /* Move up relative to click position */
+}
+
+.delete-confirm span {
+    font-size: 14px;
+    color: var(--text-secondary);
+    user-select: none;
+}
+
+.delete-confirm button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-confirm .confirm-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.delete-confirm .confirm-btn:hover {
+    background: #c82333;
+}
+
+.delete-confirm .cancel-btn {
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.delete-confirm .cancel-btn:hover {
+    background: var(--input-focus);
+}
+
+/* Add edit overlay styles */
+
+.edit-overlay {
+    position: absolute;  /* Changed from fixed to absolute */
+    top: 100%;          /* Position right below the provider item */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(8px, -120%) scale(0.95);
+    min-width: 300px;
+}
+
+.edit-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translate(8px, -120%) scale(1);
+}
+
+.edit-overlay input {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.edit-overlay button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--primary-btn);
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.edit-overlay button:hover {
+    background: var(--primary-hover);
+}
+
+.action-overlay {
+    position: fixed;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.delete-confirm {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    white-space: nowrap;
+    transform: translateX(12px) translateY(-50%) scale(0.95);
+}
+
+.delete-confirm.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(12px) translateY(-50%) scale(1);
+}
+
+.delete-confirm span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.delete-confirm button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.delete-confirm .confirm-btn {
+    background: #dc3545;
+    color: white;
+}
+
+.delete-confirm .confirm-btn:hover {
+    background: #c82333;
+}
+
+.delete-confirm .cancel-btn {
+    background: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.delete-confirm .cancel-btn:hover {
+    background: var(--input-focus);
+}
+
+.edit-overlay {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    min-width: 280px;
+    transform: translateY(8px) scale(0.95);
+    background: var(--card-bg);
+}
+
+.edit-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(8px) scale(1);
+}
+
+.edit-overlay input {
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.edit-overlay input:focus {
+    border-color: var(--primary-btn);
+    outline: none;
+    background: var(--input-focus);
+}
+
+.edit-overlay button {
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--primary-btn);
+    color: white;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.edit-overlay button:hover {
+    background: var(--primary-hover);
+}
+
+/* Add a subtle backdrop for better focus */
+.action-overlay::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.action-overlay.active::before {
+    opacity: 1;
+}
+
+/* Improve button hover states */
+.action-btn {
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    background: var(--input-bg);
 }
 
 

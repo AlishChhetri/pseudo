@@ -20,64 +20,56 @@
 
         <!-- API Credentials Form -->
         <div class="settings-form-container">
-            <h2>Add API Credentials</h2>
+            <h2>Add API Provider</h2>
             <div class="settings-form-grid">
-                <div class="settings-input-group">
-                    <div class="settings-input-label">Mode</div>
-                    <input type="text" class="settings-input" placeholder="e.g., llm, vision, audio">
+                <div class="settings-input-row">
+                    <div class="settings-input-group">
+                        <div class="settings-input-label">Provider Name</div>
+                        <input type="text" class="settings-input" placeholder="e.g., OpenAI, Anthropic, Google">
+                    </div>
+                    <div class="settings-input-group">
+                        <div class="settings-input-label">API Key</div>
+                        <input type="password" class="settings-input" placeholder="Enter your API key">
+                    </div>
                 </div>
-                <div class="settings-input-group">
-                    <div class="settings-input-label">Provider</div>
-                    <input type="text" class="settings-input" placeholder="e.g., OpenAI, Google, Anthropic">
-                </div>
-                <div class="settings-input-group">
-                    <div class="settings-input-label">API Key</div>
-                    <input type="password" class="settings-input" placeholder="Enter your API key">
-                </div>
-                <div class="settings-input-group">
-                    <div class="settings-input-label">Organization ID (Optional)</div>
-                    <input type="text" class="settings-input" placeholder="Optional organization identifier">
+                <div class="settings-input-group tags-container">
+                    <div class="settings-input-label">Available Modes</div>
+                    <div class="settings-mode-tags">
+                        <button class="settings-mode-tag" data-mode="llm">
+                            <span class="tag-icon">🤖</span>
+                            Language Models
+                        </button>
+                        <button class="settings-mode-tag" data-mode="vision">
+                            <span class="tag-icon">👁️</span>
+                            Vision
+                        </button>
+                        <button class="settings-mode-tag" data-mode="speech">
+                            <span class="tag-icon">🎤</span>
+                            Speech Recognition
+                        </button>
+                        <button class="settings-mode-tag" data-mode="translation">
+                            <span class="tag-icon">🌐</span>
+                            Translation
+                        </button>
+                        <button class="settings-mode-tag" data-mode="image">
+                            <span class="tag-icon">🎨</span>
+                            Image Generation
+                        </button>
+                    </div>
                 </div>
             </div>
-            <button class="settings-save-button">Save Credentials</button>
+            <button class="settings-save-button">Add Provider</button>
         </div>
 
         <!-- Modes Overview with Providers -->
         <div>
             <h2 class="settings-section-title">API Modes</h2>
             <div class="settings-modes-container">
-                <div class="settings-mode-card">
-                    <div class="settings-mode-title">Language Models</div>
-                    <div class="settings-providers-list">
-                        <div class="settings-provider-item">OpenAI</div>
-                        <div class="settings-provider-item">Anthropic</div>
-                        <div class="settings-provider-item">Cohere</div>
-                    </div>
-                </div>
-                <div class="settings-mode-card">
-                    <div class="settings-mode-title">Vision</div>
-                    <div class="settings-providers-list">
-                        <div class="settings-provider-item">Google</div>
-                        <div class="settings-provider-item">AWS Rekognition</div>
-                    </div>
-                </div>
-                <div class="settings-mode-card">
-                    <div class="settings-mode-title">Speech Recognition</div>
-                    <div class="settings-providers-list">
-                        <div class="settings-provider-item">Deepgram</div>
-                        <div class="settings-provider-item">Whisper</div>
-                    </div>
-                </div>
-                <div class="settings-mode-card">
-                    <div class="settings-mode-title">Translation</div>
-                    <div class="settings-providers-list">
-                        <div class="settings-provider-item">DeepL</div>
-                        <div class="settings-provider-item">Microsoft Translator</div>
-                    </div>
-                </div>
+                <!-- Mode cards will be populated by JavaScript -->
             </div>
         </div>
     </div>
 
+    <script src="../static/js/settings.js"></script>
 </body>
 </html>
