@@ -58,17 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
     renderModeCards();
 });
 
-function getIconForMode(mode) {
-    const icons = {
-        'llm': '🤖',
-        'vision': '👁️',
-        'speech': '🎤',
-        'translation': '🌐',
-        'image': '🎨'
-    };
-    return icons[mode] || '⚡';
-}
-
 function createProviderItem(providerName, providerData, modeName) {
     const providerItem = document.createElement('div');
     providerItem.className = 'settings-provider-item';
@@ -198,7 +187,7 @@ async function renderModeCards() {
             
             const title = document.createElement('div');
             title.className = 'settings-mode-title';
-            title.innerHTML = `${getIconForMode(modeName)} ${formatModeName(modeName)}`;
+            title.textContent = formatModeName(modeName); // Changed from innerHTML to textContent
             
             const providersList = document.createElement('div');
             providersList.className = 'settings-providers-list';

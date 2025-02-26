@@ -2,7 +2,7 @@
     "modes": {
         "llm": {
             "providers": {
-                "test": {
+                "Test": {
                     "api_key": "test"
                 }
             }
