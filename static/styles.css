@@ -1,19 +1,45 @@
 :root {
-    --primary-color: #8ab4f8;
+    /* Colors */
+    --primary-color: #2e76eb;
     --secondary-color: #e8eaed;
     --background-color: #202124;
     --border-color: #3c4043;
     --hover-background-color: #35363a;
-    --font-family: 'Google Sans', 'Roboto', sans-serif;
     --text-color: #e8eaed;
     --text-secondary: #9aa0a6;
-    --transition-speed: 0.3s;
+    
+    /* Danger colors */
+    --danger: #dc3545;
+    --danger-hover: #c82333;
+    
+    /* Settings-specific colors */
+    --settings-bg: #202124;
+    --settings-header-bg: #202124;
+    --settings-card-bg: #1A1A1A;
+    --settings-card-hover: #252525;
+    --settings-input-bg: #292929;
+    --settings-input-focus: #333;
+    --primary-color-hover:#1b4588;
+    
+    /* Typography */
+    --font-family: 'Google Sans', 'Roboto', sans-serif;
+    
+    /* Sizes & Dimensions */
     --button-height: 40px;
     --icon-size: 24px;
+    --border-radius: 10px;
+    
+    /* Effects */
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    --transition-speed: 0.3s;
     --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Sidebar */
+    --sidebar-width-collapsed: 72px;
+    --sidebar-width-expanded: 280px;
 }
 
-/* Global Styles */
+/* Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -36,13 +62,17 @@ body {
     left: 0;
     top: 0;
     height: 100vh;
-    width: 72px;
+    width: var(--sidebar-width-collapsed);
     background: var(--background-color);
     border-right: 1px solid var(--border-color);
     transition: all var(--transition-speed) var(--transition-timing);
     z-index: 1000;
     padding: 8px;
     gap: 16px;
+}
+
+.sidebar.expanded {
+    width: var(--sidebar-width-expanded);
 }
 
 .sidebar-top {
@@ -52,6 +82,20 @@ body {
     margin-bottom: 8px;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 16px;
+}
+
+.sidebar-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
 }
 
 .sidebar-toggle {
@@ -77,14 +121,14 @@ body {
     height: 20px;
 }
 
-.sidebar-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow: hidden;
+.sidebar svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s;
 }
 
+/* Button Styles */
 .new-chat-btn,
 .settings-btn {
     display: flex;
@@ -111,10 +155,9 @@ body {
     background-color: var(--hover-background-color);
 }
 
-.sidebar-bottom {
-    margin-top: auto;
-    padding-top: 16px;
-    border-top: 1px solid var(--border-color);
+.new-chat-btn:hover svg,
+.settings-btn:hover svg {
+    transform: scale(1.1);
 }
 
 .btn-text {
@@ -124,28 +167,45 @@ body {
     white-space: nowrap;
 }
 
-.sidebar.expanded {
-    width: 280px;
-}
-
 .sidebar.expanded .btn-text {
     opacity: 1;
     transform: translateX(0);
 }
 
-.sidebar svg {
-    flex-shrink: 0;
-    width: 20px;
-    height: 20px;
-    transition: transform 0.2s;
+/* Main Content Styles */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    transition: margin-left var(--transition-speed) var(--transition-timing);
+    background: var(--background-color);
+    margin-left: var(--sidebar-width-collapsed);
+    position: relative;
+    z-index: 1;
 }
 
-.new-chat-btn:hover svg,
-.settings-btn:hover svg {
-    transform: scale(1.1);
+.sidebar.expanded + .main-content {
+    margin-left: var(--sidebar-width-expanded);
 }
 
-/* Chat History Styles */
+/* Header Styles */
+.header {
+    display: none;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 1.25rem;
+    color: var(--text-color);
+    font-weight: 500;
+    margin-bottom: 2px;
+    padding: 4px 0;
+}
+
+/* Chat Styles */
 .chat-history {
     flex: 1;
     overflow-y: auto;
@@ -165,40 +225,6 @@ body {
     border-radius: 4px;
 }
 
-/* Main Content Styles */
-.main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    transition: margin-left var(--transition-speed) var(--transition-timing);
-    background: var(--background-color);
-    margin-left: 72px;
-    position: relative;
-    z-index: 1;
-}
-
-.sidebar.expanded + .main-content {
-    margin-left: 280px;
-}
-
-/* Header Styles */
-.header {
-    display: none;
-}
-
-.header-title {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 1.25rem;
-    color: var(--text-color);
-    font-weight: 500;
-    margin-bottom: 2px;
-    padding: 4px 0;
-}
-
-/* Chat Container Styles */
 .chat-container {
     flex: 1;
     overflow-y: auto;
@@ -230,7 +256,7 @@ body {
     line-height: 1.5;
 }
 
-/* Input Container Styles */
+/* Input Styles */
 .input-container {
     padding: 16px;
     max-width: 768px;
@@ -275,7 +301,7 @@ body {
     border: none;
     padding: 8px;
     cursor: pointer;
-    color: var (--border-color);
+    color: var(--border-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -376,18 +402,11 @@ body {
     margin-left: 4px;
     width: 14px;
     height: 14px;
-}
-
-.model-dropdown-btn:hover .selected-model,
-.model-dropdown-btn:hover svg {
-    color: var(--text-color);
-}
-
-.model-dropdown-btn svg {
     color: var(--text-secondary);
     transition: transform 0.2s ease;
 }
 
+.model-dropdown-btn:hover .selected-model,
 .model-dropdown-btn:hover svg {
     color: var(--text-color);
 }
@@ -408,13 +427,6 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-top: 4px;
-}
-
-.model-dropdown-btn:hover,
-.model-dropdown-btn:focus {
-    background: none;
-    border: none;
-    outline: none;
 }
 
 .model-option {
@@ -440,6 +452,7 @@ body {
     color: var(--text-secondary);
 }
 
+/* Submenu styles */
 .submenu {
     display: none;
     position: absolute;
@@ -457,6 +470,10 @@ body {
 }
 
 .submenu .model-option {
+    padding: 20px 16px;  /* Increased padding */
+    min-height: 100%;    /* Match parent height */
+    display: flex;
+    align-items: left;
     border-radius: 0;
 }
 
@@ -481,26 +498,12 @@ body {
 .upgrade-label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: var (--primary-color);
+    color: var(--primary-color);
 }
 
 /* Settings Page Styles */
 .settings-page {
-    --bg-color: #0D0D0D;
-    --header-bg: #161616; 
-    --card-bg: #1A1A1A;
-    --card-hover: #252525;
-    --input-bg: #292929;
-    --input-focus: #333;
-    --primary-btn: #3E63DD;
-    --primary-hover: #2E53CD;
-    --text-color: #FFFFFF;
-    --text-secondary: #9CA3AF;
-    --border-color: #2A2A2A;
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    --border-radius: 10px;
-    
-    background-color: var(--bg-color);
+    background-color: var(--settings-bg);
     color: var(--text-color);
     display: flex;
     flex-direction: column;
@@ -512,7 +515,7 @@ body {
     display: flex !important;
     align-items: center;
     padding: 16px 32px;
-    background: var(--header-bg);
+    background: var(--settings-header-bg);
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
@@ -552,8 +555,9 @@ body {
     width: 100%;
 }
 
+/* Settings Form Styles */
 .settings-form-container {
-    background: var(--card-bg);
+    background: var(--settings-card-bg);
     padding: 32px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
@@ -584,46 +588,6 @@ body {
     gap: 8px;
 }
 
-.tags-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;  /* Changed from center to flex-start */
-    margin-top: 20px;
-}
-
-.settings-mode-tags {
-    display: flex;
-    justify-content: center;  /* Center the tags horizontally */
-    flex-wrap: nowrap;  /* Changed from wrap to nowrap */
-    gap: 12px;
-    padding: 4px;
-    width: 100%;
-    overflow-x: auto;  /* Added horizontal scroll if needed */
-}
-
-.settings-mode-tag {
-    flex: 0 0 auto;  /* Prevent tags from shrinking */
-    white-space: nowrap;  /* Prevent text wrapping in tags */
-}
-
-.settings-mode-tags::-webkit-scrollbar {
-    height: 4px;
-}
-
-.settings-mode-tags::-webkit-scrollbar-track {
-    background: var(--input-bg);
-    border-radius: 4px;
-}
-
-.settings-mode-tags::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 4px;
-}
-
-.settings-mode-tags::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
-}
-
 .settings-input-group.full-width {
     grid-column: 1 / -1;
 }
@@ -638,15 +602,15 @@ body {
     padding: 14px 16px;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    background: var(--input-bg);
+    background: var(--settings-input-bg);
     color: var(--text-color);
     font-size: 16px;
     transition: all 0.2s ease;
 }
 
 .settings-input:focus {
-    background: var(--input-focus);
-    border-color: var(--primary-btn);
+    background: var(--settings-input-focus);
+    border-color: var(--primary-color);
     outline: none;
 }
 
@@ -656,7 +620,7 @@ body {
 }
 
 .settings-save-button {
-    background: var(--primary-btn);
+    background: var(--primary-color);
     color: white;
     border: none;
     border-radius: var(--border-radius);
@@ -671,7 +635,7 @@ body {
 }
 
 .settings-save-button:hover {
-    background: var(--primary-hover);
+    background: var(--primary-color-hover);
     transform: translateY(-1px);
 }
 
@@ -679,6 +643,7 @@ body {
     transform: translateY(0);
 }
 
+/* Settings Modes Styles */
 .settings-section-title {
     font-size: 22px;
     font-weight: 600;
@@ -694,7 +659,7 @@ body {
 }
 
 .settings-mode-card {
-    background: var(--card-bg);
+    background: var(--settings-card-bg);
     padding: 24px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
@@ -713,38 +678,22 @@ body {
     border-bottom: 1px solid var(--border-color);
 }
 
-.settings-providers-list {
-    overflow-y: auto;
-    flex-grow: 1;
-    padding-right: 8px; /* Space for scrollbar */
-}
-
-/* Scrollbar styling */
-.settings-providers-list::-webkit-scrollbar {
-    width: 4px;
-}
-
-.settings-providers-list::-webkit-scrollbar-track {
-    background: var(--input-bg);
-    border-radius: 4px;
-}
-
-.settings-providers-list::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 4px;
-}
-
-.settings-providers-list::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
+/* Tags Styles */
+.tags-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 20px;
 }
 
 .settings-mode-tags {
     display: flex;
-    flex-wrap: nowrap;  /* Changed from wrap to nowrap */
+    justify-content: center;
+    flex-wrap: nowrap;
     gap: 12px;
     padding: 4px;
     width: 100%;
-    overflow-x: auto;  /* Added horizontal scroll if needed */
+    overflow-x: auto;
 }
 
 .settings-mode-tag {
@@ -754,24 +703,24 @@ body {
     padding: 8px 16px;
     border-radius: 100px;
     border: 1px solid var(--border-color);
-    background: var(--input-bg);
+    background: var(--settings-input-bg);
     color: var(--text-color);
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s ease;
     user-select: none;
-    flex: 0 0 auto;  /* Prevent tags from shrinking */
-    white-space: nowrap;  /* Prevent text wrapping in tags */
+    flex: 0 0 auto;
+    white-space: nowrap;
 }
 
 .settings-mode-tag:hover {
-    background: var(--input-focus);
-    border-color: var(--primary-btn);
+    background: var(--settings-input-focus);
+    border-color: var(--primary-color);
 }
 
 .settings-mode-tag.active {
-    background: var(--primary-btn);
-    border-color: var(--primary-btn);
+    background: var(--primary-color);
+    border-color: var(--primary-color);
     color: white;
 }
 
@@ -779,43 +728,25 @@ body {
     font-size: 16px;
 }
 
-@media (max-width: 768px) {
-    .settings-main-container {
-        padding: 24px 16px;
-    }
-
-    .settings-form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .settings-header {
-        padding: 16px;
-    }
-
-    .settings-form-container,
-    .settings-mode-card {
-        padding: 20px;
-    }
-
-    .settings-input-row {
-        grid-template-columns: 1fr;
-    }
+/* Provider Styles */
+.settings-providers-list {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 8px;
 }
 
-/* Add to your existing Settings Page Styles */
-
 .settings-provider-item {
-    background: var(--input-bg);
+    background: var(--settings-input-bg);
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 12px;
     border: 1px solid var(--border-color);
     transition: all 0.2s ease;
-    position: relative; /* Important for dropdown positioning */
+    position: relative;
 }
 
 .settings-provider-item:hover {
-    border-color: var(--primary-btn);
+    border-color: var(--primary-color);
 }
 
 .provider-main {
@@ -838,14 +769,16 @@ body {
 .action-btn {
     background: none;
     border: none;
-    padding: 4px 8px;
+    padding: 6px;
+    border-radius: 4px;
     cursor: pointer;
     opacity: 0.7;
-    transition: opacity 0.2s;
+    transition: all 0.2s ease;
 }
 
 .action-btn:hover {
     opacity: 1;
+    background: var(--settings-input-bg);
 }
 
 .provider-details {
@@ -867,121 +800,34 @@ body {
     font-size: 14px;
 }
 
-/* Add to Settings Page Styles */
-
-.delete-confirm {
-    position: fixed; /* Changed from absolute to fixed */
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 8px 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    white-space: nowrap;
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    margin-top: 10px;
-    transform: translate(8px, -120%) scale(0.95); /* Move up relative to click position */
+/* Scrollbar Styles */
+.settings-providers-list::-webkit-scrollbar,
+.settings-mode-tags::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
 }
 
-.delete-confirm.active {
-    opacity: 1;
-    pointer-events: all;
-    transform: translate(8px, -120%) scale(1); /* Move up relative to click position */
-}
-
-.delete-confirm span {
-    font-size: 14px;
-    color: var(--text-secondary);
-    user-select: none;
-}
-
-.delete-confirm button {
-    padding: 6px 12px;
+.settings-providers-list::-webkit-scrollbar-track,
+.settings-mode-tags::-webkit-scrollbar-track {
+    background: var(--settings-input-bg);
     border-radius: 4px;
-    border: none;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-.delete-confirm .confirm-btn {
-    background: #dc3545;
-    color: white;
-}
-
-.delete-confirm .confirm-btn:hover {
-    background: #c82333;
-}
-
-.delete-confirm .cancel-btn {
-    background: var(--input-bg);
-    color: var(--text-color);
-}
-
-.delete-confirm .cancel-btn:hover {
-    background: var(--input-focus);
-}
-
-/* Add edit overlay styles */
-
-.edit-overlay {
-    position: absolute;  /* Changed from fixed to absolute */
-    top: 100%;          /* Position right below the provider item */
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(8px, -120%) scale(0.95);
-    min-width: 300px;
-}
-
-.edit-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-    transform: translate(8px, -120%) scale(1);
-}
-
-.edit-overlay input {
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
+.settings-providers-list::-webkit-scrollbar-thumb,
+.settings-mode-tags::-webkit-scrollbar-thumb {
+    background: var(--border-color);
     border-radius: 4px;
-    background: var(--input-bg);
-    color: var(--text-color);
-    font-size: 14px;
 }
 
-.edit-overlay button {
-    padding: 8px 16px;
-    border-radius: 4px;
-    border: none;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    background: var(--primary-btn);
-    color: white;
-    transition: all 0.2s ease;
+.settings-providers-list::-webkit-scrollbar-thumb:hover,
+.settings-mode-tags::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }
 
-.edit-overlay button:hover {
-    background: var(--primary-hover);
-}
-
+/* Action Overlay Styles */
 .action-overlay {
     position: fixed;
-    background: var(--card-bg);
+    background: var(--settings-card-bg);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -991,6 +837,22 @@ body {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.action-overlay::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.action-overlay.active::before {
+    opacity: 1;
+}
+
+/* Delete Confirmation Styles */
 .delete-confirm {
     display: flex;
     align-items: center;
@@ -1023,24 +885,25 @@ body {
 }
 
 .delete-confirm .confirm-btn {
-    background: #dc3545;
+    background: var(--danger);
     color: white;
 }
 
 .delete-confirm .confirm-btn:hover {
-    background: #c82333;
+    background: var(--danger-hover);
 }
 
 .delete-confirm .cancel-btn {
-    background: var(--input-bg);
+    background: var(--settings-input-bg);
     color: var(--text-color);
     border: 1px solid var(--border-color);
 }
 
 .delete-confirm .cancel-btn:hover {
-    background: var(--input-focus);
+    background: var(--settings-input-focus);
 }
 
+/* Edit Overlay Styles */
 .edit-overlay {
     display: flex;
     flex-direction: column;
@@ -1048,7 +911,7 @@ body {
     padding: 16px;
     min-width: 280px;
     transform: translateY(8px) scale(0.95);
-    background: var(--card-bg);
+    background: var(--settings-card-bg);
 }
 
 .edit-overlay.active {
@@ -1061,7 +924,7 @@ body {
     padding: 10px 12px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    background: var(--input-bg);
+    background: var(--settings-input-bg);
     color: var(--text-color);
     font-size: 14px;
     width: 100%;
@@ -1069,9 +932,9 @@ body {
 }
 
 .edit-overlay input:focus {
-    border-color: var(--primary-btn);
+    border-color: var(--primary-color);
     outline: none;
-    background: var(--input-focus);
+    background: var(--settings-input-focus);
 }
 
 .edit-overlay button {
@@ -1081,7 +944,7 @@ body {
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    background: var(--primary-btn);
+    background: var(--primary-color);
     color: white;
     transition: all 0.2s ease;
     width: 100%;
@@ -1091,31 +954,26 @@ body {
     background: var(--primary-hover);
 }
 
-/* Add a subtle backdrop for better focus */
-.action-overlay::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    pointer-events: none;
-    z-index: -1;
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .settings-main-container {
+        padding: 24px 16px;
+    }
+    
+    .settings-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .settings-header {
+        padding: 16px;
+    }
+    
+    .settings-form-container,
+    .settings-mode-card {
+        padding: 20px;
+    }
+    
+    .settings-input-row {
+        grid-template-columns: 1fr;
+    }
 }
-
-.action-overlay.active::before {
-    opacity: 1;
-}
-
-/* Improve button hover states */
-.action-btn {
-    padding: 6px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.action-btn:hover {
-    background: var(--input-bg);
-}
-
-
