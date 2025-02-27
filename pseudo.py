@@ -135,5 +135,22 @@ def get_configs():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    try:
+        data = request.json
+        message = data.get('message')
+        model = data.get('model', 'Auto')
+        
+        # Mock response without "Using model: " prefix
+        response = {
+            "response": f"{message}"  # Remove model info from response
+        }
+        
+        return jsonify(response), 200
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True)
