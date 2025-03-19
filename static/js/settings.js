@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please fill in all fields and select at least one mode');
             return;
         }
-        
+
         const configData = {
             provider: providerName,
             apiKey: apiKey,
