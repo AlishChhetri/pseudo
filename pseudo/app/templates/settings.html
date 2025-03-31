@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
 </head>
-<body>
+<body class="settings-page">
     <header class="settings-header">
         <div class="back-button" onclick="window.location.href='/'">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -21,7 +21,7 @@
     <main class="settings-container">
         <section class="settings-section">
             <h2>API Credentials</h2>
-            <p class="settings-description">Configure API credentials for different providers.</p>
+            <p class="settings-description">Configure API credentials for your AI providers. Pseudo will automatically use available providers based on your input.</p>
             
             <div class="credentials-container">
                 <div class="tabs">
@@ -49,28 +49,6 @@
                         <!-- Audio providers will be populated here -->
                     </div>
                     <button class="add-provider-btn" data-mode="audio">Add Audio Provider</button>
-                </div>
-            </div>
-        </section>
-        
-        <section class="settings-section">
-            <h2>Default Providers</h2>
-            <p class="settings-description">Set the default providers for each content type.</p>
-            
-            <div class="default-providers">
-                <div class="default-provider-setting">
-                    <label for="default-text-provider">Default Text Provider:</label>
-                    <select id="default-text-provider"></select>
-                </div>
-                
-                <div class="default-provider-setting">
-                    <label for="default-image-provider">Default Image Provider:</label>
-                    <select id="default-image-provider"></select>
-                </div>
-                
-                <div class="default-provider-setting">
-                    <label for="default-audio-provider">Default Audio Provider:</label>
-                    <select id="default-audio-provider"></select>
                 </div>
             </div>
         </section>

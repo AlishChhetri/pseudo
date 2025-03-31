@@ -5,30 +5,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainContent = document.querySelector('.main-content');
     
     // Check localStorage for saved sidebar state
-    let isSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    let isSidebarExpanded = localStorage.getItem('sidebarExpanded') === 'true';
     
     // Apply initial state
     updateSidebarState();
     
     // Toggle sidebar on button click
     sidebarToggle.addEventListener('click', function() {
-        isSidebarCollapsed = !isSidebarCollapsed;
+        isSidebarExpanded = !isSidebarExpanded;
         updateSidebarState();
         
         // Save state to localStorage
-        localStorage.setItem('sidebarCollapsed', isSidebarCollapsed);
+        localStorage.setItem('sidebarExpanded', isSidebarExpanded);
     });
     
     /**
-     * Update the sidebar and main content based on collapsed state
+     * Update the sidebar and main content based on expanded state
      */
     function updateSidebarState() {
-        if (isSidebarCollapsed) {
-            sidebar.classList.add('collapsed');
-            mainContent.classList.add('expanded');
+        if (isSidebarExpanded) {
+            sidebar.classList.add('expanded');
         } else {
-            sidebar.classList.remove('collapsed');
-            mainContent.classList.remove('expanded');
+            sidebar.classList.remove('expanded');
         }
     }
     
@@ -44,18 +42,28 @@ document.addEventListener('DOMContentLoaded', function() {
         item.className = 'chat-history-item';
         item.dataset.id = id;
         
-        const itemTitle = document.createElement('span');
-        itemTitle.className = 'chat-title';
+        const itemContent = document.createElement('div');
+        itemContent.className = 'chat-item-content';
+        
+        const itemTitle = document.createElement('div');
+        itemTitle.className = 'chat-item-title';
         itemTitle.textContent = title;
         
+        const itemDate = document.createElement('div');
+        itemDate.className = 'chat-item-date';
+        itemDate.textContent = new Date().toLocaleDateString();
+        
+        itemContent.appendChild(itemTitle);
+        itemContent.appendChild(itemDate);
+        
         const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-chat';
+        deleteBtn.className = 'delete-chat-btn';
         deleteBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
         deleteBtn.title = 'Delete chat';
         
         // Handle click to switch to this chat
         item.addEventListener('click', function(e) {
-            if (!e.target.closest('.delete-chat')) {
+            if (!e.target.closest('.delete-chat-btn')) {
                 switchToChat(id);
             }
         });
@@ -66,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             deleteChat(id);
         });
         
-        item.appendChild(itemTitle);
+        item.appendChild(itemContent);
         item.appendChild(deleteBtn);
         
         chatHistory.appendChild(item);
@@ -88,6 +96,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 item.classList.add('active');
             }
         });
+        
+        // Show chat container, hide welcome screen
+        const chatContainer = document.querySelector('.chat-container');
+        const welcomeScreen = document.querySelector('.welcome-screen');
+        
+        if (chatContainer && welcomeScreen) {
+            chatContainer.style.display = 'flex';
+            welcomeScreen.style.display = 'none';
+        }
     }
     
     /**
@@ -102,6 +119,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const item = document.querySelector(`.chat-history-item[data-id="${chatId}"]`);
         if (item) {
             item.remove();
+        }
+        
+        // If no chats left, show welcome screen
+        const remainingChats = document.querySelectorAll('.chat-history-item');
+        if (remainingChats.length === 0) {
+            const chatContainer = document.querySelector('.chat-container');
+            const welcomeScreen = document.querySelector('.welcome-screen');
+            
+            if (chatContainer && welcomeScreen) {
+                chatContainer.style.display = 'none';
+                welcomeScreen.style.display = 'flex';
+            }
         }
     }
     

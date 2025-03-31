@@ -108,7 +108,6 @@ def chat():
         
         # Initialize services
         router = ContentRouter()
-        media_manager = MediaManager()
         chat_manager = get_chat_manager()
         
         # Initialize chat if needed
@@ -130,39 +129,47 @@ def chat():
         
         # Handle media if needed
         media_path = None
-        response_obj = response  # Default is to use the original response
+        response_obj = {"response": response, "type": "text"}  # Default text response
         
         if mode in ['image', 'audio']:
-            media_path = media_manager.save_media(response, mode)
+            # Get chat-specific media directory
+            chat_media_dir = chat_manager.base_dir / chat_id / "media"
+            chat_media_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Save media to chat-specific directory
+            media_path = chat_manager.save_media(response, mode, chat_media_dir)
             if media_path:
                 # Get filename for the URL
                 filename = os.path.basename(media_path)
                 
                 # Create a proper URL path that will work with our routes
-                url_path = f'/media/{filename}'
+                url_path = f'/chat_history/{chat_id}/media/{filename}'
                 
                 # Create response object with media info
                 response_obj = {
-                    'type': mode,
-                    'path': url_path,
-                    'filename': filename
+                    "type": mode,
+                    "url": url_path,
+                    "filename": filename
                 }
+        else:
+            # For text responses
+            response_obj = {
+                "type": "text",
+                "response": response
+            }
         
         # Save assistant response to chat history
         assistant_message = {
             'role': 'assistant',
-            'content': response_obj if isinstance(response_obj, str) else json.dumps(response_obj),
+            'content': response if isinstance(response, str) else json.dumps(response),
             'mode': mode
         }
         
         # Pass media path for saving in chat history
         chat_manager.add_message(chat_id, assistant_message, media_path)
         
-        return jsonify({
-            'response': response_obj,
-            'selected_mode': mode,
-            'chat_id': chat_id
-        })
+        # Return appropriate response format
+        return jsonify(response_obj)
         
     except Exception as e:
         import traceback
@@ -178,6 +185,194 @@ def get_configs():
         return jsonify(router.credentials)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# API route to load providers for settings page
+@api_bp.route('/load_providers', methods=['GET'])
+def load_providers():
+    try:
+        router = ContentRouter()
+        providers_data = []
+        
+        # Convert credentials format to match what the settings page expects
+        for mode, mode_data in router.credentials["modes"].items():
+            for provider, provider_data in mode_data["providers"].items():
+                # See if this provider is already in our list
+                found = False
+                for existing in providers_data:
+                    if existing["provider"] == provider and existing["api_key"] == provider_data.get("api_key", ""):
+                        if mode not in existing["modes"]:
+                            existing["modes"].append(mode)
+                        found = True
+                        break
+                
+                if not found:
+                    # Add new provider entry with all available information
+                    provider_entry = {
+                        "provider": provider,
+                        "api_key": provider_data.get("api_key", ""),
+                        "modes": [mode],
+                        "models": provider_data.get("models", []),
+                        "organization": provider_data.get("organization", "")
+                    }
+                    providers_data.append(provider_entry)
+                else:
+                    # Update existing provider with additional information
+                    for existing in providers_data:
+                        if existing["provider"] == provider and existing["api_key"] == provider_data.get("api_key", ""):
+                            # Add models if not already present
+                            if "models" not in existing:
+                                existing["models"] = provider_data.get("models", [])
+                            # Add organization if not already present
+                            if "organization" not in existing:
+                                existing["organization"] = provider_data.get("organization", "")
+                            break
+        
+        return jsonify({"success": True, "providers": providers_data})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# API route to save a provider
+@api_bp.route('/save_provider', methods=['POST'])
+def save_provider():
+    try:
+        data = request.json
+        provider = data.get('provider')
+        api_key = data.get('api_key')
+        modes = data.get('modes')
+        
+        if not provider or not api_key or not modes:
+            return jsonify({"success": False, "error": "Missing required fields"}), 400
+        
+        # Get current credentials
+        router = ContentRouter()
+        credentials = router.credentials
+        
+        # Add or update provider in each mode
+        for mode in modes:
+            if mode not in credentials["modes"]:
+                credentials["modes"][mode] = {"providers": {}}
+            
+            if provider not in credentials["modes"][mode]["providers"]:
+                credentials["modes"][mode]["providers"][provider] = {}
+            
+            # Set API key
+            credentials["modes"][mode]["providers"][provider]["api_key"] = api_key
+            
+            # Set organization for OpenAI if not already set
+            if provider == "openai" and "organization" not in credentials["modes"][mode]["providers"][provider]:
+                credentials["modes"][mode]["providers"][provider]["organization"] = ""
+            
+            # Ensure there's a models array - preserve existing models if any
+            if "models" not in credentials["modes"][mode]["providers"][provider] or not credentials["modes"][mode]["providers"][provider]["models"]:
+                # Set default models based on provider and mode
+                if provider == "openai" and mode == "text":
+                    credentials["modes"][mode]["providers"][provider]["models"] = ["gpt-4", "gpt-3.5-turbo"]
+                elif provider == "openai" and mode == "image":
+                    credentials["modes"][mode]["providers"][provider]["models"] = ["dall-e-3"]
+                elif provider == "anthropic":
+                    credentials["modes"][mode]["providers"][provider]["models"] = ["claude-3-opus-20240229", "claude-3-sonnet-20240229"]
+                elif provider == "stability":
+                    credentials["modes"][mode]["providers"][provider]["models"] = ["stable-diffusion-xl-1024-v1-0"]
+                elif provider == "elevenlabs":
+                    credentials["modes"][mode]["providers"][provider]["models"] = ["eleven_multilingual_v2"]
+                elif provider == "ollama":
+                    credentials["modes"][mode]["providers"][provider]["models"] = ["llama2"]
+                else:
+                    credentials["modes"][mode]["providers"][provider]["models"] = []
+        
+        # Save updated credentials
+        router.save_credentials(credentials)
+        
+        return jsonify({"success": True})
+    
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# API route to update a provider's API key
+@api_bp.route('/update_provider', methods=['POST'])
+def update_provider():
+    try:
+        data = request.json
+        provider = data.get('provider')
+        old_api_key = data.get('old_api_key')
+        new_api_key = data.get('new_api_key')
+        mode = data.get('mode')
+        organization = data.get('organization')
+        modes = data.get('modes', [mode])  # Default to current mode if not specified
+        
+        if not provider or not old_api_key or not new_api_key or not mode:
+            return jsonify({"success": False, "error": "Missing required fields"}), 400
+        
+        # Get current credentials
+        router = ContentRouter()
+        credentials = router.credentials
+        
+        # Update the provider in each selected mode
+        for selected_mode in modes:
+            if selected_mode in credentials["modes"]:
+                if provider in credentials["modes"][selected_mode]["providers"]:
+                    # Update API key
+                    credentials["modes"][selected_mode]["providers"][provider]["api_key"] = new_api_key
+                    
+                    # Update organization if provided
+                    if organization is not None:
+                        credentials["modes"][selected_mode]["providers"][provider]["organization"] = organization
+                    
+                    # Preserve existing models
+                    if "models" not in credentials["modes"][selected_mode]["providers"][provider]:
+                        # Set default models based on provider and mode
+                        if provider == "openai" and selected_mode == "text":
+                            credentials["modes"][selected_mode]["providers"][provider]["models"] = ["gpt-4", "gpt-3.5-turbo"]
+                        elif provider == "openai" and selected_mode == "image":
+                            credentials["modes"][selected_mode]["providers"][provider]["models"] = ["dall-e-3"]
+                        elif provider == "anthropic":
+                            credentials["modes"][selected_mode]["providers"][provider]["models"] = ["claude-3-opus-20240229", "claude-3-sonnet-20240229"]
+                        elif provider == "stability":
+                            credentials["modes"][selected_mode]["providers"][provider]["models"] = ["stable-diffusion-xl-1024-v1-0"]
+                        elif provider == "elevenlabs":
+                            credentials["modes"][selected_mode]["providers"][provider]["models"] = ["eleven_multilingual_v2"]
+                        elif provider == "ollama":
+                            credentials["modes"][selected_mode]["providers"][provider]["models"] = ["llama2"]
+                        else:
+                            credentials["modes"][selected_mode]["providers"][provider]["models"] = []
+        
+        # Save updated credentials
+        router.save_credentials(credentials)
+        
+        return jsonify({"success": True})
+    
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# API route to delete a provider
+@api_bp.route('/delete_provider', methods=['POST'])
+def delete_provider():
+    try:
+        data = request.json
+        provider = data.get('provider')
+        mode = data.get('mode')
+        
+        if not provider or not mode:
+            return jsonify({"success": False, "error": "Missing required fields"}), 400
+        
+        # Get current credentials
+        router = ContentRouter()
+        credentials = router.credentials
+        
+        # Delete the provider for the specific mode
+        if (mode in credentials["modes"] and 
+            provider in credentials["modes"][mode]["providers"]):
+            del credentials["modes"][mode]["providers"][provider]
+        else:
+            return jsonify({"success": False, "error": f"Provider {provider} not found in {mode} mode"}), 404
+        
+        # Save updated credentials
+        router.save_credentials(credentials)
+        
+        return jsonify({"success": True})
+    
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 # API routes for chat history
 @api_bp.route('/chats', methods=['GET'])
@@ -223,6 +418,37 @@ def delete_chat(chat_id):
 @settings_bp.route('/', methods=['GET'])
 def settings():
     return render_template('settings.html')
+
+# API route to update provider models
+@api_bp.route('/update_provider_models', methods=['POST'])
+def update_provider_models():
+    try:
+        data = request.json
+        provider = data.get('provider')
+        mode = data.get('mode')
+        models = data.get('models', [])
+        
+        if not provider or not mode:
+            return jsonify({"success": False, "error": "Missing required fields"}), 400
+        
+        # Get current credentials
+        router = ContentRouter()
+        credentials = router.credentials
+        
+        # Update models for the provider in the specified mode
+        if (mode in credentials["modes"] and 
+            provider in credentials["modes"][mode]["providers"]):
+            credentials["modes"][mode]["providers"][provider]["models"] = models
+        else:
+            return jsonify({"success": False, "error": f"Provider {provider} not found in {mode} mode"}), 404
+        
+        # Save updated credentials
+        router.save_credentials(credentials)
+        
+        return jsonify({"success": True})
+    
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 def register_routes(app):
     """Register all application routes."""

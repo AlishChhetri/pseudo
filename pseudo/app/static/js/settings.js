@@ -1,438 +1,750 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Elements
+    // Tab switching
     const tabs = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content');
-    const addProviderBtns = document.querySelectorAll('.add-provider-btn');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Hide all tab content
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Show selected tab content
+            const mode = this.dataset.mode;
+            document.getElementById(`${mode}-content`).classList.add('active');
+        });
+    });
+    
+    // Modal functionality
     const modal = document.getElementById('add-provider-modal');
+    const addProviderBtns = document.querySelectorAll('.add-provider-btn');
     const closeModalBtn = document.querySelector('.close-modal');
     const cancelBtn = document.querySelector('.cancel-btn');
-    const providerForm = document.getElementById('add-provider-form');
     const providerModeInput = document.getElementById('provider-mode');
+    const providerNameSelect = document.getElementById('provider-name');
+    const apiKeyInput = document.getElementById('api-key');
+    const modeCheckboxes = document.querySelectorAll('input[name="modes"]');
     
-    // Default providers selects
-    const defaultTextProviderSelect = document.getElementById('default-text-provider');
-    const defaultImageProviderSelect = document.getElementById('default-image-provider');
-    const defaultAudioProviderSelect = document.getElementById('default-audio-provider');
-    
-    // Initialize
-    init();
-    
-    /**
-     * Initialize settings page
-     */
-    function init() {
-        // Load provider data
-        loadProviderData();
-        
-        // Tab switching
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                const mode = this.dataset.mode;
-                switchTab(mode);
+    // Open modal with appropriate mode
+    addProviderBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const mode = this.dataset.mode;
+            
+            // Set the hidden mode input
+            providerModeInput.value = mode;
+            
+            // Filter provider select options based on mode
+            filterProviderOptions(mode);
+            
+            // Pre-check the corresponding mode checkbox
+            modeCheckboxes.forEach(checkbox => {
+                checkbox.checked = checkbox.value === mode;
             });
+            
+            // Show modal
+            modal.classList.add('active');
         });
-        
-        // Add provider buttons
-        addProviderBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const mode = this.dataset.mode;
-                openAddProviderModal(mode);
-            });
-        });
-        
-        // Close modal buttons
-        closeModalBtn.addEventListener('click', closeModal);
-        cancelBtn.addEventListener('click', closeModal);
-        
-        // Form submission
-        providerForm.addEventListener('submit', handleFormSubmit);
-        
-        // Close modal on outside click
-        window.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-    }
+    });
     
-    /**
-     * Load provider data from API
-     */
-    function loadProviderData() {
-        fetch('/api/configs')
-            .then(response => response.json())
-            .then(data => {
-                // Populate the provider lists
-                if (data.modes) {
-                    for (const mode in data.modes) {
-                        if (data.modes[mode].providers) {
-                            populateProviderList(mode, data.modes[mode].providers);
-                            populateDefaultProviderSelect(mode, data.modes[mode].providers);
-                        }
-                    }
-                }
-            })
-            .catch(error => {
-                console.error('Error loading provider data:', error);
-            });
-    }
-    
-    /**
-     * Populate the provider list for a specific mode
-     */
-    function populateProviderList(mode, providers) {
-        const providerList = document.getElementById(`${mode}-providers`);
-        if (!providerList) return;
+    // Filter provider options based on selected mode
+    function filterProviderOptions(mode) {
+        const options = providerNameSelect.options;
         
-        // Clear existing providers
-        providerList.innerHTML = '';
-        
-        // Add each provider
-        for (const providerName in providers) {
-            const providerData = providers[providerName];
-            
-            const providerCard = document.createElement('div');
-            providerCard.className = 'provider-card';
-            
-            const header = document.createElement('div');
-            header.className = 'provider-header';
-            
-            const title = document.createElement('h3');
-            title.textContent = capitalizeFirstLetter(providerName);
-            
-            const actions = document.createElement('div');
-            actions.className = 'provider-actions';
-            
-            const editBtn = document.createElement('button');
-            editBtn.className = 'edit-api-key';
-            editBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
-            editBtn.title = 'Edit API key';
-            
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'delete-provider';
-            deleteBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
-            deleteBtn.title = 'Delete provider';
-            
-            // Mask API key
-            let apiKey = providerData.api_key || '';
-            let maskedKey = maskApiKey(apiKey);
-            
-            const apiKeyDiv = document.createElement('div');
-            apiKeyDiv.className = 'api-key';
-            apiKeyDiv.innerHTML = `<span>API Key:</span> <code>${maskedKey}</code>`;
-            
-            // Add models if available
-            let modelsDiv = null;
-            if (providerData.models && providerData.models.length > 0) {
-                modelsDiv = document.createElement('div');
-                modelsDiv.className = 'provider-models';
-                modelsDiv.innerHTML = `<span>Models:</span> <code>${providerData.models.join(', ')}</code>`;
-            }
-            
-            // Event listeners
-            editBtn.addEventListener('click', function() {
-                openEditApiKeyModal(mode, providerName, apiKey);
-            });
-            
-            deleteBtn.addEventListener('click', function() {
-                if (confirm(`Are you sure you want to delete the ${providerName} provider from ${mode} mode?`)) {
-                    deleteProvider(mode, providerName);
-                }
-            });
-            
-            // Assemble the card
-            actions.appendChild(editBtn);
-            actions.appendChild(deleteBtn);
-            header.appendChild(title);
-            header.appendChild(actions);
-            providerCard.appendChild(header);
-            providerCard.appendChild(apiKeyDiv);
-            if (modelsDiv) {
-                providerCard.appendChild(modelsDiv);
-            }
-            
-            providerList.appendChild(providerCard);
-        }
-    }
-    
-    /**
-     * Populate the default provider select dropdown for a specific mode
-     */
-    function populateDefaultProviderSelect(mode, providers) {
-        const selectElement = document.getElementById(`default-${mode}-provider`);
-        if (!selectElement) return;
-        
-        // Clear existing options
-        selectElement.innerHTML = '';
-        
-        // Add an empty option
-        const emptyOption = document.createElement('option');
-        emptyOption.value = '';
-        emptyOption.textContent = '-- Select a provider --';
-        selectElement.appendChild(emptyOption);
-        
-        // Add provider options
-        for (const providerName in providers) {
-            const option = document.createElement('option');
-            option.value = providerName;
-            option.textContent = capitalizeFirstLetter(providerName);
-            selectElement.appendChild(option);
+        // Reset options
+        for (let i = 0; i < options.length; i++) {
+            options[i].style.display = 'block';
         }
         
-        // Set current default
-        const currentDefault = localStorage.getItem(`default_${mode}_provider`);
-        if (currentDefault && selectElement.querySelector(`option[value="${currentDefault}"]`)) {
-            selectElement.value = currentDefault;
-        }
-        
-        // Add change listener
-        selectElement.addEventListener('change', function() {
-            localStorage.setItem(`default_${mode}_provider`, this.value);
-        });
-    }
-    
-    /**
-     * Switch active tab
-     */
-    function switchTab(mode) {
-        // Update tab buttons
-        tabs.forEach(tab => {
-            tab.classList.remove('active');
-            if (tab.dataset.mode === mode) {
-                tab.classList.add('active');
-            }
-        });
-        
-        // Update tab content
-        tabContents.forEach(content => {
-            content.classList.remove('active');
-            if (content.id === `${mode}-content`) {
-                content.classList.add('active');
-            }
-        });
-    }
-    
-    /**
-     * Open the add provider modal
-     */
-    function openAddProviderModal(mode) {
-        providerModeInput.value = mode;
-        
-        // Check the appropriate mode checkbox
-        const modeCheckboxes = document.querySelectorAll('input[name="modes"]');
-        modeCheckboxes.forEach(checkbox => {
-            checkbox.checked = checkbox.value === mode;
-        });
-        
-        // Set provider dropdown based on mode
-        const providerSelect = document.getElementById('provider-name');
-        providerSelect.innerHTML = '';
-        
+        // Filter based on mode
         if (mode === 'text') {
-            addOption(providerSelect, 'openai', 'OpenAI');
-            addOption(providerSelect, 'anthropic', 'Anthropic');
-            addOption(providerSelect, 'ollama', 'Ollama (Local)');
+            // Show all text providers (OpenAI, Anthropic, Ollama)
+            // Hide non-text providers
+            for (let i = 0; i < options.length; i++) {
+                const value = options[i].value;
+                if (value === 'stability' || value === 'elevenlabs') {
+                    options[i].style.display = 'none';
+                }
+            }
+            // Select OpenAI by default
+            providerNameSelect.value = 'openai';
         } else if (mode === 'image') {
-            addOption(providerSelect, 'openai', 'OpenAI');
-            addOption(providerSelect, 'stability', 'Stability AI');
+            // Show image providers (OpenAI, Stability)
+            // Hide non-image providers
+            for (let i = 0; i < options.length; i++) {
+                const value = options[i].value;
+                if (value === 'anthropic' || value === 'elevenlabs' || value === 'ollama') {
+                    options[i].style.display = 'none';
+                }
+            }
+            // Select Stability by default
+            providerNameSelect.value = 'stability';
         } else if (mode === 'audio') {
-            addOption(providerSelect, 'elevenlabs', 'ElevenLabs');
+            // Show audio providers (ElevenLabs)
+            // Hide non-audio providers
+            for (let i = 0; i < options.length; i++) {
+                const value = options[i].value;
+                if (value !== 'elevenlabs') {
+                    options[i].style.display = 'none';
+                }
+            }
+            // Select ElevenLabs by default
+            providerNameSelect.value = 'elevenlabs';
         }
-        
-        // Show modal
-        modal.style.display = 'block';
     }
     
-    /**
-     * Open modal to edit API key
-     */
-    function openEditApiKeyModal(mode, provider, currentKey) {
-        providerModeInput.value = mode;
-        
-        // Set provider name
-        const providerSelect = document.getElementById('provider-name');
-        providerSelect.innerHTML = '';
-        addOption(providerSelect, provider, capitalizeFirstLetter(provider));
-        providerSelect.disabled = true;
-        
-        // Set API key
-        const apiKeyInput = document.getElementById('api-key');
-        apiKeyInput.value = currentKey;
-        
-        // Check only the current mode
-        const modeCheckboxes = document.querySelectorAll('input[name="modes"]');
-        modeCheckboxes.forEach(checkbox => {
-            checkbox.checked = checkbox.value === mode;
-            checkbox.disabled = true;
-        });
-        
-        // Update modal title
-        document.querySelector('.modal-header h3').textContent = 'Update API Key';
-        
-        // Show modal
-        modal.style.display = 'block';
-    }
-    
-    /**
-     * Close the modal
-     */
+    // Close modal
     function closeModal() {
-        modal.style.display = 'none';
-        providerForm.reset();
+        modal.classList.remove('active');
         
-        // Reset form to default state
-        document.getElementById('provider-name').disabled = false;
-        document.querySelectorAll('input[name="modes"]').forEach(checkbox => {
-            checkbox.disabled = false;
-        });
-        
-        // Reset modal title
-        document.querySelector('.modal-header h3').textContent = 'Add Provider';
+        // Reset form
+        document.getElementById('add-provider-form').reset();
     }
     
-    /**
-     * Handle form submission
-     */
-    function handleFormSubmit(e) {
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Form submission
+    const addProviderForm = document.getElementById('add-provider-form');
+    addProviderForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
         const mode = providerModeInput.value;
-        const provider = document.getElementById('provider-name').value;
-        const apiKey = document.getElementById('api-key').value;
+        const provider = providerNameSelect.value;
+        const apiKey = apiKeyInput.value;
         
         // Get selected modes
         const selectedModes = [];
-        document.querySelectorAll('input[name="modes"]:checked').forEach(checkbox => {
-            selectedModes.push(checkbox.value);
+        modeCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                selectedModes.push(checkbox.value);
+            }
         });
         
-        if (!provider || !apiKey || selectedModes.length === 0) {
-            alert('Please fill out all required fields');
+        if (!apiKey) {
+            alert('Please enter an API key');
             return;
         }
         
-        // Check if updating or adding
-        if (document.getElementById('provider-name').disabled) {
-            // Update API key
-            updateApiKey(mode, provider, apiKey);
-        } else {
-            // Add new provider
-            addProvider(provider, apiKey, selectedModes);
+        if (selectedModes.length === 0) {
+            alert('Please select at least one mode');
+            return;
         }
-    }
+        
+        // Save provider
+        saveProvider(provider, apiKey, selectedModes);
+        
+        // Close modal
+                closeModal();
+        
+        // Refresh provider lists
+        loadProviders();
+    });
     
-    /**
-     * Add a new provider
-     */
-    function addProvider(provider, apiKey, modes) {
-        fetch('/api/save-config', {
+    // Save provider to credentials.json via API
+    function saveProvider(provider, apiKey, modes) {
+        fetch('/api/save_provider', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 provider: provider,
-                apiKey: apiKey,
+                api_key: apiKey,
                 modes: modes
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                closeModal();
-                loadProviderData();
+                console.log('Provider saved successfully');
             } else {
-                alert(`Error: ${data.error || 'Unknown error'}`);
+                console.error('Failed to save provider:', data.error);
+                alert('Failed to save provider: ' + data.error);
             }
         })
         .catch(error => {
-            console.error('Error adding provider:', error);
-            alert('Error adding provider. See console for details.');
+            console.error('Error saving provider:', error);
+            alert('Error saving provider');
         });
     }
     
-    /**
-     * Update an API key
-     */
-    function updateApiKey(mode, provider, apiKey) {
-        fetch('/api/update-api-key', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                mode: mode,
-                provider: provider,
-                apiKey: apiKey
-            })
-        })
+    // Load providers from credentials.json
+    function loadProviders() {
+        fetch('/api/load_providers')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                closeModal();
-                loadProviderData();
+                const providers = data.providers;
+                
+                // Clear provider lists
+                document.getElementById('text-providers').innerHTML = '';
+                document.getElementById('image-providers').innerHTML = '';
+                document.getElementById('audio-providers').innerHTML = '';
+                
+                // Add providers to lists
+                providers.forEach(provider => {
+                    provider.modes.forEach(mode => {
+                        addProviderToList(provider.provider, provider.api_key, mode);
+                    });
+                });
             } else {
-                alert(`Error: ${data.error || 'Unknown error'}`);
+                console.error('Failed to load providers:', data.error);
             }
         })
         .catch(error => {
-            console.error('Error updating API key:', error);
-            alert('Error updating API key. See console for details.');
+            console.error('Error loading providers:', error);
         });
     }
     
-    /**
-     * Delete a provider
-     */
-    function deleteProvider(mode, provider) {
-        fetch('/api/delete-provider', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                mode: mode,
-                provider: provider
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                loadProviderData();
-            } else {
-                alert(`Error: ${data.error || 'Unknown error'}`);
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting provider:', error);
-            alert('Error deleting provider. See console for details.');
-        });
-    }
-    
-    /**
-     * Helper function to mask API key
-     */
-    function maskApiKey(key) {
-        if (!key) return '';
-        if (key.length <= 8) return '••••••••';
+    // Add provider to the appropriate list
+    function addProviderToList(provider, apiKey, mode) {
+        const providerList = document.getElementById(`${mode}-providers`);
         
-        return key.substr(0, 4) + '••••••••' + key.substr(-4);
+        const providerItem = document.createElement('div');
+        providerItem.className = 'provider-item';
+        
+        const providerHeader = document.createElement('div');
+        providerHeader.className = 'provider-header';
+        
+        const providerName = document.createElement('div');
+        providerName.className = 'provider-name';
+        providerName.textContent = getProviderDisplayName(provider);
+        
+        // Add masked API key display
+        const apiKeyDisplay = document.createElement('div');
+        apiKeyDisplay.className = 'provider-key-display';
+        apiKeyDisplay.textContent = maskApiKey(apiKey);
+        apiKeyDisplay.style.fontSize = '0.8em';
+        apiKeyDisplay.style.color = 'var(--text-secondary)';
+        apiKeyDisplay.style.marginTop = '4px';
+        
+        // Add organization display if present
+        const orgDisplay = document.createElement('div');
+        orgDisplay.className = 'provider-org-display';
+        orgDisplay.textContent = maskApiKey(apiKey); // We'll update this with actual org data
+        orgDisplay.style.fontSize = '0.8em';
+        orgDisplay.style.color = 'var(--text-secondary)';
+        orgDisplay.style.marginTop = '4px';
+        
+        // Add models list
+        const modelsDisplay = document.createElement('div');
+        modelsDisplay.className = 'provider-models-display';
+        modelsDisplay.style.fontSize = '0.8em';
+        modelsDisplay.style.color = 'var(--text-secondary)';
+        modelsDisplay.style.marginTop = '4px';
+        
+        // Fetch models for this provider and mode
+        fetch(`/api/load_providers`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const providerData = data.providers.find(p => p.provider === provider);
+                    if (providerData) {
+                        // Update organization if present
+                        if (providerData.organization) {
+                            orgDisplay.textContent = `Organization: ${maskApiKey(providerData.organization)}`;
+                        } else {
+                            orgDisplay.style.display = 'none';
+                        }
+                        
+                        // Update models list
+                        if (providerData.models && providerData.models.length > 0) {
+                            modelsDisplay.textContent = `Models: ${providerData.models.join(', ')}`;
+                        } else {
+                            modelsDisplay.textContent = 'No models configured';
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading provider details:', error);
+                modelsDisplay.textContent = 'Error loading models';
+            });
+        
+        const providerActions = document.createElement('div');
+        providerActions.className = 'provider-actions';
+        
+        const editAction = document.createElement('button');
+        editAction.className = 'provider-action';
+        editAction.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
+        editAction.title = 'Edit API key';
+        
+        const deleteAction = document.createElement('button');
+        deleteAction.className = 'provider-action';
+        deleteAction.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
+        deleteAction.title = 'Delete provider';
+        
+        // Add models management button
+        const modelsAction = document.createElement('button');
+        modelsAction.className = 'provider-action';
+        modelsAction.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2z"/></svg>';
+        modelsAction.title = 'Manage models';
+        
+        // Event listeners for actions
+        editAction.addEventListener('click', function() {
+            editProvider(provider, apiKey, mode);
+        });
+        
+        deleteAction.addEventListener('click', function() {
+            deleteProvider(provider, mode);
+        });
+        
+        // Event listener for models action
+        modelsAction.addEventListener('click', function() {
+            fetch('/api/load_providers')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const providerData = data.providers.find(p => p.provider === provider);
+                        if (providerData) {
+                            showModelsModal(provider, mode, providerData.models || []);
+                        }
+                    }
+                });
+        });
+        
+        // Append elements
+        providerActions.appendChild(editAction);
+        providerActions.appendChild(deleteAction);
+        providerActions.appendChild(modelsAction);
+        
+        providerHeader.appendChild(providerName);
+        providerHeader.appendChild(providerActions);
+        
+        providerItem.appendChild(providerHeader);
+        providerItem.appendChild(apiKeyDisplay);
+        providerItem.appendChild(orgDisplay);
+        providerItem.appendChild(modelsDisplay);
+        
+        providerList.appendChild(providerItem);
     }
     
-    /**
-     * Helper function to add an option to a select element
-     */
-    function addOption(select, value, text) {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = text;
-        select.appendChild(option);
+    // Get display name for provider
+    function getProviderDisplayName(provider) {
+        const displayNames = {
+            'openai': 'OpenAI',
+            'anthropic': 'Anthropic',
+            'stability': 'Stability AI',
+            'elevenlabs': 'ElevenLabs',
+            'ollama': 'Ollama (Local)'
+        };
+        
+        return displayNames[provider] || provider;
     }
     
-    /**
-     * Helper function to capitalize the first letter of a string
-     */
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+    // Create modal for editing provider
+    const editModal = document.createElement('div');
+    editModal.className = 'modal';
+    editModal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Provider</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="edit-provider-form">
+                <input type="hidden" id="edit-provider-name">
+                <input type="hidden" id="edit-provider-mode">
+                <div class="form-group">
+                    <label for="edit-api-key">API Key</label>
+                    <input type="password" id="edit-api-key" required>
+                </div>
+                <div class="form-group" id="edit-org-group" style="display: none;">
+                    <label for="edit-org">Organization ID (Optional)</label>
+                    <input type="text" id="edit-org">
+                </div>
+                <div class="form-group">
+                    <label>Modes</label>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" name="edit-modes" value="text"> Text
+                        </label>
+                        <label>
+                            <input type="checkbox" name="edit-modes" value="image"> Image
+                        </label>
+                        <label>
+                            <input type="checkbox" name="edit-modes" value="audio"> Audio
+                        </label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(editModal);
+
+    // Create confirmation modal
+    const confirmModal = document.createElement('div');
+    confirmModal.className = 'modal';
+    confirmModal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirm Action</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message"></p>
+            </div>
+            <div class="form-actions">
+                <button class="cancel-btn">Cancel</button>
+                <button class="confirm-btn">Confirm</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(confirmModal);
+
+    // Function to show confirmation modal
+    function showConfirmation(message, onConfirm) {
+        const messageEl = document.getElementById('confirm-message');
+        messageEl.textContent = message;
+        confirmModal.classList.add('active');
+        
+        const confirmBtn = confirmModal.querySelector('.confirm-btn');
+        const cancelBtn = confirmModal.querySelector('.cancel-btn');
+        const closeBtn = confirmModal.querySelector('.close-modal');
+        
+        const closeModal = () => {
+            confirmModal.classList.remove('active');
+        };
+        
+        confirmBtn.onclick = () => {
+            onConfirm();
+            closeModal();
+        };
+        
+        cancelBtn.onclick = closeModal;
+        closeBtn.onclick = closeModal;
+        
+        confirmModal.onclick = (e) => {
+            if (e.target === confirmModal) {
+                closeModal();
+            }
+        };
     }
+
+    // Update edit provider function to use modal
+    function editProvider(provider, apiKey, mode) {
+        const form = document.getElementById('edit-provider-form');
+        const providerInput = document.getElementById('edit-provider-name');
+        const modeInput = document.getElementById('edit-provider-mode');
+        const apiKeyInput = document.getElementById('edit-api-key');
+        const orgGroup = document.getElementById('edit-org-group');
+        const orgInput = document.getElementById('edit-org');
+        
+        // Set form values
+        providerInput.value = provider;
+        modeInput.value = mode;
+        apiKeyInput.value = apiKey;
+        
+        // Show/hide organization field based on provider
+        if (provider === 'openai') {
+            orgGroup.style.display = 'block';
+            // Fetch current organization value
+            fetch('/api/load_providers')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const providerData = data.providers.find(p => p.provider === provider);
+                        if (providerData && providerData.organization) {
+                            orgInput.value = providerData.organization;
+                        }
+                    }
+                });
+        } else {
+            orgGroup.style.display = 'none';
+        }
+        
+        // Set current mode as checked
+        const modeCheckboxes = form.querySelectorAll('input[name="edit-modes"]');
+        modeCheckboxes.forEach(checkbox => {
+            checkbox.checked = checkbox.value === mode;
+        });
+        
+        // Show modal
+        editModal.classList.add('active');
+        
+        // Handle form submission
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            
+            const newApiKey = apiKeyInput.value;
+            const newOrg = orgInput.value;
+            const selectedModes = Array.from(modeCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+            
+            if (selectedModes.length === 0) {
+                alert('Please select at least one mode');
+                return;
+            }
+            
+            // Update provider
+            updateProvider(provider, apiKey, newApiKey, mode, newOrg, selectedModes);
+            
+            // Close modal
+            editModal.classList.remove('active');
+            
+            // Refresh provider lists
+            loadProviders();
+        };
+        
+        // Handle modal closing
+        const closeBtn = editModal.querySelector('.close-modal');
+        const cancelBtn = editModal.querySelector('.cancel-btn');
+        
+        const closeModal = () => {
+            editModal.classList.remove('active');
+        };
+        
+        closeBtn.onclick = closeModal;
+        cancelBtn.onclick = closeModal;
+        
+        editModal.onclick = (e) => {
+            if (e.target === editModal) {
+                closeModal();
+            }
+        };
+    }
+
+    // Update delete provider function to use confirmation modal
+    function deleteProvider(provider, mode) {
+        showConfirmation(
+            `Are you sure you want to delete ${getProviderDisplayName(provider)} from ${mode} providers?`,
+            () => {
+                fetch('/api/delete_provider', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                provider: provider,
+                        mode: mode
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                        console.log('Provider deleted successfully');
+                        loadProviders();
+            } else {
+                        console.error('Failed to delete provider:', data.error);
+                        alert('Failed to delete provider: ' + data.error);
+            }
+        })
+        .catch(error => {
+                    console.error('Error deleting provider:', error);
+                    alert('Error deleting provider');
+                });
+            }
+        );
+    }
+
+    // Update updateProvider function to handle organization and multiple modes
+    function updateProvider(provider, oldApiKey, newApiKey, mode, organization, modes) {
+        fetch('/api/update_provider', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                provider: provider,
+                old_api_key: oldApiKey,
+                new_api_key: newApiKey,
+                mode: mode,
+                organization: organization,
+                modes: modes
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Provider updated successfully');
+                loadProviders();
+            } else {
+                console.error('Failed to update provider:', data.error);
+                alert('Failed to update provider: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating provider:', error);
+            alert('Error updating provider');
+        });
+    }
+    
+    // Mask API key for display purposes
+    function maskApiKey(apiKey) {
+        if (!apiKey) return 'No API Key';
+        
+        // For Ollama (Local), don't mask
+        if (apiKey.toLowerCase() === 'local') return 'Local Model (No API Key Required)';
+        
+        const length = apiKey.length;
+        if (length <= 8) return '••••••••';
+        
+        // Show first 4 and last 4 characters
+        return apiKey.substring(0, 4) + '••••••••' + apiKey.substring(length - 4);
+    }
+    
+    // Create modal for managing models
+    const modelsModal = document.createElement('div');
+    modelsModal.className = 'modal';
+    modelsModal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Manage Models</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="models-form">
+                <input type="hidden" id="models-provider-name">
+                <input type="hidden" id="models-provider-mode">
+                <div class="form-group">
+                    <label>Available Models</label>
+                    <div id="models-list" class="models-list">
+                        <!-- Models will be added here dynamically -->
+                    </div>
+                    <div class="form-actions" style="margin-top: 8px;">
+                        <button type="button" class="add-model-btn">Add Model</button>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(modelsModal);
+
+    // Function to show models modal
+    function showModelsModal(provider, mode, currentModels) {
+        const form = document.getElementById('models-form');
+        const providerInput = document.getElementById('models-provider-name');
+        const modeInput = document.getElementById('models-provider-mode');
+        const modelsList = document.getElementById('models-list');
+        
+        // Set form values
+        providerInput.value = provider;
+        modeInput.value = mode;
+        
+        // Clear existing models
+        modelsList.innerHTML = '';
+        
+        // Add current models
+        currentModels.forEach(model => {
+            addModelInput(model);
+        });
+        
+        // Show modal
+        modelsModal.classList.add('active');
+        
+        // Handle form submission
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            
+            const models = Array.from(modelsList.querySelectorAll('.model-input'))
+                .map(input => input.value.trim())
+                .filter(value => value !== '');
+            
+            // Update models
+            updateProviderModels(provider, mode, models);
+            
+            // Close modal
+            modelsModal.classList.remove('active');
+            
+            // Refresh provider lists
+            loadProviders();
+        };
+        
+        // Handle modal closing
+        const closeBtn = modelsModal.querySelector('.close-modal');
+        const cancelBtn = modelsModal.querySelector('.cancel-btn');
+        
+        const closeModal = () => {
+            modelsModal.classList.remove('active');
+        };
+        
+        closeBtn.onclick = closeModal;
+        cancelBtn.onclick = closeModal;
+        
+        modelsModal.onclick = (e) => {
+            if (e.target === modelsModal) {
+                closeModal();
+            }
+        };
+    }
+
+    // Function to add a model input field
+    function addModelInput(value = '') {
+        const modelsList = document.getElementById('models-list');
+        const modelDiv = document.createElement('div');
+        modelDiv.className = 'model-input-group';
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'model-input';
+        input.value = value;
+        input.placeholder = 'Enter model name';
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-model-btn';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.onclick = () => modelDiv.remove();
+        
+        modelDiv.appendChild(input);
+        modelDiv.appendChild(removeBtn);
+        modelsList.appendChild(modelDiv);
+    }
+
+    // Function to update provider models
+    function updateProviderModels(provider, mode, models) {
+        fetch('/api/update_provider_models', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                provider: provider,
+                mode: mode,
+                models: models
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Models updated successfully');
+            } else {
+                console.error('Failed to update models:', data.error);
+                alert('Failed to update models: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating models:', error);
+            alert('Error updating models');
+        });
+    }
+    
+    // Add event listener for add model button
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('add-model-btn')) {
+            addModelInput();
+        }
+    });
+    
+    // Initial load
+    loadProviders();
 }); 

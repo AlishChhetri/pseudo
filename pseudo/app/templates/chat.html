@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Chats</h3>
+            <button class="new-chat-btn" id="new-chat-btn">New Chat</button>
+        </div>
+        <div class="chat-list">
+            <!-- Chat list will be populated by JavaScript -->
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="chat-container" id="chat-container">
+            <!-- Messages will be dynamically added here -->
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <textarea class="input-field" id="user-input" placeholder="Type your message here..." rows="1"></textarea>
+                <button class="send-button" id="send-button">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Import chat.js script -->
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %} 

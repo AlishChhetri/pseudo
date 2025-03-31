@@ -33,14 +33,36 @@ class ContentRouter:
             for path in search_paths:
                 if os.path.exists(path):
                     with open(path, 'r') as f:
+                        self.credentials_path = path
                         return json.load(f)
             
             logger.warning("No credentials file found. Using empty credentials.")
+            self.credentials_path = "credentials.json"  # Default to current directory
             return {"modes": {"text": {"providers": {}}, "image": {"providers": {}}, "audio": {"providers": {}}}}
         
         except Exception as e:
             logger.error(f"Error loading credentials: {e}")
+            self.credentials_path = "credentials.json"  # Default to current directory
             return {"modes": {"text": {"providers": {}}, "image": {"providers": {}}, "audio": {"providers": {}}}}
+    
+    def save_credentials(self, credentials):
+        """Save credentials to the credentials.json file."""
+        try:
+            # Create directory if it doesn't exist
+            directory = os.path.dirname(self.credentials_path)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory)
+            
+            with open(self.credentials_path, 'w') as f:
+                json.dump(credentials, f, indent=2)
+            
+            # Update the credentials in memory
+            self.credentials = credentials
+            
+            return True
+        except Exception as e:
+            logger.error(f"Error saving credentials: {e}")
+            raise e
     
     def select_mode(self, user_input):
         """Use deepseek model to determine the content type (text, image, audio)."""
