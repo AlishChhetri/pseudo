@@ -7,20 +7,38 @@
             <h3>Chats</h3>
             <button class="new-chat-btn" id="new-chat-btn">New Chat</button>
         </div>
-        <div class="chat-list">
+        <div class="chat-history">
             <!-- Chat list will be populated by JavaScript -->
         </div>
     </aside>
 
     <main class="main-content">
-        <div class="chat-container" id="chat-container">
+        <div class="welcome-screen">
+            <h1 class="welcome-title">Welcome to Pseudo</h1>
+            <p class="welcome-subtitle">Your all-in-one AI chat assistant that intelligently routes your requests to the right AI service.</p>
+            
+            <div class="suggestion-chips">
+                <button class="suggestion-chip">Tell me about quantum computing</button>
+                <button class="suggestion-chip">Generate an image of a sunset over mountains</button>
+                <button class="suggestion-chip">Convert to speech: Welcome to the future</button>
+                <button class="suggestion-chip">Explain how neural networks work</button>
+            </div>
+        </div>
+        
+        <div class="chat-container" id="chat-container" style="display: none;">
             <!-- Messages will be dynamically added here -->
         </div>
 
         <div class="input-container">
             <div class="input-wrapper">
-                <textarea class="input-field" id="user-input" placeholder="Type your message here..." rows="1"></textarea>
-                <button class="send-button" id="send-button">
+                <textarea 
+                    class="input-field" 
+                    id="user-input" 
+                    placeholder="Type your message here..." 
+                    rows="1" 
+                    autofocus
+                ></textarea>
+                <button class="send-button" id="send-button" type="button">
                     <svg viewBox="0 0 24 24">
                         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                     </svg>

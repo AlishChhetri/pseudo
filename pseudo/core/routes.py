@@ -129,14 +129,14 @@ def chat():
         
         # Handle media if needed
         media_path = None
-        response_obj = {"response": response, "type": "text"}  # Default text response
+        response_obj = {"response": response, "selected_mode": mode, "chat_id": chat_id}
         
         if mode in ['image', 'audio']:
             # Get chat-specific media directory
             chat_media_dir = chat_manager.base_dir / chat_id / "media"
             chat_media_dir.mkdir(parents=True, exist_ok=True)
             
-            # Save media to chat-specific directory
+            # Save media directly to chat-specific directory only
             media_path = chat_manager.save_media(response, mode, chat_media_dir)
             if media_path:
                 # Get filename for the URL
@@ -149,14 +149,10 @@ def chat():
                 response_obj = {
                     "type": mode,
                     "url": url_path,
-                    "filename": filename
+                    "filename": filename,
+                    "selected_mode": mode,
+                    "chat_id": chat_id
                 }
-        else:
-            # For text responses
-            response_obj = {
-                "type": "text",
-                "response": response
-            }
         
         # Save assistant response to chat history
         assistant_message = {
