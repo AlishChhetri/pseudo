@@ -1,19 +1,77 @@
-# Pseudo - Smart Content Router
+# Pseudo - Smart AI Content Router
 
-Pseudo is a Flask-based web application that mimics the behavior of an omni-model AI system using a "smart selection" mechanism. It intelligently routes user inputs to the appropriate AI mode (text, image, or audio) using APICenter as the underlying API management tool.
+Pseudo is a smart content router for AI-generated text, images, and audio. It provides a consistent interface for working with different AI providers.
+
+## 🚀 Quick Start
+
+Pseudo requires APICenter to be available as a sibling directory, since APICenter is not published to PyPI.
+
+1. Create a parent directory for both projects:
+```bash
+mkdir ai-projects
+cd ai-projects
+```
+
+2. Clone both repositories as siblings:
+```bash
+git clone https://github.com/alishchhetri/apicenter.git
+git clone https://github.com/yourusername/pseudo.git
+```
+
+3. Install Pseudo dependencies:
+```bash
+cd pseudo
+poetry install
+```
+
+4. Run the application:
+```bash
+poetry run pseudo
+```
+
+5. Open your browser and navigate to `http://0.0.0.0:5000`
+
+## 🔄 APICenter Integration
+
+Pseudo uses the APICenter library to communicate with AI providers. Since APICenter is not published to PyPI, you must set up both projects as sibling directories:
+
+```
+parent-directory/
+├── apicenter/        # APICenter repository
+└── pseudo/           # Pseudo repository
+```
+
+Pseudo automatically detects and uses the APICenter package from the sibling directory. The import system will look for the apicenter directory at the same level as the pseudo directory.
+
+## ⚙️ Configuration
+
+You can configure the application using environment variables:
+
+- `FLASK_HOST`: The host to bind to (default: `0.0.0.0`)
+- `FLASK_PORT`: The port to listen on (default: `5000`)
+- `FLASK_DEBUG`: Enable debug mode (`True`/`False`, default: `True`)
+
+Example:
+```bash
+FLASK_HOST=localhost FLASK_PORT=8000 FLASK_DEBUG=False poetry run pseudo
+```
+
+## Development
+
+The application is built using Flask and leverages the APICenter library for interfacing with various AI providers.
 
 ## How It Works
 
 Pseudo uses a smart content routing system that:
 
 1. **Analyzes Input**: Determines whether the user's input is requesting text, image, or audio content
-2. **Routes to Providers**: Uses a queue-based system to select the appropriate provider and model
+2. **Routes to Providers**: Uses a strict queue-based system to select the appropriate provider and model
 3. **Handles Responses**: Processes and displays the responses in a unified interface
 
 ## Architecture
 
 - **Smart Mode Detection**: Uses a language model to classify user inputs as text, image, or audio requests
-- **Queue-Based Selection**: Providers and models are arranged in a priority queue in credentials.json
+- **Queue-Based Selection**: Providers and models are tried in the exact order they appear in credentials.json
 - **APICenter Integration**: All API calls are made through APICenter for standardized access
 - **Modern Web Interface**: Clean and responsive UI for interacting with various AI models
 
@@ -62,56 +120,18 @@ Pseudo uses a credentials.json file that follows this structure:
 }
 ```
 
-The system follows a queue-based approach:
-- Providers are tried from top to bottom in each mode section
-- Models within each provider are tried from left to right
+The system strictly follows a queue-based approach:
+- Providers are tried in exactly the order they appear in the JSON (top to bottom)
+- Models within each provider are tried in exactly the order they appear in the array (left to right)
+- If a provider or model fails, the system automatically tries the next one in the queue
+- No default providers or models are used - only those specified in credentials.json
 
-## Installation & Setup
+### Queue Order Matters
 
-### Prerequisites
-
-- Python 3.12 or higher
-- Poetry for dependency management
-
-### Setup
-
-Pseudo uses Poetry's path dependency feature to integrate with APICenter. Here's how to set it up:
-
-1. Clone both Pseudo and APICenter repositories into the same parent directory:
-   
-   ```bash
-   mkdir ai-projects
-   cd ai-projects
-   git clone https://github.com/user/apicenter.git
-   git clone https://github.com/user/pseudo.git
-   ```
-
-2. Install dependencies with Poetry:
-   
-   ```bash
-   cd pseudo
-   poetry install
-   ```
-
-   This will automatically set up APICenter in development mode from the relative path.
-
-### Running Pseudo
-
-1. Set up your credentials.json file with your API keys in the project root
-
-2. Run the application using Poetry:
-   
-   ```bash
-   poetry run python -m pseudo.core.app
-   ```
-
-   Or use the CLI entry point:
-
-   ```bash
-   poetry run pseudo
-   ```
-
-3. Open your browser and navigate to http://localhost:5000
+The order of providers and models in your credentials.json is critical:
+- The first provider listed for each mode will be tried first
+- The first model listed for each provider will be tried first
+- Rearranging the order changes the priority of which services are used
 
 ## Example Usage
 
@@ -121,12 +141,14 @@ Pseudo uses Poetry's path dependency feature to integrate with APICenter. Here's
 
 ## APICenter Integration
 
-Pseudo demonstrates the power and flexibility of the APICenter library by using it to:
+Pseudo uses APICenter for all AI provider interactions:
 
-1. **Standardize API Calls**: All provider calls use the same consistent interface
-2. **Handle Authentication**: API keys are managed through the credentials system
-3. **Process Responses**: Responses from different providers are normalized
-4. **Implement Fallbacks**: If one provider/model fails, it automatically tries the next in queue
+1. **Content Type Detection**: Uses the first available text provider to determine if input requires text, image, or audio
+2. **Provider Queue Processing**: Tries each provider and model in the exact order specified in credentials.json
+3. **Standardized Response Handling**: Processes different response formats from various providers
+4. **Automatic Fallback**: If one provider fails, automatically tries the next in the queue
+
+No default providers are hardcoded - the system strictly follows the queue as defined in credentials.json.
 
 ## Technical Details
 
@@ -207,29 +229,6 @@ This allows users to interact with a single unified interface while Pseudo intel
 - Ollama (for local model support and content type detection)
 - API keys for desired services
 
-## 🚀 Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/pseudo.git
-   cd pseudo
-   ```
-
-2. Install dependencies using Poetry:
-
-   ```bash
-   poetry install
-   ```
-
-3. Run the application:
-
-   ```bash
-   poetry run pseudo
-   ```
-
-4. Open your browser and navigate to `http://localhost:5000`
-
 ## 📝 Configuration
 
 Pseudo uses a `credentials.json` file to store API keys. You can add your API keys through the web interface under Settings, or directly edit the file:
@@ -270,10 +269,10 @@ Pseudo uses a `credentials.json` file to store API keys. You can add your API ke
 
 ## 🧠 How It Works
 
-1. When a user enters a prompt, it's sent to an LLM (Ollama with `deepseek-r1`) that acts as a content classifier.
-2. The classifier determines the likely intent: text, image, or audio generation.
-3. Based on this classification, the prompt is routed to the appropriate AI service via APICenter.
-4. The response is displayed to the user in the appropriate format.
+1. When a user enters a prompt, it's sent to the first available text provider in credentials.json (using APICenter)
+2. The system uses this provider to classify the intent as text, image, or audio generation
+3. Based on this classification, the prompt is routed to the appropriate AI services via APICenter, trying providers and models in the order they appear in credentials.json
+4. The response is displayed to the user in the appropriate format
 
 ## 📄 License
 
