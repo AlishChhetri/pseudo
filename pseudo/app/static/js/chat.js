@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // State variables
     let selectedModel = 'Auto';
-    let currentChatId = null;
+let currentChatId = null;
     let chatMessages = [];
     let sidebarVisible = false;
     let sidebarCollapsed = false;
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 chatItem.addEventListener('click', function(e) {
                     // Don't trigger if delete button was clicked
                     if (e.target.closest('.delete-chat-btn')) {
-                        return;
+        return;
                     }
                     
                     loadChat(chat.id);
@@ -389,10 +389,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         let content = message.content;
                         let mediaPath = message.media_path;
                         
-                        if (typeof content === 'string' && (content.startsWith('{') || content.startsWith('['))) {
-                            try {
-                                content = JSON.parse(content);
-                            } catch (e) {
+                    if (typeof content === 'string' && (content.startsWith('{') || content.startsWith('['))) {
+                        try {
+                            content = JSON.parse(content);
+                        } catch (e) {
                                 // Keep as string if parsing fails
                             }
                         }
@@ -411,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 appendAudioMessage(`/chat_history/${chatId}/${mediaPath}`, true);
                             } else if (content && content.path) {
                                 appendAudioMessage(content.path);
-                            } else {
+                    } else {
                                 appendMessage('assistant', 'Audio unavailable');
                             }
                         } else {

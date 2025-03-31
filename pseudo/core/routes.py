@@ -29,38 +29,13 @@ def get_chat_manager():
 @main_bp.route('/')
 def index():
     return render_template('index.html')
+
 # Route for accessing chat history media
 @main_bp.route('/chat_history/<chat_id>/media/<path:filename>')
 def chat_history_media(chat_id, filename):
     chat_manager = get_chat_manager()
     chat_media_path = chat_manager.base_dir / chat_id / "media"
     return send_from_directory(chat_media_path, filename)
-
-# Route to download media files
-@main_bp.route('/download/<path:filename>')
-def download_file(filename):
-    """Allow downloading media files with proper content disposition."""
-    media_folder = current_app.config['MEDIA_FOLDER']
-    file_path = Path(media_folder) / filename
-    
-    # Get file extension for MIME type
-    _, ext = os.path.splitext(filename)
-    mime_type = None
-    
-    # Set appropriate MIME type
-    if ext.lower() in ['.jpg', '.jpeg', '.png']:
-        mime_type = f'image/{ext[1:].lower()}'
-    elif ext.lower() == '.mp3':
-        mime_type = 'audio/mpeg'
-    elif ext.lower() == '.mp4':
-        mime_type = 'video/mp4'
-    
-    return send_file(
-        file_path,
-        as_attachment=True,
-        download_name=filename,
-        mimetype=mime_type
-    )
 
 # Route to download chat history media
 @main_bp.route('/download/chat_history/<chat_id>/media/<path:filename>')
