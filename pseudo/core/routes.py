@@ -29,12 +29,6 @@ def get_chat_manager():
 @main_bp.route('/')
 def index():
     return render_template('index.html')
-
-# Media files route
-@main_bp.route('/media/<path:filename>')
-def media_file(filename):
-    return send_from_directory(current_app.config['MEDIA_FOLDER'], filename)
-
 # Route for accessing chat history media
 @main_bp.route('/chat_history/<chat_id>/media/<path:filename>')
 def chat_history_media(chat_id, filename):
@@ -151,15 +145,28 @@ def chat():
                     "url": url_path,
                     "filename": filename,
                     "selected_mode": mode,
-                    "chat_id": chat_id
+                    "chat_id": chat_id,
+                    "response": "Generated content" # Just a placeholder for text display
                 }
         
         # Save assistant response to chat history
         assistant_message = {
             'role': 'assistant',
-            'content': response if isinstance(response, str) else json.dumps(response),
             'mode': mode
         }
+        
+        # Handle content based on type
+        if isinstance(response, bytes):
+            # Don't try to JSON serialize bytes
+            assistant_message['content'] = "Generated content"
+        elif isinstance(response, str):
+            assistant_message['content'] = response
+        else:
+            # Try to serialize any other type
+            try:
+                assistant_message['content'] = json.dumps(response)
+            except:
+                assistant_message['content'] = str(response)
         
         # Pass media path for saving in chat history
         chat_manager.add_message(chat_id, assistant_message, media_path)

@@ -7,13 +7,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const suggestionChips = document.querySelectorAll('.suggestion-chip');
     const chatHistoryContainer = document.querySelector('.chat-history');
     
+    // Sidebar elements
+    const sidebar = document.getElementById('sidebar');
+    const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
+    const mainContent = document.querySelector('.main-content');
+    const inputContainer = document.querySelector('.input-container');
+    
+    // Model dropdown elements
+    const modelDropdownBtn = document.querySelector('.model-dropdown-btn');
+    const modelDropdownContent = document.getElementById('model-dropdown-content');
+    const selectedModelSpan = document.getElementById('selected-model');
+    
+    // Mobile elements
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+    
     // State variables
     let selectedModel = 'Auto';
     let currentChatId = null;
     let chatMessages = [];
+    let sidebarVisible = false;
+    let sidebarCollapsed = false;
+    
+    // Available models (these could be fetched from the server)
+    const availableModels = [
+        { id: 'auto', name: 'Auto', description: 'Automatically select the best model' },
+        { id: 'gpt-4', name: 'GPT-4', description: 'Most powerful model for complex tasks' },
+        { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', description: 'Fast and versatile for general tasks' }
+    ];
     
     // Initialize
     setupEventListeners();
+    setupModelDropdown();
+    setupMobileSidebar();
+    setupSidebarCollapse();
     loadChatHistory();
     createNewChat(false);
     
@@ -32,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sendButton.addEventListener('click', handleSendMessage);
         
         // Enter key press in input field
-        inputField.addEventListener('keydown', function(e) {
+        inputField?.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSendMessage();
@@ -40,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Auto-resize input field
-        inputField.addEventListener('input', function() {
+        inputField?.addEventListener('input', function() {
             inputField.style.height = 'auto';
             inputField.style.height = (inputField.scrollHeight > 150 ? 150 : inputField.scrollHeight) + 'px';
         });
@@ -56,21 +83,155 @@ document.addEventListener('DOMContentLoaded', function() {
         // New chat button
         document.querySelector('.new-chat-btn')?.addEventListener('click', function() {
             createNewChat(true);
-        });
-        
-        // Update selected model when changed
-        document.addEventListener('modelSelected', function(e) {
-            selectedModel = e.detail.model;
-            console.log('Model selected:', selectedModel);
+            // Close sidebar on mobile after creating a new chat
+            if (window.innerWidth <= 768) {
+                toggleSidebar(false);
+            }
         });
 
         // Global click for input focus
         document.addEventListener('click', function(e) {
-            // If not clicking in textarea and not a button
-            if (!e.target.closest('textarea') && !e.target.closest('button')) {
+            // If not clicking in textarea and not a button or dropdown
+            if (!e.target.closest('textarea') && 
+                !e.target.closest('button') && 
+                !e.target.closest('.model-dropdown-content')) {
                 inputField?.focus();
+                
+                // Close model dropdown if open
+                if (modelDropdownContent?.classList.contains('show')) {
+                    modelDropdownContent.classList.remove('show');
+                    modelDropdownBtn.setAttribute('aria-expanded', 'false');
+                }
             }
         });
+    }
+    
+    /**
+     * Set up model dropdown functionality
+     */
+    function setupModelDropdown() {
+        // Populate model dropdown
+        if (modelDropdownContent) {
+            availableModels.forEach(model => {
+                const option = document.createElement('div');
+                option.className = 'model-option';
+                if (model.id === selectedModel.toLowerCase()) {
+                    option.classList.add('selected');
+                }
+                
+                option.innerHTML = `
+                    <div class="model-title">${model.name}</div>
+                    <div class="model-subtitle">${model.description}</div>
+                `;
+                
+                option.addEventListener('click', function() {
+                    selectModel(model);
+                });
+                
+                modelDropdownContent.appendChild(option);
+            });
+        }
+        
+        // Toggle dropdown on button click
+        modelDropdownBtn?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            const isExpanded = modelDropdownBtn.getAttribute('aria-expanded') === 'true';
+            modelDropdownBtn.setAttribute('aria-expanded', !isExpanded);
+            modelDropdownContent?.classList.toggle('show');
+        });
+    }
+    
+    /**
+     * Select a model
+     */
+    function selectModel(model) {
+        selectedModel = model.id;
+        
+        // Update selected model display
+        if (selectedModelSpan) {
+            selectedModelSpan.textContent = model.name;
+        }
+        
+        // Update selected state in dropdown
+        const options = modelDropdownContent?.querySelectorAll('.model-option');
+        options?.forEach(option => {
+            option.classList.toggle('selected', option.querySelector('.model-title').textContent === model.name);
+        });
+        
+        // Close dropdown
+        modelDropdownContent?.classList.remove('show');
+        modelDropdownBtn?.setAttribute('aria-expanded', 'false');
+        
+        // Trigger custom event for model selection
+        document.dispatchEvent(new CustomEvent('modelSelected', { detail: { model: model.id } }));
+        
+        console.log('Model selected:', model.name);
+    }
+    
+    /**
+     * Set up sidebar collapse functionality
+     */
+    function setupSidebarCollapse() {
+        sidebarCollapseBtn?.addEventListener('click', function() {
+            sidebarCollapsed = !sidebarCollapsed;
+            
+            // Toggle classes
+            sidebar?.classList.toggle('collapsed', sidebarCollapsed);
+            mainContent?.classList.toggle('expanded', sidebarCollapsed);
+            inputContainer?.classList.toggle('expanded', sidebarCollapsed);
+            
+            // Store preference in localStorage
+            localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
+        });
+        
+        // Initialize sidebar state from localStorage
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            sidebarCollapsed = true;
+            sidebar?.classList.add('collapsed');
+            mainContent?.classList.add('expanded');
+            inputContainer?.classList.add('expanded');
+        }
+    }
+    
+    /**
+     * Set up mobile sidebar functionality
+     */
+    function setupMobileSidebar() {
+        // Toggle sidebar on mobile menu click
+        mobileMenuToggle?.addEventListener('click', function() {
+            toggleSidebar(!sidebarVisible);
+        });
+        
+        // Close sidebar when backdrop is clicked
+        sidebarBackdrop?.addEventListener('click', function() {
+            toggleSidebar(false);
+        });
+        
+        // Close sidebar when window is resized to desktop size
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768 && sidebarVisible) {
+                toggleSidebar(false);
+            }
+        });
+    }
+    
+    /**
+     * Toggle sidebar visibility
+     */
+    function toggleSidebar(visible) {
+        sidebarVisible = visible;
+        
+        if (sidebar) {
+            sidebar.classList.toggle('visible', visible);
+        }
+        
+        if (sidebarBackdrop) {
+            sidebarBackdrop.classList.toggle('visible', visible);
+        }
+        
+        // Prevent body scrolling when sidebar is open
+        document.body.style.overflow = visible ? 'hidden' : '';
     }
     
     /**
@@ -135,6 +296,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     
                     loadChat(chat.id);
+                    
+                    // Close sidebar on mobile after selecting a chat
+                    if (window.innerWidth <= 768) {
+                        toggleSidebar(false);
+                    }
                 });
                 
                 // Add event listener for delete button
@@ -386,9 +552,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Display message based on content type
         if (mode === 'image' && response.url) {
-            appendImageMessage(response.url);
+            // Always use the chat-specific URL directly
+            appendImageMessage(response.url, true);
         } else if (mode === 'audio' && response.url) {
-            appendAudioMessage(response.url);
+            // Always use the chat-specific URL directly
+            appendAudioMessage(response.url, true);
         } else {
             appendMessage('assistant', content);
         }
@@ -422,6 +590,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Get language if specified
                     const langMatch = part.match(/```(\w+)?\n/);
                     const language = langMatch && langMatch[1] ? langMatch[1] : '';
+                    
+                    // Add data-language attribute for the language label
+                    codeBlock.setAttribute('data-language', language || 'code');
                     
                     // Get code content
                     const codeContent = part
@@ -539,7 +710,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const filename = imagePath.split('/').pop();
                 downloadPath = `/download/chat_history/${currentChatId}/media/${filename}`;
             } else {
-                // Extract the base filename
+                // For future compatibility, but should never happen now
                 const filename = imagePath.split('/').pop();
                 downloadPath = `/download/${filename}`;
             }
@@ -617,7 +788,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const filename = audioPath.split('/').pop();
                 downloadPath = `/download/chat_history/${currentChatId}/media/${filename}`;
             } else {
-                // Extract the base filename
+                // For future compatibility, but should never happen now
                 const filename = audioPath.split('/').pop();
                 downloadPath = `/download/${filename}`;
             }

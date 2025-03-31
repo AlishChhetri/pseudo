@@ -1,14 +1,61 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- Mobile menu toggle button -->
+<button class="mobile-menu-toggle" id="mobile-menu-toggle">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+    </svg>
+</button>
+
+<!-- Mobile sidebar backdrop -->
+<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
 <div class="layout">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h3>Chats</h3>
-            <button class="new-chat-btn" id="new-chat-btn">New Chat</button>
+            <h3>Pseudo</h3>
+            <button class="sidebar-collapse-btn" id="sidebar-collapse-btn" title="Collapse sidebar">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+                </svg>
+            </button>
         </div>
+
+        <div class="model-dropdown" id="model-dropdown">
+            <button class="model-dropdown-btn" aria-expanded="false">
+                <div class="model-dropdown-header">
+                    <div class="header-title">
+                        Model <svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5z" fill="currentColor"/></svg>
+                    </div>
+                    <div class="selected-model-wrapper">
+                        <span class="selected-model" id="selected-model">Auto</span>
+                    </div>
+                </div>
+            </button>
+            <div class="model-dropdown-content" id="model-dropdown-content">
+                <!-- Model options will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <button class="new-chat-btn" id="new-chat-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            <span>New chat</span>
+        </button>
+        
         <div class="chat-history">
             <!-- Chat list will be populated by JavaScript -->
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="/settings" class="settings-link">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+                <span>Settings</span>
+            </a>
         </div>
     </aside>
 
