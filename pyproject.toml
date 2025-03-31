@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "pseudo"
+version = "0.1.0"
+description = "Smart content router for AI-generated text, images, and audio"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "pseudo"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flask = "^3.0.0"
+requests = "^2.32.0"
+pillow = "^11.1.0"
+python-dotenv = "^1.0.1"
+
+# Use APICenter from relative local path in editable mode
+apicenter = { path = "/home/alishchhetri/comp/apicenter", develop = true }
+
+# Dependencies for various providers
+openai = "^1.69.0"
+anthropic = "^0.49.0"
+elevenlabs = "^1.55.0"
+stability-sdk = "^0.8.6"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.3.0"
+flake8 = "^7.0.0"
+pytest = "^8.0.0"
+
+[tool.poetry.scripts]
+pseudo = "pseudo.core.app:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api" 

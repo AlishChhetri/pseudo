@@ -173,3 +173,4 @@ cython_debug/
 # psuedo
 credentials.json
 media/
+chat_history/
