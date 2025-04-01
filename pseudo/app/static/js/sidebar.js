@@ -5,6 +5,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Always keep sidebar expanded
     sidebar.classList.add('expanded');
+    
+    // Load existing chats from the server
+    loadChats();
+
+    /**
+     * Load existing chats from the server
+     */
+    function loadChats() {
+        fetch('/api/chats', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.chats && Array.isArray(data.chats)) {
+                // Clear existing chat history
+                const chatHistory = document.querySelector('.chat-history');
+                chatHistory.innerHTML = '';
+                
+                // Sort chats by timestamp (newest first)
+                const sortedChats = data.chats.sort((a, b) => {
+                    return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
+                });
+                
+                // Add each chat to the sidebar
+                sortedChats.forEach(chat => {
+                    const chatTitle = chat.title || 'Untitled Chat';
+                    const chatId = chat.id;
+                    addChatHistoryItem(chatTitle, chatId);
+                });
+                
+                // If there are chats, load the first one
+                if (sortedChats.length > 0) {
+                    switchToChat(sortedChats[0].id);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading chats:', error);
+        });
+    }
 
     /**
      * Add a chat history item
@@ -62,25 +105,49 @@ document.addEventListener('DOMContentLoaded', function () {
      * @param {string} chatId - ID of chat to switch to
      */
     function switchToChat(chatId) {
-        // Implementation would load chat data by ID
-        console.log('Switching to chat:', chatId);
-
-        // For this demo, just highlight the selected chat
-        document.querySelectorAll('.chat-history-item').forEach(item => {
-            item.classList.remove('active');
-            if (item.dataset.id === chatId) {
-                item.classList.add('active');
+        // Load chat data from the server
+        fetch(`/api/chats/${chatId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
+        })
+        .then(response => response.json())
+        .then(chatData => {
+            if (!chatData.error) {
+                console.log('Loaded chat data:', chatData);
+                
+                // Highlight the selected chat in the sidebar
+                document.querySelectorAll('.chat-history-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.id === chatId) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                // Show chat container, hide welcome screen
+                const chatContainer = document.querySelector('.chat-container');
+                const welcomeScreen = document.querySelector('.welcome-screen');
+                
+                if (chatContainer && welcomeScreen) {
+                    chatContainer.style.display = 'flex';
+                    welcomeScreen.style.display = 'none';
+                }
+                
+                // Dispatch event to notify chat.js about the loaded chat
+                document.dispatchEvent(new CustomEvent('chatLoaded', {
+                    detail: { 
+                        chatId: chatId,
+                        chatData: chatData
+                    }
+                }));
+            } else {
+                console.error('Failed to load chat:', chatData.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading chat:', error);
         });
-
-        // Show chat container, hide welcome screen
-        const chatContainer = document.querySelector('.chat-container');
-        const welcomeScreen = document.querySelector('.welcome-screen');
-
-        if (chatContainer && welcomeScreen) {
-            chatContainer.style.display = 'flex';
-            welcomeScreen.style.display = 'none';
-        }
     }
 
     /**
@@ -88,26 +155,47 @@ document.addEventListener('DOMContentLoaded', function () {
      * @param {string} chatId - ID of chat to delete
      */
     function deleteChat(chatId) {
-        // Implementation would delete chat data by ID
-        console.log('Deleting chat:', chatId);
-
-        // Remove the element
-        const item = document.querySelector(`.chat-history-item[data-id="${chatId}"]`);
-        if (item) {
-            item.remove();
-        }
-
-        // If no chats left, show welcome screen
-        const remainingChats = document.querySelectorAll('.chat-history-item');
-        if (remainingChats.length === 0) {
-            const chatContainer = document.querySelector('.chat-container');
-            const welcomeScreen = document.querySelector('.welcome-screen');
-
-            if (chatContainer && welcomeScreen) {
-                chatContainer.style.display = 'none';
-                welcomeScreen.style.display = 'flex';
+        // Delete chat on the server
+        fetch(`/api/chats/${chatId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
             }
-        }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Chat deleted successfully:', chatId);
+                
+                // Remove the element from the sidebar
+                const item = document.querySelector(`.chat-history-item[data-id="${chatId}"]`);
+                if (item) {
+                    item.remove();
+                }
+                
+                // If no chats left, show welcome screen
+                const remainingChats = document.querySelectorAll('.chat-history-item');
+                if (remainingChats.length === 0) {
+                    const chatContainer = document.querySelector('.chat-container');
+                    const welcomeScreen = document.querySelector('.welcome-screen');
+                    
+                    if (chatContainer && welcomeScreen) {
+                        chatContainer.style.display = 'none';
+                        welcomeScreen.style.display = 'flex';
+                        
+                        // Notify chat.js that we've switched to a new/empty chat
+                        document.dispatchEvent(new CustomEvent('chatDeleted', {
+                            detail: { chatId: chatId }
+                        }));
+                    }
+                }
+            } else {
+                console.error('Failed to delete chat:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting chat:', error);
+        });
     }
 
     // Expose functions for external use

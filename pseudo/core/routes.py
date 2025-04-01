@@ -187,6 +187,17 @@ def get_configs():
         return jsonify({"error": str(e)}), 500
 
 
+# API route to get models for dropdown
+@api_bp.route("/models", methods=["GET"])
+def get_models():
+    try:
+        router = ContentRouter()
+        return jsonify({"modes": router.credentials["modes"]})
+    except Exception as e:
+        logger.error(f"Error fetching models: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
 # API route to load providers for settings page
 @api_bp.route("/load_providers", methods=["GET"])
 def load_providers():
@@ -503,6 +514,52 @@ def update_provider_models():
         return jsonify({"success": True})
 
     except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+# API route to update provider order
+@api_bp.route("/update_provider_order", methods=["POST"])
+def update_provider_order():
+    try:
+        data = request.json
+        mode = data.get("mode")
+        providers = data.get("providers", [])
+
+        if not mode or not providers:
+            return jsonify({"success": False, "error": "Missing required fields"}), 400
+
+        # Get current credentials
+        router = ContentRouter()
+        credentials = router.credentials
+
+        # Check if mode exists
+        if mode not in credentials["modes"]:
+            return jsonify({"success": False, "error": f"Mode {mode} not found"}), 404
+
+        # Create new ordered providers dictionary
+        new_providers = {}
+        
+        # Add providers in the new order
+        for provider_data in providers:
+            provider_name = provider_data.get("provider")
+            api_key = provider_data.get("api_key")
+            
+            # Only include providers that exist in current credentials
+            if provider_name in credentials["modes"][mode]["providers"]:
+                # Copy provider data from original credentials
+                new_providers[provider_name] = credentials["modes"][mode]["providers"][provider_name]
+        
+        # Update credentials with new order
+        credentials["modes"][mode]["providers"] = new_providers
+        
+        # Save updated credentials
+        router.save_credentials(credentials)
+
+        return jsonify({"success": True})
+
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
         return jsonify({"success": False, "error": str(e)}), 500
 
 

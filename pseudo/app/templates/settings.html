@@ -24,7 +24,7 @@
         <section class="settings-section">
             <h2>API Credentials</h2>
             <p class="settings-description">Configure API credentials for your AI providers. Pseudo will automatically
-                use available providers based on your input.</p>
+                use available providers based on your input. Drag items to change their order.</p>
 
             <div class="credentials-container">
                 <div class="tabs">
@@ -34,21 +34,21 @@
                 </div>
 
                 <div class="tab-content active" id="text-content">
-                    <div class="provider-list" id="text-providers">
+                    <div class="provider-list sortable-list" id="text-providers" data-mode="text">
                         <!-- Text providers will be populated here -->
                     </div>
                     <button class="add-provider-btn" data-mode="text">Add Text Provider</button>
                 </div>
 
                 <div class="tab-content" id="image-content">
-                    <div class="provider-list" id="image-providers">
+                    <div class="provider-list sortable-list" id="image-providers" data-mode="image">
                         <!-- Image providers will be populated here -->
                     </div>
                     <button class="add-provider-btn" data-mode="image">Add Image Provider</button>
                 </div>
 
                 <div class="tab-content" id="audio-content">
-                    <div class="provider-list" id="audio-providers">
+                    <div class="provider-list sortable-list" id="audio-providers" data-mode="audio">
                         <!-- Audio providers will be populated here -->
                     </div>
                     <button class="add-provider-btn" data-mode="audio">Add Audio Provider</button>
@@ -100,6 +100,16 @@
                 </form>
             </div>
         </div>
+    </div>
+    
+    <!-- Models Modal -->
+    <div class="modal" id="models-modal">
+        <!-- Modal content will be added dynamically -->
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmation-modal">
+        <!-- Modal content will be added dynamically -->
     </div>
 
     <script src="{{ url_for('static', filename='js/settings.js') }}"></script>

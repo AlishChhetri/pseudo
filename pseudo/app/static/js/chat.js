@@ -8,40 +8,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const chatHistoryContainer = document.querySelector('.chat-history');
 
     // Sidebar elements
-    const sidebar = document.getElementById('sidebar');
-    const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
+    const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
     const inputContainer = document.querySelector('.input-container');
 
-    // Model dropdown elements
-    const modelDropdownBtn = document.querySelector('.model-dropdown-btn');
-    const modelDropdownContent = document.getElementById('model-dropdown-content');
-    const selectedModelSpan = document.getElementById('selected-model');
-
-    // Mobile elements
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-
     // State variables
-    let selectedModel = 'Auto';
     let currentChatId = null;
     let chatMessages = [];
-    let sidebarVisible = false;
-    let sidebarCollapsed = false;
-
-    // Available models (these could be fetched from the server)
-    const availableModels = [
-        { id: 'auto', name: 'Auto', description: 'Automatically select the best model' },
-        { id: 'gpt-4', name: 'GPT-4', description: 'Most powerful model for complex tasks' },
-        { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', description: 'Fast and versatile for general tasks' }
-    ];
+    let selectedModel = 'Auto';
 
     // Initialize
     setupEventListeners();
-    setupModelDropdown();
     setupMobileSidebar();
-    setupSidebarCollapse();
-    loadChatHistory();
     createNewChat(false);
 
     // Auto-focus input field when page loads
@@ -95,242 +73,45 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        // Global click for input focus
-        document.addEventListener('click', function (e) {
-            // If not clicking in textarea and not a button or dropdown
-            if (!e.target.closest('textarea') &&
-                !e.target.closest('button') &&
-                !e.target.closest('.model-dropdown-content')) {
-                inputField?.focus();
-
-                // Close model dropdown if open
-                if (modelDropdownContent?.classList.contains('show')) {
-                    modelDropdownContent.classList.remove('show');
-                    modelDropdownBtn.setAttribute('aria-expanded', 'false');
-                }
-            }
-        });
-
         // Listen for model selection events
         document.addEventListener('modelSelected', function(e) {
             console.log('Model selected event received:', e.detail.model);
-            // You can implement additional logic here
+            selectedModel = e.detail.model;
+            
+            // Create a toast notification
+            const modelName = document.getElementById('selected-model').textContent;
+            createToastNotification(`Model set to ${modelName}`);
         });
-    }
-
-    /**
-     * Set up model dropdown functionality
-     */
-    function setupModelDropdown() {
-        // Populate model dropdown
-        if (modelDropdownContent) {
-            availableModels.forEach(model => {
-                const option = document.createElement('div');
-                option.className = 'model-option';
-                if (model.id === selectedModel.toLowerCase()) {
-                    option.classList.add('selected');
-                }
-
-                option.innerHTML = `
-                    <div class="model-title">${model.name}</div>
-                    <div class="model-subtitle">${model.description}</div>
-                `;
-
-                option.addEventListener('click', function () {
-                    selectModel(model);
-                });
-
-                modelDropdownContent.appendChild(option);
-            });
-        }
-
-        // Toggle dropdown on button click
-        modelDropdownBtn?.addEventListener('click', function (e) {
-            e.stopPropagation();
-
-            const isExpanded = modelDropdownBtn.getAttribute('aria-expanded') === 'true';
-            modelDropdownBtn.setAttribute('aria-expanded', !isExpanded);
-            modelDropdownContent?.classList.toggle('show');
+        
+        // Listen for chat loaded events from sidebar
+        document.addEventListener('chatLoaded', function(e) {
+            console.log('Chat loaded event received:', e.detail);
+            loadChat(e.detail.chatId, e.detail.chatData);
         });
-    }
-
-    /**
-     * Select a model
-     */
-    function selectModel(model) {
-        selectedModel = model.id;
-
-        // Update selected model display
-        if (selectedModelSpan) {
-            selectedModelSpan.textContent = model.name;
-        }
-
-        // Update selected state in dropdown
-        const options = modelDropdownContent?.querySelectorAll('.model-option');
-        options?.forEach(option => {
-            option.classList.toggle('selected', option.querySelector('.model-title').textContent === model.name);
+        
+        // Listen for chat deleted events from sidebar
+        document.addEventListener('chatDeleted', function(e) {
+            console.log('Chat deleted event received:', e.detail);
+            createNewChat(false);
         });
-
-        // Close dropdown
-        modelDropdownContent?.classList.remove('show');
-        modelDropdownBtn?.setAttribute('aria-expanded', 'false');
-
-        // Trigger custom event for model selection
-        document.dispatchEvent(new CustomEvent('modelSelected', { detail: { model: model.id } }));
-
-        console.log('Model selected:', model.name);
-    }
-
-    /**
-     * Set up sidebar collapse functionality
-     */
-    function setupSidebarCollapse() {
-        sidebarCollapseBtn?.addEventListener('click', function () {
-            sidebarCollapsed = !sidebarCollapsed;
-
-            // Toggle classes
-            sidebar?.classList.toggle('collapsed', sidebarCollapsed);
-            mainContent?.classList.toggle('expanded', sidebarCollapsed);
-            inputContainer?.classList.toggle('expanded', sidebarCollapsed);
-
-            // Store preference in localStorage
-            localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
-        });
-
-        // Initialize sidebar state from localStorage
-        if (localStorage.getItem('sidebarCollapsed') === 'true') {
-            sidebarCollapsed = true;
-            sidebar?.classList.add('collapsed');
-            mainContent?.classList.add('expanded');
-            inputContainer?.classList.add('expanded');
-        }
     }
 
     /**
      * Set up mobile sidebar functionality
      */
     function setupMobileSidebar() {
-        // Toggle sidebar on mobile menu click
-        mobileMenuToggle?.addEventListener('click', function () {
-            toggleSidebar(!sidebarVisible);
-        });
-
-        // Close sidebar when backdrop is clicked
-        sidebarBackdrop?.addEventListener('click', function () {
-            toggleSidebar(false);
-        });
-
         // Close sidebar when window is resized to desktop size
         window.addEventListener('resize', function () {
-            if (window.innerWidth > 768 && sidebarVisible) {
-                toggleSidebar(false);
+            if (window.innerWidth > 768 && sidebar && sidebar.classList.contains('visible')) {
+                sidebar.classList.remove('visible');
             }
         });
     }
 
     /**
-     * Toggle sidebar visibility
-     */
-    function toggleSidebar(visible) {
-        sidebarVisible = visible;
-
-        if (sidebar) {
-            sidebar.classList.toggle('visible', visible);
-        }
-
-        if (sidebarBackdrop) {
-            sidebarBackdrop.classList.toggle('visible', visible);
-        }
-
-        // Prevent body scrolling when sidebar is open
-        document.body.style.overflow = visible ? 'hidden' : '';
-    }
-
-    /**
-     * Load chat history from the server
-     */
-    function loadChatHistory() {
-        fetch('/api/chats')
-            .then(response => response.json())
-            .then(data => {
-                if (data.chats && Array.isArray(data.chats)) {
-                    displayChatHistory(data.chats);
-                }
-            })
-            .catch(error => {
-                console.error('Error loading chat history:', error);
-            });
-    }
-
-    /**
-     * Display chat history in the sidebar
-     */
-    function displayChatHistory(chats) {
-        // Clear existing history
-        if (chatHistoryContainer) {
-            chatHistoryContainer.innerHTML = '';
-
-            // Add each chat to history
-            chats.forEach(chat => {
-                const chatItem = document.createElement('div');
-                chatItem.className = 'chat-history-item';
-                chatItem.dataset.chatId = chat.id;
-
-                // Set active class if this is the current chat
-                if (chat.id === currentChatId) {
-                    chatItem.classList.add('active');
-                }
-
-                // Format date
-                const date = new Date(chat.updated_at);
-                const formattedDate = date.toLocaleDateString(undefined, {
-                    month: 'short',
-                    day: 'numeric'
-                });
-
-                chatItem.innerHTML = `
-                    <div class="chat-item-content">
-                        <div class="chat-item-title">${chat.title}</div>
-                        <div class="chat-item-date">${formattedDate}</div>
-                    </div>
-                    <button class="delete-chat-btn" aria-label="Delete chat">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                        </svg>
-                    </button>
-                `;
-
-                // Add event listener for loading this chat
-                chatItem.addEventListener('click', function (e) {
-                    // Don't trigger if delete button was clicked
-                    if (e.target.closest('.delete-chat-btn')) {
-                        return;
-                    }
-
-                    loadChat(chat.id);
-
-                    // Close sidebar on mobile after selecting a chat
-                    if (window.innerWidth <= 768) {
-                        toggleSidebar(false);
-                    }
-                });
-
-                // Add event listener for delete button
-                const deleteBtn = chatItem.querySelector('.delete-chat-btn');
-                deleteBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    deleteChat(chat.id);
-                });
-
-                chatHistoryContainer.appendChild(chatItem);
-            });
-        }
-    }
-
-    /**
      * Create a new chat
      */
-    function createNewChat(saveImmediately = true) {
+    function createNewChat(saveImmediately = false) {
         // Clear UI
         if (chatContainer) {
             chatContainer.innerHTML = '';
@@ -348,130 +129,30 @@ document.addEventListener('DOMContentLoaded', function () {
         currentChatId = null;
 
         if (saveImmediately) {
-            // Create new chat via API
+            // Create a new chat on the server
             fetch('/api/chats/new', {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
-                .then(response => response.json())
-                .then(data => {
-                    currentChatId = data.chat_id;
-                    // Update chat history display
-                    loadChatHistory();
-                })
-                .catch(error => {
-                    console.error('Error creating new chat:', error);
-                });
-        } else {
-            // Just reset UI without creating permanently
-            currentChatId = null;
-        }
-    }
-
-    /**
-     * Load a specific chat
-     */
-    function loadChat(chatId) {
-        fetch(`/api/chats/${chatId}`)
-            .then(response => response.json())
-            .then(chat => {
-                // Set as current chat
-                currentChatId = chatId;
-
-                // Clear UI
-                if (chatContainer) {
-                    chatContainer.innerHTML = '';
-                }
-
-                if (welcomeScreen) {
-                    welcomeScreen.style.display = 'none';
-                }
-
-                if (chatContainer) {
-                    chatContainer.style.display = 'block';
-                }
-
-                // Store messages for future reference
-                chatMessages = chat.messages;
-
-                // Display messages
-                chat.messages.forEach(message => {
-                    if (message.role === 'user') {
-                        appendMessage('user', message.content);
-                    } else if (message.role === 'assistant') {
-                        // Parse content if it's a JSON string
-                        let content = message.content;
-                        let mediaPath = message.media_path;
-
-                        if (typeof content === 'string' && (content.startsWith('{') || content.startsWith('['))) {
-                            try {
-                                content = JSON.parse(content);
-                            } catch (e) {
-                                // Keep as string if parsing fails
-                            }
-                        }
-
-                        // Handle different content types
-                        if (message.mode === 'image') {
-                            if (mediaPath) {
-                                appendImageMessage(`/chat_history/${chatId}/${mediaPath}`, true);
-                            } else if (content && content.path) {
-                                appendImageMessage(content.path);
-                            } else {
-                                appendMessage('assistant', 'Image unavailable');
-                            }
-                        } else if (message.mode === 'audio') {
-                            if (mediaPath) {
-                                appendAudioMessage(`/chat_history/${chatId}/${mediaPath}`, true);
-                            } else if (content && content.path) {
-                                appendAudioMessage(content.path);
-                            } else {
-                                appendMessage('assistant', 'Audio unavailable');
-                            }
-                        } else {
-                            // Text content
-                            if (typeof content === 'object') {
-                                appendMessage('assistant', JSON.stringify(content));
-                            } else {
-                                appendMessage('assistant', content);
-                            }
-                        }
-                    }
-                });
-
-                // Highlight this chat in the history
-                document.querySelectorAll('.chat-history-item').forEach(item => {
-                    item.classList.toggle('active', item.dataset.chatId === chatId);
-                });
-            })
-            .catch(error => {
-                console.error(`Error loading chat ${chatId}:`, error);
-            });
-    }
-
-    /**
-     * Delete a chat
-     */
-    function deleteChat(chatId) {
-        if (!confirm('Are you sure you want to delete this chat?')) {
-            return;
-        }
-
-        fetch(`/api/chats/${chatId}`, {
-            method: 'DELETE'
-        })
             .then(response => response.json())
             .then(data => {
-                // If the deleted chat was the current one, create a new chat
-                if (chatId === currentChatId) {
-                    createNewChat(false);
+                if (data.chat_id) {
+                    currentChatId = data.chat_id;
+                    
+                    // Add to history in sidebar if sidebar functions exist
+                    if (window.sidebarFunctions && typeof window.sidebarFunctions.addChatHistoryItem === 'function') {
+                        window.sidebarFunctions.addChatHistoryItem('New Chat', currentChatId);
+                    }
+                    
+                    console.log('Created new chat with ID:', currentChatId);
                 }
-
-                // Refresh chat history
-                loadChatHistory();
             })
             .catch(error => {
-                console.error(`Error deleting chat ${chatId}:`, error);
+                console.error('Error creating new chat:', error);
             });
+        }
     }
 
     /**
@@ -489,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (chatContainer) {
-            chatContainer.style.display = 'block';
+            chatContainer.style.display = 'flex';
         }
 
         // Add user message to UI
@@ -502,16 +183,98 @@ document.addEventListener('DOMContentLoaded', function () {
         // Show thinking indicator
         const thinkingIndicator = appendThinkingIndicator();
 
-        // Simulate response after a short delay
-        setTimeout(() => {
+        // Send the message to the actual API endpoint
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: message,
+                model: selectedModel,
+                chat_id: currentChatId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
             // Remove thinking indicator
             if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
                 chatContainer.removeChild(thinkingIndicator);
             }
 
-            // Display response
-            appendMessage('assistant', 'This is a simulated response to your message: "' + message + '"');
-        }, 2000);
+            // Save the chat ID if it was created
+            if (data.chat_id) {
+                currentChatId = data.chat_id;
+            }
+
+            // Handle different types of responses
+            if (data.type === 'image') {
+                // For image responses, create an image element
+                const imageElement = document.createElement('img');
+                imageElement.src = data.url;
+                imageElement.alt = 'Generated image';
+                imageElement.style.maxWidth = '100%';
+                imageElement.style.borderRadius = 'var(--radius-md)';
+                
+                // Create content div
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'content';
+                contentDiv.appendChild(imageElement);
+                
+                // Create message div
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message assistant-message';
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar';
+                
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                chatContainer.appendChild(messageDiv);
+                
+            } else if (data.type === 'audio') {
+                // For audio responses, create an audio element
+                const audioElement = document.createElement('audio');
+                audioElement.src = data.url;
+                audioElement.controls = true;
+                
+                // Create content div
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'content';
+                contentDiv.appendChild(audioElement);
+                
+                // Create message div
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message assistant-message';
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar';
+                
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                chatContainer.appendChild(messageDiv);
+                
+            } else {
+                // Regular text response
+                appendMessage('assistant', data.response);
+            }
+            
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+            
+            // Remove thinking indicator
+            if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
+                chatContainer.removeChild(thinkingIndicator);
+            }
+            
+            // Show error message
+            appendMessage('assistant', 'Sorry, there was an error processing your request. Please try again.');
+        });
     }
 
     /**
@@ -555,10 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content';
-        contentDiv.style.position = 'relative';
-        contentDiv.style.minHeight = '50px';
-        contentDiv.style.width = '100%';
-
+        
         const thinkingDiv = document.createElement('div');
         thinkingDiv.className = 'thinking-indicator';
         thinkingDiv.innerHTML = '<span></span><span></span><span></span>';
@@ -574,188 +334,121 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
-     * Append an image message to the chat container
+     * Create a toast notification
      */
-    function appendImageMessage(imagePath, isFromChatHistory = false) {
-        if (!chatContainer) return;
-
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message assistant-message';
-
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'avatar';
-
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'content image-content';
-
-        // Image wrapper (contains image and actions)
-        const imageWrapper = document.createElement('div');
-        imageWrapper.className = 'media-wrapper';
-
-        // Image element
-        const image = document.createElement('img');
-        image.src = imagePath;
-        image.alt = 'Generated image';
-        image.className = 'generated-image';
-        image.loading = 'lazy'; // Improve performance
-
-        // Enlarge image on click
-        image.addEventListener('click', function () {
-            const modal = document.createElement('div');
-            modal.className = 'media-modal';
-
-            const modalContent = document.createElement('div');
-            modalContent.className = 'media-modal-content';
-
-            const modalImage = document.createElement('img');
-            modalImage.src = imagePath;
-            modalImage.alt = 'Enlarged image';
-
-            const closeButton = document.createElement('button');
-            closeButton.className = 'modal-close-btn';
-            closeButton.innerHTML = '&times;';
-            closeButton.addEventListener('click', function () {
-                document.body.removeChild(modal);
-            });
-
-            modalContent.appendChild(modalImage);
-            modalContent.appendChild(closeButton);
-            modal.appendChild(modalContent);
-
-            document.body.appendChild(modal);
-
-            // Close modal when clicking outside of image
-            modal.addEventListener('click', function (e) {
-                if (e.target === modal) {
-                    document.body.removeChild(modal);
-                }
-            });
-        });
-
-        // Media actions (download button)
-        const mediaActions = document.createElement('div');
-        mediaActions.className = 'media-actions';
-
-        const downloadButton = document.createElement('button');
-        downloadButton.className = 'media-action-btn download-btn';
-        downloadButton.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-            </svg>
-            <span>Download</span>
-        `;
-
-        // Set download link based on source
-        downloadButton.addEventListener('click', function () {
-            let downloadPath;
-            if (isFromChatHistory) {
-                // Extract the base filename
-                const filename = imagePath.split('/').pop();
-                downloadPath = `/download/chat_history/${currentChatId}/media/${filename}`;
-            } else {
-                // For future compatibility, but should never happen now
-                const filename = imagePath.split('/').pop();
-                downloadPath = `/download/${filename}`;
-            }
-
-            // Create a temporary link and trigger download
-            const a = document.createElement('a');
-            a.href = downloadPath;
-            a.download = '';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        });
-
-        mediaActions.appendChild(downloadButton);
-        imageWrapper.appendChild(image);
-        imageWrapper.appendChild(mediaActions);
-
-        contentDiv.appendChild(imageWrapper);
-        messageDiv.appendChild(avatarDiv);
-        messageDiv.appendChild(contentDiv);
-
-        chatContainer.appendChild(messageDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-
-        return messageDiv;
+    function createToastNotification(message, duration = 3000) {
+        // Create toast container if it doesn't exist
+        let toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+        
+        // Create toast element
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        
+        // Add to container
+        toastContainer.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => toast.classList.add('show'), 10);
+        
+        // Remove after duration
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300); // Allow for fade out transition
+        }, duration);
     }
 
     /**
-     * Append an audio message to the chat container
+     * Load an existing chat
      */
-    function appendAudioMessage(audioPath, isFromChatHistory = false) {
-        if (!chatContainer) return;
-
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message assistant-message';
-
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'avatar';
-
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'content audio-content';
-
-        // Audio wrapper
-        const audioWrapper = document.createElement('div');
-        audioWrapper.className = 'media-wrapper';
-
-        // Audio player
-        const audio = document.createElement('audio');
-        audio.controls = true;
-
-        const source = document.createElement('source');
-        source.src = audioPath;
-        source.type = 'audio/mpeg';
-
-        audio.appendChild(source);
-
-        // Media actions (download button)
-        const mediaActions = document.createElement('div');
-        mediaActions.className = 'media-actions';
-
-        const downloadButton = document.createElement('button');
-        downloadButton.className = 'media-action-btn download-btn';
-        downloadButton.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-            </svg>
-            <span>Download</span>
-        `;
-
-        // Set download link based on source
-        downloadButton.addEventListener('click', function () {
-            let downloadPath;
-            if (isFromChatHistory) {
-                // Extract the base filename
-                const filename = audioPath.split('/').pop();
-                downloadPath = `/download/chat_history/${currentChatId}/media/${filename}`;
-            } else {
-                // For future compatibility, but should never happen now
-                const filename = audioPath.split('/').pop();
-                downloadPath = `/download/${filename}`;
-            }
-
-            // Create a temporary link and trigger download
-            const a = document.createElement('a');
-            a.href = downloadPath;
-            a.download = '';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        });
-
-        mediaActions.appendChild(downloadButton);
-        audioWrapper.appendChild(audio);
-        audioWrapper.appendChild(mediaActions);
-
-        contentDiv.appendChild(audioWrapper);
-        messageDiv.appendChild(avatarDiv);
-        messageDiv.appendChild(contentDiv);
-
-        chatContainer.appendChild(messageDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-
-        return messageDiv;
+    function loadChat(chatId, chatData) {
+        // Set the current chat ID
+        currentChatId = chatId;
+        
+        // Clear UI
+        if (chatContainer) {
+            chatContainer.innerHTML = '';
+        }
+        
+        // Hide welcome screen, show chat container
+        if (welcomeScreen) {
+            welcomeScreen.style.display = 'none';
+        }
+        
+        if (chatContainer) {
+            chatContainer.style.display = 'flex';
+        }
+        
+        // Load messages
+        if (chatData.messages && Array.isArray(chatData.messages)) {
+            chatMessages = chatData.messages;
+            
+            // Add messages to UI
+            chatMessages.forEach(message => {
+                if (message.role === 'user') {
+                    appendMessage('user', message.content);
+                } else if (message.role === 'assistant') {
+                    // Handle different types of assistant messages
+                    if (message.mode === 'image' && message.media_path) {
+                        // Create image element
+                        const imageElement = document.createElement('img');
+                        imageElement.src = `/chat_history/${chatId}/media/${message.media_path.split('/').pop()}`;
+                        imageElement.alt = 'Generated image';
+                        imageElement.style.maxWidth = '100%';
+                        imageElement.style.borderRadius = 'var(--radius-md)';
+                        
+                        // Create content div
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'content';
+                        contentDiv.appendChild(imageElement);
+                        
+                        // Create message div
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message assistant-message';
+                        
+                        const avatarDiv = document.createElement('div');
+                        avatarDiv.className = 'avatar';
+                        
+                        messageDiv.appendChild(avatarDiv);
+                        messageDiv.appendChild(contentDiv);
+                        
+                        chatContainer.appendChild(messageDiv);
+                    } else if (message.mode === 'audio' && message.media_path) {
+                        // Create audio element
+                        const audioElement = document.createElement('audio');
+                        audioElement.src = `/chat_history/${chatId}/media/${message.media_path.split('/').pop()}`;
+                        audioElement.controls = true;
+                        
+                        // Create content div
+                        const contentDiv = document.createElement('div');
+                        contentDiv.className = 'content';
+                        contentDiv.appendChild(audioElement);
+                        
+                        // Create message div
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message assistant-message';
+                        
+                        const avatarDiv = document.createElement('div');
+                        avatarDiv.className = 'avatar';
+                        
+                        messageDiv.appendChild(avatarDiv);
+                        messageDiv.appendChild(contentDiv);
+                        
+                        chatContainer.appendChild(messageDiv);
+                    } else {
+                        // Regular text message
+                        appendMessage('assistant', message.content);
+                    }
+                }
+            });
+            
+            // Scroll to bottom
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
     }
 }); 
