@@ -259,8 +259,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 imageElement.style.borderRadius = 'var(--radius-md)';
                 
                 // Create content div
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'content';
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'content';
                 contentDiv.appendChild(imageElement);
                 
                 // Add model attribution
@@ -271,6 +271,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const attributionTextSpan = document.createElement('span');
                 attributionTextSpan.className = 'model-attribution-text';
                 
+                // Format the attribution text with mode, provider, and model
+                const mode = data.selected_mode ? data.selected_mode.charAt(0).toUpperCase() + data.selected_mode.slice(1) : 'Image';
                 let providerModel = '';
                 if (data.provider && data.model) {
                     providerModel = `${data.provider} - ${data.model}`;
@@ -280,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     providerModel = 'Unknown';
                 }
                 
-                attributionTextSpan.textContent = `Image | ${providerModel}`;
+                attributionTextSpan.textContent = `${mode} | ${providerModel}`;
                 
                 attributionDiv.appendChild(attributionTextSpan);
                 
@@ -316,12 +318,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 contentDiv.appendChild(attributionDiv);
                 
                 // Create message div
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message assistant-message';
-
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'avatar';
-
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message assistant-message';
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar';
+                
                 messageDiv.appendChild(avatarDiv);
                 messageDiv.appendChild(contentDiv);
                 
@@ -346,6 +348,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 const attributionTextSpan = document.createElement('span');
                 attributionTextSpan.className = 'model-attribution-text';
                 
+                // Format the attribution text with mode, provider, and model
+                const mode = data.selected_mode ? data.selected_mode.charAt(0).toUpperCase() + data.selected_mode.slice(1) : 'Audio';
                 let providerModel = '';
                 if (data.provider && data.model) {
                     providerModel = `${data.provider} - ${data.model}`;
@@ -355,7 +359,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     providerModel = 'Unknown';
                 }
                 
-                attributionTextSpan.textContent = `Audio | ${providerModel}`;
+                attributionTextSpan.textContent = `${mode} | ${providerModel}`;
                 
                 attributionDiv.appendChild(attributionTextSpan);
                 
@@ -364,25 +368,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 actionsDiv.className = 'message-actions';
                 
                 // Download button
-        const downloadButton = document.createElement('button');
+                const downloadButton = document.createElement('button');
                 downloadButton.className = 'message-action-button download-button';
                 downloadButton.setAttribute('aria-label', 'Download audio');
-        downloadButton.innerHTML = `
+                downloadButton.innerHTML = `
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
                         <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
+                    </svg>
                 `;
                 
                 // Add download functionality
                 downloadButton.addEventListener('click', () => {
-            const a = document.createElement('a');
+                    const a = document.createElement('a');
                     a.href = data.url;
                     a.download = `audio-${Date.now()}.mp3`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
                     createToastNotification('Audio download started');
                 });
                 
@@ -397,10 +401,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const avatarDiv = document.createElement('div');
                 avatarDiv.className = 'avatar';
                 
-        messageDiv.appendChild(avatarDiv);
-        messageDiv.appendChild(contentDiv);
-
-        chatContainer.appendChild(messageDiv);
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                chatContainer.appendChild(messageDiv);
                 
             } else {
                 // Regular text response with metadata
@@ -413,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             
             // Scroll to bottom
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
 
             // Update chat in sidebar
             // Get the title from either the first user message or the default
@@ -472,7 +476,10 @@ document.addEventListener('DOMContentLoaded', function () {
             
             const attributionText = document.createElement('span');
             attributionText.className = 'model-attribution-text';
-            attributionText.textContent = `${metadata.provider} | ${metadata.model}`;
+            
+            // Format the attribution text with mode, provider, and model
+            const mode = metadata.mode ? metadata.mode.charAt(0).toUpperCase() + metadata.mode.slice(1) : 'Text';
+            attributionText.textContent = `${mode} | ${metadata.provider} - ${metadata.model}`;
             
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'message-actions';
@@ -489,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             // Download button for media
             if (metadata.type === 'image' || metadata.type === 'audio') {
-        const downloadButton = document.createElement('button');
+                const downloadButton = document.createElement('button');
                 downloadButton.className = 'message-action-button';
                 downloadButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>';
                 downloadButton.title = 'Download';

@@ -790,15 +790,7 @@ select:focus {
 }
 
 .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    margin-right: 0.75rem;
-    background-color: var(--bg-tertiary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    display: none;
 }
 
 .message.user-message .avatar {
@@ -820,12 +812,10 @@ select:focus {
 .message.user-message .content {
     background-color: var(--accent-primary);
     color: white;
-    border-top-right-radius: 0;
 }
 
 .message.assistant-message .content {
     background-color: var(--bg-tertiary);
-    border-top-left-radius: 0;
 }
 
 /* Thinking indicator - Fit to content */
@@ -1389,7 +1379,6 @@ select:focus {
 .model-attribution-text {
     display: flex;
     align-items: center;
-    font-style: italic;
 }
 
 .model-attribution-text::before {
@@ -1466,4 +1455,12 @@ select:focus {
 .info-text {
     display: block;
     opacity: 0.8;
+}
+
+/* Audio message styles */
+.message.assistant-message audio {
+    width: 600px;
+    margin: 8px 0;
+    border-radius: var(--radius-md);
+    padding: 8px;
 }
