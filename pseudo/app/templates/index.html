@@ -38,82 +38,9 @@
     </aside>
 
     <main class="main-content">
-        <div class="model-dropdown">
-            <button class="model-dropdown-btn" aria-haspopup="true" aria-expanded="false">
-                <div class="model-dropdown-header">
-                    <div class="header-title">
-                        Pseudo
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </div>
-                    <div class="selected-model-wrapper">
-                        <span class="selected-model" id="selected-model">Auto</span>
-                    </div>
-                </div>
-            </button>
-            <div class="model-dropdown-content" id="model-dropdown-content" role="menu">
-                <!-- Auto option -->
-                <div class="model-option selected" data-model="Auto" role="menuitem">
-                    <span class="model-title">Auto</span>
-                    <span class="model-subtitle">Automatically select best model</span>
-                </div>
-                
-                <!-- Text category -->
-                <div class="model-category" role="menuitem">
-                    <span class="model-title">Text</span>
-                    <span class="model-subtitle">Language models for text generation</span>
-                    <div class="submenu">
-                        <div class="model-option" data-model="openai/gpt-4">
-                            <span class="model-title">GPT-4</span>
-                            <span class="model-subtitle">OpenAI's most capable model</span>
-                        </div>
-                        <div class="model-option" data-model="anthropic/claude-3-sonnet">
-                            <span class="model-title">Claude 3 Sonnet</span>
-                            <span class="model-subtitle">Anthropic's advanced reasoning model</span>
-                        </div>
-                        <div class="model-option" data-model="ollama/llama2">
-                            <span class="model-title">Llama 2</span>
-                            <span class="model-subtitle">Meta's open-source local model</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Image category -->
-                <div class="model-category" role="menuitem">
-                    <span class="model-title">Image</span>
-                    <span class="model-subtitle">Image generation models</span>
-                    <div class="submenu">
-                        <div class="model-option" data-model="openai/dall-e-3">
-                            <span class="model-title">DALL-E 3</span>
-                            <span class="model-subtitle">OpenAI's high quality image model</span>
-                        </div>
-                        <div class="model-option" data-model="stability/sdxl">
-                            <span class="model-title">Stable Diffusion XL</span>
-                            <span class="model-subtitle">Stability AI's detailed generation</span>
-                        </div>
-                        <div class="model-option" data-model="midjourney/v5">
-                            <span class="model-title">Midjourney v5</span>
-                            <span class="model-subtitle">Artistic image generation</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Audio category -->
-                <div class="model-category" role="menuitem">
-                    <span class="model-title">Audio</span>
-                    <span class="model-subtitle">Text-to-speech and audio models</span>
-                    <div class="submenu">
-                        <div class="model-option" data-model="elevenlabs/multilingual">
-                            <span class="model-title">ElevenLabs TTS</span>
-                            <span class="model-subtitle">High-quality voice generation</span>
-                        </div>
-                        <div class="model-option" data-model="openai/whisper">
-                            <span class="model-title">Whisper</span>
-                            <span class="model-subtitle">OpenAI's speech recognition</span>
-                        </div>
-                    </div>
-                </div>
+        <div class="model-header">
+            <div class="header-title">
+                Pseudo
             </div>
         </div>
 
@@ -151,7 +78,6 @@
     </main>
 
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/model_select.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
     <script src="{{ url_for('static', filename='js/demo.js') }}"></script>
 </body>

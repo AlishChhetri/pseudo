@@ -1702,3 +1702,75 @@ select:focus {
     width: 60px;
     overflow: hidden;
 }
+
+/* Model header styling */
+.model-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+}
+
+.header-title {
+    font-weight: var(--font-weight-bold);
+    font-size: 1.75rem;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+}
+
+/* Model attribution in message bubbles */
+.model-attribution {
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary);
+    margin-top: 0.5rem;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.model-attribution-text {
+    display: flex;
+    align-items: center;
+    font-style: italic;
+}
+
+.model-attribution-text::before {
+    content: '|';
+    display: none; /* Remove the pipe that was previously added via pseudo-element */
+}
+
+/* Message actions */
+.message-actions {
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0.6;
+    transition: opacity var(--transition-fast);
+}
+
+.message-actions:hover {
+    opacity: 1;
+}
+
+.message-action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-tertiary);
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-action-button:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-hover);
+}
+
+.message-action-button svg {
+    width: 16px;
+    height: 16px;
+}

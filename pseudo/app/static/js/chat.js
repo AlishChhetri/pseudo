@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // State variables
     let currentChatId = null;
     let chatMessages = [];
-    let selectedModel = 'Auto';
 
     // Initialize
     setupEventListeners();
@@ -71,16 +70,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (window.innerWidth <= 768) {
                 toggleSidebar(false);
             }
-        });
-
-        // Listen for model selection events
-        document.addEventListener('modelSelected', function(e) {
-            console.log('Model selected event received:', e.detail.model);
-            selectedModel = e.detail.model;
-            
-            // Create a toast notification
-            const modelName = document.getElementById('selected-model').textContent;
-            createToastNotification(`Model set to ${modelName}`);
         });
         
         // Listen for chat loaded events from sidebar
@@ -183,7 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Show thinking indicator
         const thinkingIndicator = appendThinkingIndicator();
 
-        // Send the message to the actual API endpoint
+        // Send the message to the API endpoint
         fetch('/api/chat', {
             method: 'POST',
             headers: {
@@ -191,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: JSON.stringify({
                 message: message,
-                model: selectedModel,
                 chat_id: currentChatId
             })
         })
@@ -221,6 +209,58 @@ document.addEventListener('DOMContentLoaded', function () {
                 contentDiv.className = 'content';
                 contentDiv.appendChild(imageElement);
                 
+                // Add model attribution
+                const attributionDiv = document.createElement('div');
+                attributionDiv.className = 'model-attribution';
+                
+                // Create attribution text
+                const attributionTextSpan = document.createElement('span');
+                attributionTextSpan.className = 'model-attribution-text';
+                
+                let providerModel = '';
+                if (data.provider && data.model) {
+                    providerModel = `${data.provider} - ${data.model}`;
+                } else if (data.model) {
+                    providerModel = data.model;
+                } else {
+                    providerModel = 'Unknown';
+                }
+                
+                attributionTextSpan.textContent = `Image | ${providerModel}`;
+                
+                attributionDiv.appendChild(attributionTextSpan);
+                
+                // Create action buttons for image
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+                
+                // Download button
+                const downloadButton = document.createElement('button');
+                downloadButton.className = 'message-action-button download-button';
+                downloadButton.setAttribute('aria-label', 'Download image');
+                downloadButton.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                `;
+                
+                // Add download functionality
+                downloadButton.addEventListener('click', () => {
+                    const a = document.createElement('a');
+                    a.href = data.url;
+                    a.download = `image-${Date.now()}.png`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    createToastNotification('Image download started');
+                });
+                
+                actionsDiv.appendChild(downloadButton);
+                attributionDiv.appendChild(actionsDiv);
+                contentDiv.appendChild(attributionDiv);
+                
                 // Create message div
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message assistant-message';
@@ -244,6 +284,58 @@ document.addEventListener('DOMContentLoaded', function () {
                 contentDiv.className = 'content';
                 contentDiv.appendChild(audioElement);
                 
+                // Add model attribution
+                const attributionDiv = document.createElement('div');
+                attributionDiv.className = 'model-attribution';
+                
+                // Create attribution text
+                const attributionTextSpan = document.createElement('span');
+                attributionTextSpan.className = 'model-attribution-text';
+                
+                let providerModel = '';
+                if (data.provider && data.model) {
+                    providerModel = `${data.provider} - ${data.model}`;
+                } else if (data.model) {
+                    providerModel = data.model;
+                } else {
+                    providerModel = 'Unknown';
+                }
+                
+                attributionTextSpan.textContent = `Audio | ${providerModel}`;
+                
+                attributionDiv.appendChild(attributionTextSpan);
+                
+                // Create action buttons for audio
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'message-actions';
+                
+                // Download button
+                const downloadButton = document.createElement('button');
+                downloadButton.className = 'message-action-button download-button';
+                downloadButton.setAttribute('aria-label', 'Download audio');
+                downloadButton.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                `;
+                
+                // Add download functionality
+                downloadButton.addEventListener('click', () => {
+                    const a = document.createElement('a');
+                    a.href = data.url;
+                    a.download = `audio-${Date.now()}.mp3`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    createToastNotification('Audio download started');
+                });
+                
+                actionsDiv.appendChild(downloadButton);
+                attributionDiv.appendChild(actionsDiv);
+                contentDiv.appendChild(attributionDiv);
+                
                 // Create message div
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message assistant-message';
@@ -257,8 +349,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 chatContainer.appendChild(messageDiv);
                 
             } else {
-                // Regular text response
-                appendMessage('assistant', data.response);
+                // Regular text response with metadata
+                const metadata = {
+                    mode: data.selected_mode || 'text',
+                    model: data.model || 'Unknown',
+                    provider: data.provider || null
+                };
+                appendMessage('assistant', data.response, metadata);
             }
             
             // Scroll to bottom
@@ -279,8 +376,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /**
      * Append a message to the chat container
+     * @param {string} role - 'user' or 'assistant'
+     * @param {string} content - The message content
+     * @param {object} metadata - Optional metadata including model and mode
      */
-    function appendMessage(role, content) {
+    function appendMessage(role, content, metadata = {}) {
         if (!chatContainer) return;
 
         const messageDiv = document.createElement('div');
@@ -292,6 +392,83 @@ document.addEventListener('DOMContentLoaded', function () {
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content';
         contentDiv.textContent = content;
+
+        // Add model attribution for assistant messages
+        if (role === 'assistant' && (metadata.model || metadata.mode)) {
+            const attributionDiv = document.createElement('div');
+            attributionDiv.className = 'model-attribution';
+            
+            // Create attribution text
+            const attributionTextSpan = document.createElement('span');
+            attributionTextSpan.className = 'model-attribution-text';
+            
+            let modeText = metadata.mode ? metadata.mode.charAt(0).toUpperCase() + metadata.mode.slice(1) : 'Text';
+            let providerModel = '';
+            
+            if (metadata.provider && metadata.model) {
+                providerModel = `${metadata.provider} - ${metadata.model}`;
+            } else if (metadata.model) {
+                providerModel = metadata.model;
+            } else {
+                providerModel = 'Unknown';
+            }
+            
+            attributionTextSpan.textContent = `${modeText} | ${providerModel}`;
+            
+            attributionDiv.appendChild(attributionTextSpan);
+            
+            // Create action buttons based on content type
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'message-actions';
+            
+            if (metadata.mode === 'text' || !metadata.mode) {
+                // Copy button for text
+                const copyButton = document.createElement('button');
+                copyButton.className = 'message-action-button copy-button';
+                copyButton.setAttribute('aria-label', 'Copy text');
+                copyButton.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                `;
+                copyButton.addEventListener('click', () => {
+                    navigator.clipboard.writeText(content)
+                        .then(() => createToastNotification('Text copied to clipboard'))
+                        .catch(err => console.error('Could not copy text: ', err));
+                });
+                actionsDiv.appendChild(copyButton);
+            } else if (metadata.mode === 'image') {
+                // Download button for image
+                const downloadButton = document.createElement('button');
+                downloadButton.className = 'message-action-button download-button';
+                downloadButton.setAttribute('aria-label', 'Download image');
+                downloadButton.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                `;
+                actionsDiv.appendChild(downloadButton);
+            } else if (metadata.mode === 'audio') {
+                // Download button for audio
+                const downloadButton = document.createElement('button');
+                downloadButton.className = 'message-action-button download-button';
+                downloadButton.setAttribute('aria-label', 'Download audio');
+                downloadButton.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                `;
+                actionsDiv.appendChild(downloadButton);
+            }
+            
+            attributionDiv.appendChild(actionsDiv);
+            contentDiv.appendChild(attributionDiv);
+        }
 
         messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
@@ -407,6 +584,58 @@ document.addEventListener('DOMContentLoaded', function () {
                         contentDiv.className = 'content';
                         contentDiv.appendChild(imageElement);
                         
+                        // Add model attribution
+                        const attributionDiv = document.createElement('div');
+                        attributionDiv.className = 'model-attribution';
+                        
+                        // Create attribution text
+                        const attributionTextSpan = document.createElement('span');
+                        attributionTextSpan.className = 'model-attribution-text';
+                        
+                        let providerModel = '';
+                        if (message.provider && message.model) {
+                            providerModel = `${message.provider} - ${message.model}`;
+                        } else if (message.model) {
+                            providerModel = message.model;
+                        } else {
+                            providerModel = 'Unknown';
+                        }
+                        
+                        attributionTextSpan.textContent = `Image | ${providerModel}`;
+                        
+                        attributionDiv.appendChild(attributionTextSpan);
+                        
+                        // Create action buttons
+                        const actionsDiv = document.createElement('div');
+                        actionsDiv.className = 'message-actions';
+                        
+                        // Download button
+                        const downloadButton = document.createElement('button');
+                        downloadButton.className = 'message-action-button download-button';
+                        downloadButton.setAttribute('aria-label', 'Download image');
+                        downloadButton.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        `;
+                        
+                        // Add download functionality
+                        downloadButton.addEventListener('click', () => {
+                            const a = document.createElement('a');
+                            a.href = `/chat_history/${chatId}/media/${message.media_path.split('/').pop()}`;
+                            a.download = `image-${Date.now()}.png`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            createToastNotification('Image download started');
+                        });
+                        
+                        actionsDiv.appendChild(downloadButton);
+                        attributionDiv.appendChild(actionsDiv);
+                        contentDiv.appendChild(attributionDiv);
+                        
                         // Create message div
                         const messageDiv = document.createElement('div');
                         messageDiv.className = 'message assistant-message';
@@ -429,6 +658,58 @@ document.addEventListener('DOMContentLoaded', function () {
                         contentDiv.className = 'content';
                         contentDiv.appendChild(audioElement);
                         
+                        // Add model attribution
+                        const attributionDiv = document.createElement('div');
+                        attributionDiv.className = 'model-attribution';
+                        
+                        // Create attribution text
+                        const attributionTextSpan = document.createElement('span');
+                        attributionTextSpan.className = 'model-attribution-text';
+                        
+                        let providerModel = '';
+                        if (message.provider && message.model) {
+                            providerModel = `${message.provider} - ${message.model}`;
+                        } else if (message.model) {
+                            providerModel = message.model;
+                        } else {
+                            providerModel = 'Unknown';
+                        }
+                        
+                        attributionTextSpan.textContent = `Audio | ${providerModel}`;
+                        
+                        attributionDiv.appendChild(attributionTextSpan);
+                        
+                        // Create action buttons
+                        const actionsDiv = document.createElement('div');
+                        actionsDiv.className = 'message-actions';
+                        
+                        // Download button
+                        const downloadButton = document.createElement('button');
+                        downloadButton.className = 'message-action-button download-button';
+                        downloadButton.setAttribute('aria-label', 'Download audio');
+                        downloadButton.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                        `;
+                        
+                        // Add download functionality
+                        downloadButton.addEventListener('click', () => {
+                            const a = document.createElement('a');
+                            a.href = `/chat_history/${chatId}/media/${message.media_path.split('/').pop()}`;
+                            a.download = `audio-${Date.now()}.mp3`;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            createToastNotification('Audio download started');
+                        });
+                        
+                        actionsDiv.appendChild(downloadButton);
+                        attributionDiv.appendChild(actionsDiv);
+                        contentDiv.appendChild(attributionDiv);
+                        
                         // Create message div
                         const messageDiv = document.createElement('div');
                         messageDiv.className = 'message assistant-message';
@@ -441,8 +722,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         
                         chatContainer.appendChild(messageDiv);
                     } else {
-                        // Regular text message
-                        appendMessage('assistant', message.content);
+                        // Regular text message with metadata
+                        const metadata = {
+                            mode: message.mode || 'text',
+                            model: message.model || 'Unknown',
+                            provider: message.provider || null
+                        };
+                        appendMessage('assistant', message.content, metadata);
                     }
                 }
             });
