@@ -1,23 +1,19 @@
+import json
+import logging
+import os
+
 from flask import (
     Blueprint,
+    g,
     jsonify,
     render_template,
     request,
-    current_app,
-    send_from_directory,
     send_file,
-    g,
+    send_from_directory,
 )
-import os
-import json
-import uuid
-import logging
-from pathlib import Path
-from werkzeug.utils import secure_filename
 
-from pseudo.core.services.content_router import ContentRouter
-from pseudo.core.services.media_manager import MediaManager
 from pseudo.core.services.chat_history import ChatManager
+from pseudo.core.services.content_router import ContentRouter
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -81,7 +77,7 @@ def chat():
     try:
         data = request.json
         message = data.get("message")
-        model_selection = data.get("model", "Auto")  #  Default to automatic model selection
+        data.get("model", "Auto")  #  Default to automatic model selection
         chat_id = data.get("chat_id")
 
         if not message:
@@ -164,7 +160,7 @@ def chat():
             # Try to serialize any other type
             try:
                 assistant_message["content"] = json.dumps(response)
-            except:
+            except Exception:
                 assistant_message["content"] = str(response)
 
         # Pass media path for saving in chat history

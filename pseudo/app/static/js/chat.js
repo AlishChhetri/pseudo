@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Chat elements
     const chatContainer = document.querySelector('.chat-container');
     const inputField = document.querySelector('.input-field');
@@ -6,36 +6,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const welcomeScreen = document.querySelector('.welcome-screen');
     const suggestionChips = document.querySelectorAll('.suggestion-chip');
     const chatHistoryContainer = document.querySelector('.chat-history');
-    
+
     // Sidebar elements
     const sidebar = document.getElementById('sidebar');
     const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
     const mainContent = document.querySelector('.main-content');
     const inputContainer = document.querySelector('.input-container');
-    
+
     // Model dropdown elements
     const modelDropdownBtn = document.querySelector('.model-dropdown-btn');
     const modelDropdownContent = document.getElementById('model-dropdown-content');
     const selectedModelSpan = document.getElementById('selected-model');
-    
+
     // Mobile elements
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-    
+
     // State variables
     let selectedModel = 'Auto';
-let currentChatId = null;
+    let currentChatId = null;
     let chatMessages = [];
     let sidebarVisible = false;
     let sidebarCollapsed = false;
-    
+
     // Available models (these could be fetched from the server)
     const availableModels = [
         { id: 'auto', name: 'Auto', description: 'Automatically select the best model' },
         { id: 'gpt-4', name: 'GPT-4', description: 'Most powerful model for complex tasks' },
         { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', description: 'Fast and versatile for general tasks' }
     ];
-    
+
     // Initialize
     setupEventListeners();
     setupModelDropdown();
@@ -43,23 +43,23 @@ let currentChatId = null;
     setupSidebarCollapse();
     loadChatHistory();
     createNewChat(false);
-    
+
     // Auto-focus input field when page loads
     if (inputField) {
         setTimeout(() => {
             inputField.focus();
         }, 100);
     }
-    
+
     /**
      * Set up all event listeners
      */
     function setupEventListeners() {
         // Send button click
         sendButton.addEventListener('click', handleSendMessage);
-        
+
         // Enter key press in input field
-        inputField?.addEventListener('keydown', function(e) {
+        inputField?.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleSendMessage();
@@ -67,21 +67,21 @@ let currentChatId = null;
         });
 
         // Auto-resize input field
-        inputField?.addEventListener('input', function() {
+        inputField?.addEventListener('input', function () {
             inputField.style.height = 'auto';
             inputField.style.height = (inputField.scrollHeight > 150 ? 150 : inputField.scrollHeight) + 'px';
         });
-        
+
         // Suggestion chips
         suggestionChips?.forEach(chip => {
-            chip.addEventListener('click', function() {
+            chip.addEventListener('click', function () {
                 inputField.value = chip.textContent;
                 inputField.focus();
             });
         });
-        
+
         // New chat button
-        document.querySelector('.new-chat-btn')?.addEventListener('click', function() {
+        document.querySelector('.new-chat-btn')?.addEventListener('click', function () {
             createNewChat(true);
             // Close sidebar on mobile after creating a new chat
             if (window.innerWidth <= 768) {
@@ -90,13 +90,13 @@ let currentChatId = null;
         });
 
         // Global click for input focus
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             // If not clicking in textarea and not a button or dropdown
-            if (!e.target.closest('textarea') && 
-                !e.target.closest('button') && 
+            if (!e.target.closest('textarea') &&
+                !e.target.closest('button') &&
                 !e.target.closest('.model-dropdown-content')) {
                 inputField?.focus();
-                
+
                 // Close model dropdown if open
                 if (modelDropdownContent?.classList.contains('show')) {
                     modelDropdownContent.classList.remove('show');
@@ -105,7 +105,7 @@ let currentChatId = null;
             }
         });
     }
-    
+
     /**
      * Set up model dropdown functionality
      */
@@ -118,73 +118,73 @@ let currentChatId = null;
                 if (model.id === selectedModel.toLowerCase()) {
                     option.classList.add('selected');
                 }
-                
+
                 option.innerHTML = `
                     <div class="model-title">${model.name}</div>
                     <div class="model-subtitle">${model.description}</div>
                 `;
-                
-                option.addEventListener('click', function() {
+
+                option.addEventListener('click', function () {
                     selectModel(model);
                 });
-                
+
                 modelDropdownContent.appendChild(option);
             });
         }
-        
+
         // Toggle dropdown on button click
-        modelDropdownBtn?.addEventListener('click', function(e) {
+        modelDropdownBtn?.addEventListener('click', function (e) {
             e.stopPropagation();
-            
+
             const isExpanded = modelDropdownBtn.getAttribute('aria-expanded') === 'true';
             modelDropdownBtn.setAttribute('aria-expanded', !isExpanded);
             modelDropdownContent?.classList.toggle('show');
         });
     }
-    
+
     /**
      * Select a model
      */
     function selectModel(model) {
         selectedModel = model.id;
-        
+
         // Update selected model display
         if (selectedModelSpan) {
             selectedModelSpan.textContent = model.name;
         }
-        
+
         // Update selected state in dropdown
         const options = modelDropdownContent?.querySelectorAll('.model-option');
         options?.forEach(option => {
             option.classList.toggle('selected', option.querySelector('.model-title').textContent === model.name);
         });
-        
+
         // Close dropdown
         modelDropdownContent?.classList.remove('show');
         modelDropdownBtn?.setAttribute('aria-expanded', 'false');
-        
+
         // Trigger custom event for model selection
         document.dispatchEvent(new CustomEvent('modelSelected', { detail: { model: model.id } }));
-        
+
         console.log('Model selected:', model.name);
     }
-    
+
     /**
      * Set up sidebar collapse functionality
      */
     function setupSidebarCollapse() {
-        sidebarCollapseBtn?.addEventListener('click', function() {
+        sidebarCollapseBtn?.addEventListener('click', function () {
             sidebarCollapsed = !sidebarCollapsed;
-            
+
             // Toggle classes
             sidebar?.classList.toggle('collapsed', sidebarCollapsed);
             mainContent?.classList.toggle('expanded', sidebarCollapsed);
             inputContainer?.classList.toggle('expanded', sidebarCollapsed);
-            
+
             // Store preference in localStorage
             localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
         });
-        
+
         // Initialize sidebar state from localStorage
         if (localStorage.getItem('sidebarCollapsed') === 'true') {
             sidebarCollapsed = true;
@@ -193,47 +193,47 @@ let currentChatId = null;
             inputContainer?.classList.add('expanded');
         }
     }
-    
+
     /**
      * Set up mobile sidebar functionality
      */
     function setupMobileSidebar() {
         // Toggle sidebar on mobile menu click
-        mobileMenuToggle?.addEventListener('click', function() {
+        mobileMenuToggle?.addEventListener('click', function () {
             toggleSidebar(!sidebarVisible);
         });
-        
+
         // Close sidebar when backdrop is clicked
-        sidebarBackdrop?.addEventListener('click', function() {
+        sidebarBackdrop?.addEventListener('click', function () {
             toggleSidebar(false);
         });
-        
+
         // Close sidebar when window is resized to desktop size
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             if (window.innerWidth > 768 && sidebarVisible) {
                 toggleSidebar(false);
             }
         });
     }
-    
+
     /**
      * Toggle sidebar visibility
      */
     function toggleSidebar(visible) {
         sidebarVisible = visible;
-        
+
         if (sidebar) {
             sidebar.classList.toggle('visible', visible);
         }
-        
+
         if (sidebarBackdrop) {
             sidebarBackdrop.classList.toggle('visible', visible);
         }
-        
+
         // Prevent body scrolling when sidebar is open
         document.body.style.overflow = visible ? 'hidden' : '';
     }
-    
+
     /**
      * Load chat history from the server
      */
@@ -249,7 +249,7 @@ let currentChatId = null;
                 console.error('Error loading chat history:', error);
             });
     }
-    
+
     /**
      * Display chat history in the sidebar
      */
@@ -257,25 +257,25 @@ let currentChatId = null;
         // Clear existing history
         if (chatHistoryContainer) {
             chatHistoryContainer.innerHTML = '';
-            
+
             // Add each chat to history
             chats.forEach(chat => {
                 const chatItem = document.createElement('div');
                 chatItem.className = 'chat-history-item';
                 chatItem.dataset.chatId = chat.id;
-                
+
                 // Set active class if this is the current chat
                 if (chat.id === currentChatId) {
                     chatItem.classList.add('active');
                 }
-                
+
                 // Format date
                 const date = new Date(chat.updated_at);
-                const formattedDate = date.toLocaleDateString(undefined, { 
-                    month: 'short', 
-                    day: 'numeric' 
+                const formattedDate = date.toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric'
                 });
-                
+
                 chatItem.innerHTML = `
                     <div class="chat-item-content">
                         <div class="chat-item-title">${chat.title}</div>
@@ -287,34 +287,34 @@ let currentChatId = null;
                         </svg>
                     </button>
                 `;
-                
+
                 // Add event listener for loading this chat
-                chatItem.addEventListener('click', function(e) {
+                chatItem.addEventListener('click', function (e) {
                     // Don't trigger if delete button was clicked
                     if (e.target.closest('.delete-chat-btn')) {
-        return;
+                        return;
                     }
-                    
+
                     loadChat(chat.id);
-                    
+
                     // Close sidebar on mobile after selecting a chat
                     if (window.innerWidth <= 768) {
                         toggleSidebar(false);
                     }
                 });
-                
+
                 // Add event listener for delete button
                 const deleteBtn = chatItem.querySelector('.delete-chat-btn');
-                deleteBtn.addEventListener('click', function(e) {
+                deleteBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     deleteChat(chat.id);
                 });
-                
+
                 chatHistoryContainer.appendChild(chatItem);
             });
         }
     }
-    
+
     /**
      * Create a new chat
      */
@@ -323,37 +323,37 @@ let currentChatId = null;
         if (chatContainer) {
             chatContainer.innerHTML = '';
         }
-        
+
         if (welcomeScreen) {
             welcomeScreen.style.display = 'block';
         }
-        
+
         if (chatContainer) {
             chatContainer.style.display = 'none';
         }
-        
+
         chatMessages = [];
-        
+
         if (saveImmediately) {
             // Create new chat via API
             fetch('/api/chats/new', {
                 method: 'POST'
             })
-            .then(response => response.json())
-            .then(data => {
-                currentChatId = data.chat_id;
-                // Update chat history display
-                loadChatHistory();
-            })
-            .catch(error => {
-                console.error('Error creating new chat:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    currentChatId = data.chat_id;
+                    // Update chat history display
+                    loadChatHistory();
+                })
+                .catch(error => {
+                    console.error('Error creating new chat:', error);
+                });
         } else {
             // Just reset UI without creating permanently
             currentChatId = null;
         }
     }
-    
+
     /**
      * Load a specific chat
      */
@@ -363,23 +363,23 @@ let currentChatId = null;
             .then(chat => {
                 // Set as current chat
                 currentChatId = chatId;
-                
+
                 // Clear UI
                 if (chatContainer) {
                     chatContainer.innerHTML = '';
                 }
-                
+
                 if (welcomeScreen) {
                     welcomeScreen.style.display = 'none';
                 }
-                
+
                 if (chatContainer) {
                     chatContainer.style.display = 'block';
                 }
-                
+
                 // Store messages for future reference
                 chatMessages = chat.messages;
-                
+
                 // Display messages
                 chat.messages.forEach(message => {
                     if (message.role === 'user') {
@@ -388,15 +388,15 @@ let currentChatId = null;
                         // Parse content if it's a JSON string
                         let content = message.content;
                         let mediaPath = message.media_path;
-                        
-                    if (typeof content === 'string' && (content.startsWith('{') || content.startsWith('['))) {
-                        try {
-                            content = JSON.parse(content);
-                        } catch (e) {
+
+                        if (typeof content === 'string' && (content.startsWith('{') || content.startsWith('['))) {
+                            try {
+                                content = JSON.parse(content);
+                            } catch (e) {
                                 // Keep as string if parsing fails
                             }
                         }
-                        
+
                         // Handle different content types
                         if (message.mode === 'image') {
                             if (mediaPath) {
@@ -411,7 +411,7 @@ let currentChatId = null;
                                 appendAudioMessage(`/chat_history/${chatId}/${mediaPath}`, true);
                             } else if (content && content.path) {
                                 appendAudioMessage(content.path);
-                    } else {
+                            } else {
                                 appendMessage('assistant', 'Audio unavailable');
                             }
                         } else {
@@ -424,7 +424,7 @@ let currentChatId = null;
                         }
                     }
                 });
-                
+
                 // Highlight this chat in the history
                 document.querySelectorAll('.chat-history-item').forEach(item => {
                     item.classList.toggle('active', item.dataset.chatId === chatId);
@@ -434,7 +434,7 @@ let currentChatId = null;
                 console.error(`Error loading chat ${chatId}:`, error);
             });
     }
-    
+
     /**
      * Delete a chat
      */
@@ -442,51 +442,51 @@ let currentChatId = null;
         if (!confirm('Are you sure you want to delete this chat?')) {
             return;
         }
-        
+
         fetch(`/api/chats/${chatId}`, {
             method: 'DELETE'
         })
-        .then(response => response.json())
-        .then(data => {
-            // If the deleted chat was the current one, create a new chat
-            if (chatId === currentChatId) {
-                createNewChat(false);
-            }
-            
-            // Refresh chat history
-            loadChatHistory();
-        })
-        .catch(error => {
-            console.error(`Error deleting chat ${chatId}:`, error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                // If the deleted chat was the current one, create a new chat
+                if (chatId === currentChatId) {
+                    createNewChat(false);
+                }
+
+                // Refresh chat history
+                loadChatHistory();
+            })
+            .catch(error => {
+                console.error(`Error deleting chat ${chatId}:`, error);
+            });
     }
-    
+
     /**
      * Handle sending a message
      */
     function handleSendMessage() {
         const message = inputField.value.trim();
         if (!message) return;
-        
+
         // Hide welcome screen, show chat container
         if (welcomeScreen) {
             welcomeScreen.style.display = 'none';
         }
-        
+
         if (chatContainer) {
             chatContainer.style.display = 'block';
         }
-        
+
         // Add user message to UI
         appendMessage('user', message);
-        
+
         // Clear input field
         inputField.value = '';
         inputField.style.height = 'auto';
-        
+
         // Show thinking indicator
         const thinkingIndicator = appendThinkingIndicator();
-        
+
         // Send message to backend
         sendMessageToBackend(message)
             .then(response => {
@@ -494,10 +494,10 @@ let currentChatId = null;
                 if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
                     chatContainer.removeChild(thinkingIndicator);
                 }
-                
+
                 // Process and display response
                 processResponse(response);
-                
+
                 // Update chat history display
                 loadChatHistory();
             })
@@ -506,12 +506,12 @@ let currentChatId = null;
                 if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
                     chatContainer.removeChild(thinkingIndicator);
                 }
-                
+
                 // Show error message
                 appendMessage('assistant', `Error: ${error.message}`);
             });
     }
-    
+
     /**
      * Send message to backend API
      */
@@ -528,28 +528,28 @@ let currentChatId = null;
                 use_chat_folder: true // Ensure media is saved to chat folder
             })
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.error || 'Unknown error occurred');
-                });
-            }
-            return response.json();
-        });
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Unknown error occurred');
+                    });
+                }
+                return response.json();
+            });
     }
-    
+
     /**
      * Process the response from the backend
      */
     function processResponse(response) {
         const content = response.response;
         const mode = response.selected_mode;
-        
+
         // Update current chat ID if needed
         if (response.chat_id && !currentChatId) {
             currentChatId = response.chat_id;
         }
-        
+
         // Display message based on content type
         if (mode === 'image' && response.url) {
             // Always use the chat-specific URL directly
@@ -561,7 +561,7 @@ let currentChatId = null;
             appendMessage('assistant', content);
         }
     }
-    
+
     /**
      * Append a message to the chat container
      */
@@ -570,35 +570,35 @@ let currentChatId = null;
 
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${role}-message`;
-        
+
         const avatarDiv = document.createElement('div');
         avatarDiv.className = 'avatar';
-        
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content';
 
         // Process content for code blocks
         if (typeof content === 'string' && content.includes('```')) {
             const parts = content.split(/(```(?:\w+)?\n[\s\S]*?\n```)/g);
-            
+
             parts.forEach(part => {
                 if (part.startsWith('```') && part.endsWith('```')) {
                     // Handle code block
                     const codeBlock = document.createElement('pre');
                     codeBlock.className = 'code-block';
-                    
+
                     // Get language if specified
                     const langMatch = part.match(/```(\w+)?\n/);
                     const language = langMatch && langMatch[1] ? langMatch[1] : '';
-                    
+
                     // Add data-language attribute for the language label
                     codeBlock.setAttribute('data-language', language || 'code');
-                    
+
                     // Get code content
                     const codeContent = part
                         .replace(/```(?:\w+)?\n/, '')
                         .replace(/\n```$/, '');
-                    
+
                     codeBlock.innerHTML = `<code class="language-${language}">${escapeHtml(codeContent)}</code>`;
                     contentDiv.appendChild(codeBlock);
                 } else if (part.trim()) {
@@ -611,15 +611,15 @@ let currentChatId = null;
         } else {
             contentDiv.textContent = content;
         }
-        
+
         messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
-        
+
         chatContainer.appendChild(messageDiv);
-        
+
         // Scroll to bottom
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        
+
         return messageDiv;
     }
 
@@ -629,7 +629,7 @@ let currentChatId = null;
         div.textContent = text;
         return div.innerHTML;
     }
-    
+
     /**
      * Append an image message to the chat container
      */
@@ -638,61 +638,61 @@ let currentChatId = null;
 
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message assistant-message';
-        
+
         const avatarDiv = document.createElement('div');
         avatarDiv.className = 'avatar';
-        
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content image-content';
-        
+
         // Image wrapper (contains image and actions)
         const imageWrapper = document.createElement('div');
         imageWrapper.className = 'media-wrapper';
-        
+
         // Image element
         const image = document.createElement('img');
         image.src = imagePath;
         image.alt = 'Generated image';
         image.className = 'generated-image';
         image.loading = 'lazy'; // Improve performance
-        
+
         // Enlarge image on click
-        image.addEventListener('click', function() {
+        image.addEventListener('click', function () {
             const modal = document.createElement('div');
             modal.className = 'media-modal';
-            
+
             const modalContent = document.createElement('div');
             modalContent.className = 'media-modal-content';
-            
+
             const modalImage = document.createElement('img');
             modalImage.src = imagePath;
             modalImage.alt = 'Enlarged image';
-            
+
             const closeButton = document.createElement('button');
             closeButton.className = 'modal-close-btn';
             closeButton.innerHTML = '&times;';
-            closeButton.addEventListener('click', function() {
+            closeButton.addEventListener('click', function () {
                 document.body.removeChild(modal);
             });
-            
+
             modalContent.appendChild(modalImage);
             modalContent.appendChild(closeButton);
             modal.appendChild(modalContent);
-            
+
             document.body.appendChild(modal);
-            
+
             // Close modal when clicking outside of image
-            modal.addEventListener('click', function(e) {
+            modal.addEventListener('click', function (e) {
                 if (e.target === modal) {
                     document.body.removeChild(modal);
                 }
             });
         });
-        
+
         // Media actions (download button)
         const mediaActions = document.createElement('div');
         mediaActions.className = 'media-actions';
-        
+
         const downloadButton = document.createElement('button');
         downloadButton.className = 'media-action-btn download-btn';
         downloadButton.innerHTML = `
@@ -701,9 +701,9 @@ let currentChatId = null;
             </svg>
             <span>Download</span>
         `;
-        
+
         // Set download link based on source
-        downloadButton.addEventListener('click', function() {
+        downloadButton.addEventListener('click', function () {
             let downloadPath;
             if (isFromChatHistory) {
                 // Extract the base filename
@@ -714,7 +714,7 @@ let currentChatId = null;
                 const filename = imagePath.split('/').pop();
                 downloadPath = `/download/${filename}`;
             }
-            
+
             // Create a temporary link and trigger download
             const a = document.createElement('a');
             a.href = downloadPath;
@@ -723,21 +723,21 @@ let currentChatId = null;
             a.click();
             document.body.removeChild(a);
         });
-        
+
         mediaActions.appendChild(downloadButton);
         imageWrapper.appendChild(image);
         imageWrapper.appendChild(mediaActions);
-        
+
         contentDiv.appendChild(imageWrapper);
         messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
-        
+
         chatContainer.appendChild(messageDiv);
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        
+
         return messageDiv;
     }
-    
+
     /**
      * Append an audio message to the chat container
      */
@@ -746,31 +746,31 @@ let currentChatId = null;
 
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message assistant-message';
-        
+
         const avatarDiv = document.createElement('div');
         avatarDiv.className = 'avatar';
-        
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content audio-content';
-        
+
         // Audio wrapper
         const audioWrapper = document.createElement('div');
         audioWrapper.className = 'media-wrapper';
-        
+
         // Audio player
         const audio = document.createElement('audio');
         audio.controls = true;
-        
+
         const source = document.createElement('source');
         source.src = audioPath;
         source.type = 'audio/mpeg';
-        
+
         audio.appendChild(source);
-        
+
         // Media actions (download button)
         const mediaActions = document.createElement('div');
         mediaActions.className = 'media-actions';
-        
+
         const downloadButton = document.createElement('button');
         downloadButton.className = 'media-action-btn download-btn';
         downloadButton.innerHTML = `
@@ -779,9 +779,9 @@ let currentChatId = null;
             </svg>
             <span>Download</span>
         `;
-        
+
         // Set download link based on source
-        downloadButton.addEventListener('click', function() {
+        downloadButton.addEventListener('click', function () {
             let downloadPath;
             if (isFromChatHistory) {
                 // Extract the base filename
@@ -792,7 +792,7 @@ let currentChatId = null;
                 const filename = audioPath.split('/').pop();
                 downloadPath = `/download/${filename}`;
             }
-            
+
             // Create a temporary link and trigger download
             const a = document.createElement('a');
             a.href = downloadPath;
@@ -801,21 +801,21 @@ let currentChatId = null;
             a.click();
             document.body.removeChild(a);
         });
-        
+
         mediaActions.appendChild(downloadButton);
         audioWrapper.appendChild(audio);
         audioWrapper.appendChild(mediaActions);
-        
+
         contentDiv.appendChild(audioWrapper);
         messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
-        
+
         chatContainer.appendChild(messageDiv);
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        
+
         return messageDiv;
     }
-    
+
     /**
      * Append a thinking indicator to the chat container
      */
@@ -824,24 +824,24 @@ let currentChatId = null;
 
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message assistant-message thinking';
-        
+
         const avatarDiv = document.createElement('div');
         avatarDiv.className = 'avatar';
-        
+
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content';
-        
+
         const thinkingDiv = document.createElement('div');
         thinkingDiv.className = 'thinking-indicator';
         thinkingDiv.innerHTML = '<span></span><span></span><span></span>';
-        
+
         contentDiv.appendChild(thinkingDiv);
         messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
-        
+
         chatContainer.appendChild(messageDiv);
         chatContainer.scrollTop = chatContainer.scrollHeight;
-        
+
         return messageDiv;
     }
 }); 

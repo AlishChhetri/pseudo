@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+
 from flask import Flask
 
 from pseudo.core.config import Config
