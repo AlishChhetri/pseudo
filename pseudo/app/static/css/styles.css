@@ -469,8 +469,19 @@ select:focus {
 
 .sidebar-bottom {
     padding: 1rem;
-    border-top: 1px solid var(--border-color);
+    position: relative;
     margin-top: auto;
+}
+
+.sidebar-bottom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%; /* Border width reduced to match top's style */
+    height: 1px;
+    background-color: var(--border-color);
 }
 
 .settings-btn {
@@ -520,10 +531,14 @@ select:focus {
     left: var(--sidebar-width);
     /* Match sidebar width */
     right: 0;
-    padding: 1.5rem 2rem;
+    padding-top: 1.75rem; /* Increased top padding for more gap */
+    padding-bottom: 1.5rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     background-color: var(--bg-primary);
-    border-top: 1px solid var(--border-color);
     z-index: 90; /* Less than dropdown but still above content */
+    display: flex;
+    justify-content: center;
 }
 
 .input-container.expanded {
@@ -531,11 +546,57 @@ select:focus {
     /* Match collapsed sidebar width */
 }
 
+.input-container::before {
+    content: '';
+    position: absolute;
+    top: 0; /* Place at the top */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%; /* Border width reduced to 80% */
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+/* Input Wrapper Styles */
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: 0 1.25rem;
+    min-height: 60px; /* Increased height */
+    max-width: 90%;
+    width: 90%; /* Set fixed width to match max-width */
+    margin: 0 auto;
+    transition: box-shadow var(--transition-fast);
+}
+
+.input-wrapper:focus-within {
+    box-shadow: var(--shadow-light);
+    background-color: var(--bg-hover);
+}
+
+/* Input Field Styles */
+.input-field {
+    flex-grow: 1;
+    resize: none;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1.1rem; /* Increased font size */
+    line-height: 1.5;
+    padding: 0.75rem 0; /* Increased padding */
+    max-height: 200px;
+    overflow-y: auto;
+    outline: none;
+}
+
 /* Model dropdown - Improved overlay style */
 .model-dropdown {
     padding: 1rem;
     position: relative;
-    max-width: 300px;
+    min-width: 15%;
+    max-width: fit-content;
     z-index: 100;
 }
 
@@ -566,6 +627,14 @@ select:focus {
     justify-content: space-between;
     font-weight: var(--font-weight-medium);
     font-size: var(--font-size-base);
+}
+
+.header-title svg {
+    width: 25px; /* Larger arrow */
+    height: 25px; /* Larger arrow */
+    margin-left: 2px; /* Move closer to the text */
+    position: relative;
+    top: 1px; /* Center vertically */
 }
 
 .selected-model-wrapper {
@@ -988,69 +1057,9 @@ select:focus {
     box-shadow: inset -1px 0 0 var(--border-color);
 }
 
-/* Enhanced Input Container */
-.input-wrapper {
-    display: flex;
-    align-items: center;
-    background-color: var(--bg-tertiary);
-    border-radius: var(--radius-md);
-    padding: 0 1rem;
-    min-height: 50px; /* Slightly taller */
-    max-width: 90%; /* Match chat container width */
-    margin: 0 auto;
-    transition: box-shadow var(--transition-fast);
-}
-
-.input-wrapper:focus-within {
-    box-shadow: var(--shadow-light);
-    background-color: var(--bg-hover);
-}
-
-.input-field {
-    flex-grow: 1;
-    resize: none;
-    border: none;
-    background: transparent;
-    color: var(--text-primary);
-    font-size: var(--font-size-base);
-    line-height: 1.5;
-    padding: 0.5rem 0;
-    max-height: 200px;
-    overflow-y: auto;
-    outline: none;
-}
-
-.send-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    margin-left: 0.5rem;
-    border-radius: 50%;
-    background-color: var(--accent-primary);
-    transition: background-color var(--transition-fast);
-}
-
-.send-button:hover {
-    background-color: var(--accent-secondary);
-}
-
 /* Message Bubble Enhancements */
 .message .content {
     transition: transform var(--transition-normal), box-shadow var(--transition-normal);
-}
-
-.message:hover .content {
-    box-shadow: var(--shadow);
-}
-
-.message.user-message:hover .content {
-    transform: translateX(-3px);
-}
-
-.message.assistant-message:hover .content {
-    transform: translateX(3px);
 }
 
 .message.user-message .content {
@@ -1109,7 +1118,7 @@ select:focus {
     justify-content: center;
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 100px; /* Space for input container */
+    padding-bottom: 120px; /* Increased to match chat container */
     min-height: calc(100vh - 200px); /* Ensure minimum height */
     width: 100%;
 }
@@ -1167,67 +1176,8 @@ select:focus {
     max-width: 90%;
     width: 100%;
     margin: 0 auto;
-    padding-bottom: 100px;
+    padding-bottom: 120px; /* Increased to create more space above input container */
     min-height: calc(100vh - 200px);
-}
-
-/* Input Wrapper Styles */
-.input-wrapper {
-    display: flex;
-    align-items: center;
-    background-color: var(--bg-tertiary);
-    border-radius: var(--radius-md);
-    padding: 0 1rem;
-    min-height: 50px; /* Slightly taller */
-    max-width: 90%; /* Match chat container width */
-    margin: 0 auto;
-    transition: box-shadow var(--transition-fast);
-}
-
-.input-wrapper:focus-within {
-    box-shadow: var(--shadow-light);
-    background-color: var(--bg-hover);
-}
-
-.input-field {
-    flex-grow: 1;
-    background: transparent;
-    border: none;
-    resize: none;
-    padding: 0.5rem 0;
-    font-size: var(--font-size-base);
-    line-height: 1.5;
-    color: var(--text-primary);
-    max-height: 200px;
-    overflow-y: auto;
-    outline: none;
-}
-
-.send-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    margin-left: 0.5rem;
-    border-radius: 50%;
-    background-color: var(--accent-primary);
-    transition: background-color var(--transition-fast);
-}
-
-.send-button:hover {
-    background-color: var(--accent-secondary);
-}
-
-.send-button svg {
-    width: 18px;
-    height: 18px;
-    color: white;
-}
-
-.sidebar.collapsed {
-    width: 60px;
-    overflow: hidden;
 }
 
 /* Toast Notifications */
@@ -1272,12 +1222,11 @@ select:focus {
     display: flex;
     align-items: center;
     padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--bg-secondary);
+    background-color: transparent;
 }
 
 .settings-header h1 {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-4xl);
     font-weight: var(--font-weight-medium);
     margin: 0;
 }
@@ -1722,4 +1671,34 @@ select:focus {
 
 .reorder-indicator-icon {
     margin-right: 0.5rem;
+}
+
+/* Send Button Styles */
+.send-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px; /* Slightly larger */
+    height: 45px; /* Slightly larger */
+    margin-left: 0.75rem;
+    border-radius: 50%;
+    background-color: transparent;
+    transition: background-color var(--transition-fast);
+}
+
+.send-button:hover {
+    transform: scale(1.1);
+}
+
+.send-button svg {
+    width: 20px; /* Slightly larger */
+    height: 20px; /* Slightly larger */
+    color: white;
+    transform: rotate(45deg);
+}
+
+/* Sidebar Collapsed Style */
+.sidebar.collapsed {
+    width: 60px;
+    overflow: hidden;
 }
