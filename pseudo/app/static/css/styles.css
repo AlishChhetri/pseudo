@@ -505,6 +505,7 @@ select:focus {
     background: var(--bg-primary);
     position: relative;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100vh; /* Ensure it takes full height */
 }
 
 .main-content.expanded {
@@ -519,10 +520,10 @@ select:focus {
     left: var(--sidebar-width);
     /* Match sidebar width */
     right: 0;
-    padding: 1.25rem;
+    padding: 1.5rem 2rem;
     background-color: var(--bg-primary);
     border-top: 1px solid var(--border-color);
-    z-index: 50;
+    z-index: 90; /* Less than dropdown but still above content */
 }
 
 .input-container.expanded {
@@ -533,9 +534,9 @@ select:focus {
 /* Model dropdown - Improved overlay style */
 .model-dropdown {
     padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
     position: relative;
     max-width: 300px;
+    z-index: 100;
 }
 
 .model-dropdown-btn {
@@ -579,10 +580,10 @@ select:focus {
 /* Dropdown overlay */
 .model-dropdown-content {
     display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 100;
+    position: fixed;
+    top: 100px;
+    left: 1rem;
+    z-index: 1000;
     background-color: var(--bg-secondary);
     width: 260px;
     border-radius: var(--radius-md);
@@ -591,6 +592,7 @@ select:focus {
     border: 1px solid var(--border-color);
     overflow: visible;
     padding: 0.5rem 0;
+    transform-origin: top left;
 }
 
 /* Category and option styling */
@@ -664,7 +666,7 @@ select:focus {
 .submenu {
     display: none;
     position: absolute;
-    top: -5px; /* Align with parent border */
+    top: -5px;
     left: calc(100% + 5px);
     background-color: var(--bg-secondary);
     width: 300px;
@@ -673,9 +675,8 @@ select:focus {
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--border-color);
-    z-index: 101;
+    z-index: 1001;
     padding: 0.5rem 0;
-    /* Add a subtle delay for smoother navigation */
     transition: visibility 0s, opacity 0.2s ease;
     opacity: 0;
     visibility: hidden;
@@ -990,11 +991,12 @@ select:focus {
 /* Enhanced Input Container */
 .input-wrapper {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     background-color: var(--bg-tertiary);
     border-radius: var(--radius-md);
-    padding: 0.75rem 1rem;
-    max-width: var(--content-max-width);
+    padding: 0 1rem;
+    min-height: 50px; /* Slightly taller */
+    max-width: 90%; /* Match chat container width */
     margin: 0 auto;
     transition: box-shadow var(--transition-fast);
 }
@@ -1105,10 +1107,11 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 80px; /* Space for input container */
+    padding-bottom: 100px; /* Space for input container */
+    min-height: calc(100vh - 200px); /* Ensure minimum height */
+    width: 100%;
 }
 
 .welcome-content {
@@ -1157,14 +1160,15 @@ select:focus {
 /* Chat Container Styles */
 .chat-container {
     flex-grow: 1;
-    padding: 2rem;
+    padding: 2rem 3rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    max-width: var(--content-max-width);
-    margin: 0 auto;
+    max-width: 90%;
     width: 100%;
-    padding-bottom: 80px; /* Space for input container */
+    margin: 0 auto;
+    padding-bottom: 100px;
+    min-height: calc(100vh - 200px);
 }
 
 /* Input Wrapper Styles */
@@ -1174,8 +1178,8 @@ select:focus {
     background-color: var(--bg-tertiary);
     border-radius: var(--radius-md);
     padding: 0 1rem;
-    min-height: 40px;
-    max-width: var(--content-max-width);
+    min-height: 50px; /* Slightly taller */
+    max-width: 90%; /* Match chat container width */
     margin: 0 auto;
     transition: box-shadow var(--transition-fast);
 }
