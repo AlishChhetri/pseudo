@@ -212,8 +212,8 @@ This allows users to interact with a single unified interface while Pseudo intel
   - **Text**: OpenAI, Anthropic, Ollama (local models)
   - **Image**: OpenAI DALL-E, Stability AI
   - **Audio**: ElevenLabs
-- **Model Selection**: Allows users to manually select specific models if desired
-- **Settings Management**: Easy-to-use interface for managing API keys and provider settings
+- **Model Selection**: Automatically selects appropriate models based on content type
+- **Credential Management**: Simple JSON file configuration for API keys
 - **Modern UI**: Clean, responsive interface with light/dark mode support
 
 ## 🔧 Technology Stack
@@ -231,7 +231,7 @@ This allows users to interact with a single unified interface while Pseudo intel
 
 ## 📝 Configuration
 
-Pseudo uses a `credentials.json` file to store API keys. You can add your API keys through the web interface under Settings, or directly edit the file:
+Pseudo uses a `credentials.json` file to store API keys. You need to manually edit this file to add your API keys:
 
 ```json
 {
@@ -239,33 +239,31 @@ Pseudo uses a `credentials.json` file to store API keys. You can add your API ke
         "text": {
             "providers": {
                 "openai": {
-                    "api_key": "your-openai-api-key"
+                    "api_key": "your-openai-api-key",
+                    "models": ["gpt-4", "gpt-3.5-turbo"]
                 },
                 "anthropic": {
-                    "api_key": "your-anthropic-api-key"
+                    "api_key": "your-anthropic-api-key",
+                    "models": ["claude-3-opus", "claude-3-sonnet"]
                 }
             }
         },
         "image": {
             "providers": {
                 "openai": {
-                    "api_key": "your-openai-api-key"
-                },
-                "stability": {
-                    "api_key": "your-stability-api-key"
-                }
-            }
-        },
-        "audio": {
-            "providers": {
-                "elevenlabs": {
-                    "api_key": "your-elevenlabs-api-key"
+                    "api_key": "your-openai-api-key",
+                    "models": ["dall-e-3"]
                 }
             }
         }
     }
 }
 ```
+
+The order of providers and models in the file determines the priority in which they are used:
+- Providers are tried from top to bottom
+- Models within a provider are tried from left to right
+- If one fails, the next in line is automatically tried
 
 ## 🧠 How It Works
 

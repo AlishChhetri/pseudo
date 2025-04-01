@@ -48,6 +48,15 @@ class ContentRouter:
     def _load_credentials(self) -> Dict[str, Any]:
         """Load credentials from available file locations and return credential dictionary."""
         try:
+            # Define the default structure for empty credentials
+            default_credentials = {
+                "modes": {
+                    "text": {"providers": {}},
+                    "image": {"providers": {}},
+                    "audio": {"providers": {}},
+                }
+            }
+            
             # Search for credentials file in common locations
             search_paths = [
                 "credentials.json",  # Current directory
@@ -69,20 +78,29 @@ class ContentRouter:
                         self.credentials_path = path
                         return json.load(f)
 
-            # No credentials found - use default empty structure
-            logger.warning("No credentials file found. Using empty credentials.")
-            self.credentials_path = "credentials.json"  # Default to current directory
-            return {
-                "modes": {
-                    "text": {"providers": {}},
-                    "image": {"providers": {}},
-                    "audio": {"providers": {}},
-                }
-            }
+            # No credentials found - use project root as default location
+            project_root = Path(__file__).parent.parent.parent.parent
+            default_path = project_root / "credentials.json"
+            self.credentials_path = str(default_path.absolute())
+            
+            logger.warning(f"No credentials found. Creating default at: {self.credentials_path}")
+            
+            # Create default credentials file
+            with open(self.credentials_path, "w") as f:
+                json.dump(default_credentials, f, indent=2)
+            
+            return default_credentials
 
         except Exception as e:
             logger.error(f"Error loading credentials: {e}")
-            self.credentials_path = "credentials.json"  # Default to current directory
+            
+            # Ensure we have a valid path even in case of errors
+            project_root = Path(__file__).parent.parent.parent.parent
+            default_path = project_root / "credentials.json"
+            self.credentials_path = str(default_path.absolute())
+            
+            logger.warning(f"Using fallback credentials path: {self.credentials_path}")
+            
             return {
                 "modes": {
                     "text": {"providers": {}},
@@ -94,6 +112,13 @@ class ContentRouter:
     def save_credentials(self, credentials: Dict[str, Any]) -> bool:
         """Save credentials to disk and return success status."""
         try:
+            # Ensure we have a valid path
+            if not self.credentials_path or self.credentials_path == "":
+                # Use project root as default location if path is empty
+                project_root = Path(__file__).parent.parent.parent.parent
+                self.credentials_path = str((project_root / "credentials.json").absolute())
+                logger.warning(f"Empty credentials path. Using default: {self.credentials_path}")
+            
             # Create directory if it doesn't exist
             directory = os.path.dirname(self.credentials_path)
             if directory and not os.path.exists(directory):
@@ -105,7 +130,8 @@ class ContentRouter:
 
             # Update the credentials in memory
             self.credentials = credentials
-
+            
+            logger.info(f"Successfully saved credentials to {self.credentials_path}")
             return True
         except Exception as e:
             logger.error(f"Error saving credentials: {e}")
