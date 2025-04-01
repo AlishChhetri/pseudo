@@ -410,61 +410,59 @@ select:focus {
 
 .chat-history-item {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 0.75rem 1rem;
+    align-items: center;
+    padding: 8px 16px;
+    margin: 4px 0;
     border-radius: var(--radius-md);
     cursor: pointer;
-    transition: background-color var(--transition-fast);
+    transition: background-color 0.2s ease;
 }
 
 .chat-history-item:hover {
-    background-color: var(--bg-hover);
+    background-color: var(--hover-subtle);
 }
 
 .chat-history-item.active {
-    background-color: var(--bg-active);
+    background-color: var(--hover-subtle);
+    border-left: 3px solid var(--accent);
 }
 
 .chat-item-content {
-    display: flex;
-    flex-direction: column;
+    flex: 1;
     overflow: hidden;
-    flex-grow: 1;
 }
 
 .chat-item-title {
+    color: var(--text-primary);
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 180px;
+    margin-bottom: 2px;
 }
 
 .chat-item-date {
-    font-size: var(--font-size-xs);
     color: var(--text-tertiary);
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
 }
 
 .delete-chat-btn {
-    padding: 0.25rem;
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity var(--transition-fast), background-color var(--transition-fast);
-}
-
-.chat-history-item:hover .delete-chat-btn {
-    opacity: 0.7;
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    opacity: 0.6;
+    transition: opacity 0.2s ease, color 0.2s ease;
 }
 
 .delete-chat-btn:hover {
-    background-color: var(--bg-active);
-    opacity: 1 !important;
-}
-
-.delete-chat-btn img {
-    width: 16px;
-    height: 16px;
+    opacity: 1;
+    color: var(--text-error);
 }
 
 .sidebar-bottom {
@@ -1773,4 +1771,27 @@ select:focus {
 .message-action-button svg {
     width: 16px;
     height: 16px;
+}
+
+/* Toast notification */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    border: 1px solid var(--border-subtle);
+    font-size: var(--font-size-sm);
+}
+
+.toast-notification.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }

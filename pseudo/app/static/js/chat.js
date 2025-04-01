@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize
     setupEventListeners();
     setupMobileSidebar();
-    createNewChat(false);
+    
+    // When the page loads, the sidebar.js will automatically load the most recent chat
+    // so we don't need to explicitly create a new chat here unless there are no chats
 
     // Auto-focus input field when page loads
     if (inputField) {
@@ -132,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     
                     // Add to history in sidebar if sidebar functions exist
                     if (window.sidebarFunctions && typeof window.sidebarFunctions.addChatHistoryItem === 'function') {
-                        window.sidebarFunctions.addChatHistoryItem('New Chat', currentChatId);
+                        window.sidebarFunctions.addChatHistoryItem('New Chat', currentChatId, new Date().toLocaleDateString());
                     }
                     
                     console.log('Created new chat with ID:', currentChatId);
@@ -162,6 +164,36 @@ document.addEventListener('DOMContentLoaded', function () {
             chatContainer.style.display = 'flex';
         }
 
+        // Check if we need to create a new chat first
+        if (!currentChatId) {
+            // Create a new chat and then send the message
+            fetch('/api/chats/new', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.chat_id) {
+                    currentChatId = data.chat_id;
+                    // Now send the message
+                    sendMessage(message);
+                }
+            })
+            .catch(error => {
+                console.error('Error creating new chat:', error);
+            });
+        } else {
+            // Just send the message
+            sendMessage(message);
+        }
+    }
+    
+    /**
+     * Send a message to the API
+     */
+    function sendMessage(message) {
         // Add user message to UI
         appendMessage('user', message);
 
@@ -360,17 +392,25 @@ document.addEventListener('DOMContentLoaded', function () {
             
             // Scroll to bottom
             chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Update chat in sidebar
+            // Get the title from either the first user message or the default
+            const chatTitle = message || 'New Chat';
+            
+            // Update the chat in the sidebar to reflect its new position as most recent
+            if (window.sidebarFunctions && typeof window.sidebarFunctions.updateChatInSidebar === 'function') {
+                window.sidebarFunctions.updateChatInSidebar(currentChatId, chatTitle);
+            }
         })
         .catch(error => {
-            console.error('Error sending message:', error);
-            
             // Remove thinking indicator
             if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
                 chatContainer.removeChild(thinkingIndicator);
             }
             
             // Show error message
-            appendMessage('assistant', 'Sorry, there was an error processing your request. Please try again.');
+            console.error('Error sending message:', error);
+            createToastNotification('Error sending message. Please try again.', 5000);
         });
     }
 
@@ -514,30 +554,26 @@ document.addEventListener('DOMContentLoaded', function () {
      * Create a toast notification
      */
     function createToastNotification(message, duration = 3000) {
-        // Create toast container if it doesn't exist
-        let toastContainer = document.querySelector('.toast-container');
-        if (!toastContainer) {
-            toastContainer = document.createElement('div');
-            toastContainer.className = 'toast-container';
-            document.body.appendChild(toastContainer);
-        }
-        
-        // Create toast element
         const toast = document.createElement('div');
-        toast.className = 'toast';
+        toast.className = 'toast-notification';
         toast.textContent = message;
         
-        // Add to container
-        toastContainer.appendChild(toast);
+        document.body.appendChild(toast);
         
-        // Animate in
-        setTimeout(() => toast.classList.add('show'), 10);
+        // Trigger animation
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
         
         // Remove after duration
         setTimeout(() => {
             toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300); // Allow for fade out transition
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300); // Allow time for fade-out animation
         }, duration);
+        
+        return toast;
     }
 
     /**
@@ -737,4 +773,32 @@ document.addEventListener('DOMContentLoaded', function () {
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     }
-}); 
+});
+
+/**
+ * Create and display a toast notification
+ * @param {string} message - Message to display
+ * @param {number} duration - Duration in milliseconds
+ */
+function createToastNotification(message, duration = 3000) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    // Remove after duration
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300); // Allow time for fade-out animation
+    }, duration);
+    
+    return toast;
+} 

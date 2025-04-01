@@ -26,21 +26,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 const chatHistory = document.querySelector('.chat-history');
                 chatHistory.innerHTML = '';
                 
-                // Sort chats by timestamp (newest first)
-                const sortedChats = data.chats.sort((a, b) => {
-                    return new Date(b.timestamp || 0) - new Date(a.timestamp || 0);
-                });
-                
-                // Add each chat to the sidebar
-                sortedChats.forEach(chat => {
+                // The chats are already sorted by updated_at on the server side (newest first)
+                // Add each chat to the sidebar in the order received
+                data.chats.forEach(chat => {
+                    // Use truncated title or fallback to "Untitled Chat"
                     const chatTitle = chat.title || 'Untitled Chat';
                     const chatId = chat.id;
-                    addChatHistoryItem(chatTitle, chatId);
+                    const chatDate = new Date(chat.updated_at).toLocaleDateString();
+                    addChatHistoryItem(chatTitle, chatId, chatDate);
                 });
                 
-                // If there are chats, load the first one
-                if (sortedChats.length > 0) {
-                    switchToChat(sortedChats[0].id);
+                // If there are chats, load the most recent one (first in the list)
+                if (data.chats.length > 0) {
+                    switchToChat(data.chats[0].id);
                 }
             }
         })
@@ -53,10 +51,12 @@ document.addEventListener('DOMContentLoaded', function () {
      * Add a chat history item
      * @param {string} title - Chat title
      * @param {string} id - Unique identifier
+     * @param {string} date - Formatted date string
      */
-    function addChatHistoryItem(title, id) {
+    function addChatHistoryItem(title, id, date) {
         const chatHistory = document.querySelector('.chat-history');
 
+        // Create chat history item
         const item = document.createElement('div');
         item.className = 'chat-history-item';
         item.dataset.id = id;
@@ -64,13 +64,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const itemContent = document.createElement('div');
         itemContent.className = 'chat-item-content';
 
+        // Create truncated title element
         const itemTitle = document.createElement('div');
         itemTitle.className = 'chat-item-title';
-        itemTitle.textContent = title;
+        // Truncate title if too long (30 chars)
+        itemTitle.textContent = title.length > 30 ? title.substring(0, 30) + '...' : title;
+        
+        // Set title attribute for tooltip on hover
+        itemTitle.title = title;
 
         const itemDate = document.createElement('div');
         itemDate.className = 'chat-item-date';
-        itemDate.textContent = new Date().toLocaleDateString();
+        itemDate.textContent = date || new Date().toLocaleDateString();
 
         itemContent.appendChild(itemTitle);
         itemContent.appendChild(itemDate);
@@ -96,7 +101,11 @@ document.addEventListener('DOMContentLoaded', function () {
         item.appendChild(itemContent);
         item.appendChild(deleteBtn);
 
+        // Add to chat history
+        // Since the chats are already sorted server-side with most recent first,
+        // we can just append the chat items in the order they come
         chatHistory.appendChild(item);
+        
         return item;
     }
 
@@ -188,6 +197,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             detail: { chatId: chatId }
                         }));
                     }
+                } else {
+                    // Load the next available chat
+                    const nextChat = remainingChats[0];
+                    if (nextChat) {
+                        switchToChat(nextChat.dataset.id);
+                    }
                 }
             } else {
                 console.error('Failed to delete chat:', data.error);
@@ -198,10 +213,49 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    /**
+     * Update chat history with a real-time update
+     * Used when a new message is sent in the current chat
+     * @param {string} chatId - ID of the chat to update
+     * @param {string} title - Updated title
+     */
+    function updateChatInSidebar(chatId, title) {
+        // Find existing chat item
+        const existingItem = document.querySelector(`.chat-history-item[data-id="${chatId}"]`);
+        
+        if (existingItem) {
+            // Update the title
+            const titleElement = existingItem.querySelector('.chat-item-title');
+            if (titleElement) {
+                // Truncate title if too long (30 chars)
+                titleElement.textContent = title.length > 30 ? title.substring(0, 30) + '...' : title;
+                titleElement.title = title;
+            }
+            
+            // Update date
+            const dateElement = existingItem.querySelector('.chat-item-date');
+            if (dateElement) {
+                dateElement.textContent = new Date().toLocaleDateString();
+            }
+            
+            // Move to top of list (most recent first)
+            const chatHistory = document.querySelector('.chat-history');
+            if (chatHistory.firstChild !== existingItem) {
+                chatHistory.removeChild(existingItem);
+                chatHistory.insertBefore(existingItem, chatHistory.firstChild);
+            }
+        } else {
+            // If the item doesn't exist, add it
+            addChatHistoryItem(title, chatId, new Date().toLocaleDateString());
+        }
+    }
+
     // Expose functions for external use
     window.sidebarFunctions = {
         addChatHistoryItem,
         switchToChat,
-        deleteChat
+        deleteChat,
+        updateChatInSidebar,
+        refreshChats: loadChats
     };
 }); 
