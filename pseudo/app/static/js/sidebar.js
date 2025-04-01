@@ -22,12 +22,32 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             if (data.chats && Array.isArray(data.chats)) {
+                // Check if we already have a temporary chat that should remain at the top
+                const existingTempChats = document.querySelectorAll('.chat-history-item[data-id^="temp-"]');
+                let tempChatActive = false;
+                let tempChatData = null;
+                
+                // Save details of the most recently active temp chat if exists
+                if (existingTempChats.length > 0) {
+                    // Keep only the most recent (or active) temp chat
+                    existingTempChats.forEach((tempChat, index) => {
+                        if (tempChat.classList.contains('active') || index === 0) {
+                            tempChatActive = tempChat.classList.contains('active');
+                            tempChatData = {
+                                id: tempChat.dataset.id,
+                                title: tempChat.querySelector('.chat-item-title').title || 'New Chat',
+                                date: tempChat.querySelector('.chat-item-date').textContent || new Date().toLocaleDateString()
+                            };
+                        }
+                    });
+                }
+                
                 // Clear existing chat history
                 const chatHistory = document.querySelector('.chat-history');
                 chatHistory.innerHTML = '';
                 
-                // The chats are already sorted by updated_at on the server side (newest first)
                 // Add each chat to the sidebar in the order received
+                // The chats are already sorted by updated_at on the server side (newest first)
                 data.chats.forEach(chat => {
                     // Use truncated title or fallback to "Untitled Chat"
                     const chatTitle = chat.title || 'Untitled Chat';
@@ -36,8 +56,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     addChatHistoryItem(chatTitle, chatId, chatDate);
                 });
                 
-                // If there are chats, load the most recent one (first in the list)
-                if (data.chats.length > 0) {
+                // If we had a temporary chat, re-add it at the top
+                if (tempChatData) {
+                    const newTempChat = addChatHistoryItem(tempChatData.title, tempChatData.id, tempChatData.date);
+                    
+                    // If the temp chat was active, switch back to it
+                    if (tempChatActive) {
+                        switchToChat(tempChatData.id);
+                        return; // Skip loading other chats
+                    }
+                }
+                
+                // If there are chats and no temp chat was active, load the most recent one
+                if (data.chats.length > 0 && !tempChatActive) {
                     switchToChat(data.chats[0].id);
                 }
             }
@@ -101,10 +132,28 @@ document.addEventListener('DOMContentLoaded', function () {
         item.appendChild(itemContent);
         item.appendChild(deleteBtn);
 
-        // Add to chat history
-        // Since the chats are already sorted server-side with most recent first,
-        // we can just append the chat items in the order they come
-        chatHistory.appendChild(item);
+        // Always insert temporary or new chats at the top of the list
+        if (id.startsWith('temp-') || chatHistory.childNodes.length === 0) {
+            // Insert at the beginning (top) of the chat history
+            if (chatHistory.firstChild) {
+                chatHistory.insertBefore(item, chatHistory.firstChild);
+            } else {
+                chatHistory.appendChild(item);
+            }
+        } else {
+            // For existing chats being loaded from server history, 
+            // they're already in the correct order (server sorts by updated_at)
+            chatHistory.appendChild(item);
+        }
+
+        // If this is a temporary chat, automatically select it
+        if (id.startsWith('temp-')) {
+            // Set this as the active chat
+            document.querySelectorAll('.chat-history-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            item.classList.add('active');
+        }
         
         return item;
     }
@@ -114,7 +163,37 @@ document.addEventListener('DOMContentLoaded', function () {
      * @param {string} chatId - ID of chat to switch to
      */
     function switchToChat(chatId) {
-        // Load chat data from the server
+        // If this is a temporary chat ID, just highlight it and don't try to load from server
+        if (chatId.startsWith('temp-')) {
+            // Highlight the selected chat in the sidebar
+            document.querySelectorAll('.chat-history-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.id === chatId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Show welcome screen for new chat
+            const chatContainer = document.querySelector('.chat-container');
+            const welcomeScreen = document.querySelector('.welcome-screen');
+            
+            if (chatContainer && welcomeScreen) {
+                chatContainer.style.display = 'none';
+                welcomeScreen.style.display = 'flex';
+            }
+            
+            // Focus the input field
+            const inputField = document.querySelector('.input-field');
+            if (inputField) {
+                setTimeout(() => {
+                    inputField.focus();
+                }, 100);
+            }
+            
+            return;
+        }
+        
+        // For real chat IDs, load chat data from the server
         fetch(`/api/chats/${chatId}`, {
             method: 'GET',
             headers: {
@@ -164,7 +243,38 @@ document.addEventListener('DOMContentLoaded', function () {
      * @param {string} chatId - ID of chat to delete
      */
     function deleteChat(chatId) {
-        // Delete chat on the server
+        // If this is a temporary chat, just remove it from the UI
+        if (chatId.startsWith('temp-')) {
+            const item = document.querySelector(`.chat-history-item[data-id="${chatId}"]`);
+            if (item) {
+                item.remove();
+            }
+            
+            // Show welcome screen
+            const chatContainer = document.querySelector('.chat-container');
+            const welcomeScreen = document.querySelector('.welcome-screen');
+            
+            if (chatContainer && welcomeScreen) {
+                chatContainer.style.display = 'none';
+                welcomeScreen.style.display = 'flex';
+                
+                // Notify chat.js that we've switched to a new/empty chat
+                document.dispatchEvent(new CustomEvent('chatDeleted', {
+                    detail: { chatId: chatId }
+                }));
+            }
+            
+            // Check if we have any other chats to switch to
+            const remainingChats = document.querySelectorAll('.chat-history-item:not([data-id^="temp-"])');
+            if (remainingChats.length > 0) {
+                // Load the most recent chat
+                switchToChat(remainingChats[0].dataset.id);
+            }
+            
+            return;
+        }
+        
+        // For real chats, delete on the server
         fetch(`/api/chats/${chatId}`, {
             method: 'DELETE',
             headers: {
@@ -183,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 
                 // If no chats left, show welcome screen
-                const remainingChats = document.querySelectorAll('.chat-history-item');
+                const remainingChats = document.querySelectorAll('.chat-history-item:not([data-id^="temp-"])');
                 if (remainingChats.length === 0) {
                     const chatContainer = document.querySelector('.chat-container');
                     const welcomeScreen = document.querySelector('.welcome-screen');
@@ -214,13 +324,56 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     /**
+     * Remove any existing temporary chat
+     * Used when creating a new chat to ensure only one temp chat exists
+     */
+    function removeExistingTempChat() {
+        const tempChats = document.querySelectorAll('.chat-history-item[data-id^="temp-"]');
+        tempChats.forEach(tempChat => {
+            tempChat.remove();
+        });
+    }
+
+    /**
      * Update chat history with a real-time update
      * Used when a new message is sent in the current chat
      * @param {string} chatId - ID of the chat to update
      * @param {string} title - Updated title
      */
     function updateChatInSidebar(chatId, title) {
-        // Find existing chat item
+        // Handle case where we need to update a temp chat
+        const tempChatItem = document.querySelector('.chat-history-item[data-id^="temp-"].active');
+        
+        // If we have an active temp chat and a real chat ID, update the temp chat
+        if (tempChatItem && chatId && !chatId.startsWith('temp-')) {
+            // Update the temp chat with the real ID
+            tempChatItem.dataset.id = chatId;
+            
+            // Update the title
+            const titleElement = tempChatItem.querySelector('.chat-item-title');
+            if (titleElement) {
+                // Truncate title if too long (30 chars)
+                titleElement.textContent = title.length > 30 ? title.substring(0, 30) + '...' : title;
+                titleElement.title = title;
+            }
+            
+            // Update date
+            const dateElement = tempChatItem.querySelector('.chat-item-date');
+            if (dateElement) {
+                dateElement.textContent = new Date().toLocaleDateString();
+            }
+            
+            // Ensure it's at the top of the list
+            const chatHistory = document.querySelector('.chat-history');
+            if (chatHistory.firstChild !== tempChatItem) {
+                chatHistory.removeChild(tempChatItem);
+                chatHistory.insertBefore(tempChatItem, chatHistory.firstChild);
+            }
+            
+            return; // We've handled the temp chat case
+        }
+        
+        // Find existing chat item with the real ID
         const existingItem = document.querySelector(`.chat-history-item[data-id="${chatId}"]`);
         
         if (existingItem) {
@@ -256,6 +409,7 @@ document.addEventListener('DOMContentLoaded', function () {
         switchToChat,
         deleteChat,
         updateChatInSidebar,
-        refreshChats: loadChats
+        refreshChats: loadChats,
+        removeExistingTempChat
     };
 }); 

@@ -117,32 +117,30 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         chatMessages = [];
+        
+        // We'll create a chat ID in memory but won't save it to the server until a message is sent
+        // This prevents empty chats from being saved
         currentChatId = null;
-
-        if (saveImmediately) {
-            // Create a new chat on the server
-            fetch('/api/chats/new', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                if (data.chat_id) {
-                    currentChatId = data.chat_id;
-                    
-                    // Add to history in sidebar if sidebar functions exist
-                    if (window.sidebarFunctions && typeof window.sidebarFunctions.addChatHistoryItem === 'function') {
-                        window.sidebarFunctions.addChatHistoryItem('New Chat', currentChatId, new Date().toLocaleDateString());
-                    }
-                    
-                    console.log('Created new chat with ID:', currentChatId);
-                }
-            })
-            .catch(error => {
-                console.error('Error creating new chat:', error);
-            });
+        
+        // Remove any existing temporary chat first
+        if (window.sidebarFunctions && typeof window.sidebarFunctions.removeExistingTempChat === 'function') {
+            window.sidebarFunctions.removeExistingTempChat();
+        }
+        
+        // Create a new temporary chat
+        if (window.sidebarFunctions && typeof window.sidebarFunctions.addChatHistoryItem === 'function') {
+            const tempId = 'temp-' + Date.now(); // Temporary ID for UI only
+            
+            // Add the temporary chat to the sidebar - it will be automatically
+            // inserted at the top and marked as active by the addChatHistoryItem function
+            window.sidebarFunctions.addChatHistoryItem('New Chat', tempId, new Date().toLocaleDateString());
+            
+            // When user focuses on input, we'll prepare for them to type
+            if (inputField) {
+                setTimeout(() => {
+                    inputField.focus();
+                }, 100);
+            }
         }
     }
 
@@ -164,9 +162,13 @@ document.addEventListener('DOMContentLoaded', function () {
             chatContainer.style.display = 'flex';
         }
 
+        // Get the currently active temp chat if it exists
+        const activeTempChat = document.querySelector('.chat-history-item.active[data-id^="temp-"]');
+        const tempChatId = activeTempChat ? activeTempChat.dataset.id : null;
+
         // Check if we need to create a new chat first
         if (!currentChatId) {
-            // Create a new chat and then send the message
+            // Create a new chat on the server and then send the message
             fetch('/api/chats/new', {
                 method: 'POST',
                 headers: {
@@ -177,6 +179,12 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.chat_id) {
                     currentChatId = data.chat_id;
+                    
+                    // If we had a temp chat in the UI, update it with the real ID
+                    if (tempChatId && activeTempChat) {
+                        activeTempChat.dataset.id = currentChatId;
+                    }
+                    
                     // Now send the message
                     sendMessage(message);
                 }
