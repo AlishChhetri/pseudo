@@ -298,27 +298,7 @@ Always maintain the meaning of the original request while removing only the part
                         # If we got a response, return it immediately without trying further options
                         if response:
                             logger.info(f"Successfully processed with {provider_name}/{model_name}")
-                            # Return a dictionary with the response and provider/model info
-                            if isinstance(response, (str, bytes)):
-                                return {
-                                    "content": response,
-                                    "provider": provider_name,
-                                    "model": model_name
-                                }
-                            elif isinstance(response, dict):
-                                # If response is already a dict, add provider/model info
-                                response.update({
-                                    "provider": provider_name,
-                                    "model": model_name
-                                })
-                                return response
-                            else:
-                                # For any other type, wrap it
-                                return {
-                                    "content": response,
-                                    "provider": provider_name,
-                                    "model": model_name
-                                }
+                            return response
                     except Exception as e:
                         error_msg = f"Error with {provider_name}/{model_name}: {e}"
                         logger.warning(error_msg)

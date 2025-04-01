@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
             if (modelDropdownContent.style.display === 'block') {
                 modelDropdownContent.style.display = 'none';
-            } else {
+        } else {
                 // Get position of button for better positioning
                 const rect = modelDropdownBtn.getBoundingClientRect();
                 modelDropdownContent.style.top = (rect.bottom + 10) + 'px';
                 modelDropdownContent.style.left = rect.left + 'px';
                 
                 // Show dropdown
-                modelDropdownContent.style.display = 'block';
+            modelDropdownContent.style.display = 'block';
                 
                 // Position the dropdown based on available space
                 positionDropdown(modelDropdownContent);

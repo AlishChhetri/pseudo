@@ -34,31 +34,31 @@ document.addEventListener('DOMContentLoaded', function () {
     function setupEventListeners() {
         // Send button click
         if (sendButton) {
-            sendButton.addEventListener('click', handleSendMessage);
+        sendButton.addEventListener('click', handleSendMessage);
         }
 
         // Enter key press in input field
         if (inputField) {
             inputField.addEventListener('keydown', function (e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                }
-            });
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+            }
+        });
 
-            // Auto-resize input field
+        // Auto-resize input field
             inputField.addEventListener('input', function () {
-                inputField.style.height = 'auto';
-                inputField.style.height = (inputField.scrollHeight > 150 ? 150 : inputField.scrollHeight) + 'px';
-            });
+            inputField.style.height = 'auto';
+            inputField.style.height = (inputField.scrollHeight > 150 ? 150 : inputField.scrollHeight) + 'px';
+        });
         }
 
         // Suggestion chips
         suggestionChips?.forEach(chip => {
             chip.addEventListener('click', function () {
                 if (inputField) {
-                    inputField.value = chip.textContent;
-                    inputField.focus();
+                inputField.value = chip.textContent;
+                inputField.focus();
                 }
             });
         });
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 toggleSidebar(false);
             }
         });
-        
+
         // Listen for chat loaded events from sidebar
         document.addEventListener('chatLoaded', function(e) {
             console.log('Chat loaded event received:', e.detail);
@@ -125,8 +125,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => response.json())
-            .then(data => {
+                .then(response => response.json())
+                .then(data => {
                 if (data.chat_id) {
                     currentChatId = data.chat_id;
                     
@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content';
-        
+
         const thinkingDiv = document.createElement('div');
         thinkingDiv.className = 'thinking-indicator';
         thinkingDiv.innerHTML = '<span></span><span></span><span></span>';
