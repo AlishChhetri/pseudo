@@ -1,1 +1,1 @@
-"""Core modules for Pseudo application.""" 
+"""Core modules for Pseudo application."""

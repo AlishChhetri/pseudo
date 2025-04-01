@@ -1,1 +1,1 @@
-"""Flask application package for Pseudo.""" 
+"""Flask application package for Pseudo."""

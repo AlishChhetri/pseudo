@@ -101,7 +101,7 @@ def chat():
 
         # Determine mode and clean content in one step
         mode, cleaned_content = router.select_mode_and_clean_content(message)
-        
+
         # For debugging
         logger.info(f"Original input: '{message}'")
         logger.info(f"Detected mode: {mode}")
@@ -113,11 +113,11 @@ def chat():
         # Handle media if needed
         media_path = None
         response_obj = {
-            "response": response, 
-            "selected_mode": mode, 
+            "response": response,
+            "selected_mode": mode,
             "chat_id": chat_id,
             "original_input": message,
-            "cleaned_content": cleaned_content
+            "cleaned_content": cleaned_content,
         }
 
         if mode in ["image", "audio"]:
@@ -143,15 +143,15 @@ def chat():
                     "chat_id": chat_id,
                     "response": "Generated content",  #  Just a placeholder for text display
                     "original_input": message,
-                    "cleaned_content": cleaned_content
+                    "cleaned_content": cleaned_content,
                 }
 
         # Save assistant response to chat history
         assistant_message = {
-            "role": "assistant", 
+            "role": "assistant",
             "mode": mode,
             "original_input": message,
-            "cleaned_content": cleaned_content
+            "cleaned_content": cleaned_content,
         }
 
         # Handle content based on type

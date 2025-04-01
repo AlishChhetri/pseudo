@@ -45,7 +45,11 @@ def main() -> None:
     # Get server configuration from environment variables
     host = os.environ.get("FLASK_HOST", "0.0.0.0")  #  Default host to all interfaces
     port = int(os.environ.get("FLASK_PORT", 5000))  #  Default port for development
-    debug = os.environ.get("FLASK_DEBUG", "True").lower() in ("true", "1", "t")  #  Debug mode toggle
+    debug = os.environ.get("FLASK_DEBUG", "True").lower() in (
+        "true",
+        "1",
+        "t",
+    )  #  Debug mode toggle
 
     # Display startup information
     print(f"Starting Pseudo application on http://{host}:{port}")

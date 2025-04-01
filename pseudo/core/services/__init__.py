@@ -1,1 +1,1 @@
-"""Service modules for Pseudo application.""" 
+"""Service modules for Pseudo application."""

@@ -30,8 +30,12 @@ class Config:
     CREDENTIALS_FILE = credentials_file
 
     # Ollama settings for content detection
-    SELECTOR_MODEL = os.environ.get("SELECTOR_MODEL", "deepseek-r1")  #  Model used for content routing
-    SELECTOR_MODEL_TAG = os.environ.get("SELECTOR_MODEL_TAG", "8b")  #  Size/tag of the selector model
+    SELECTOR_MODEL = os.environ.get(
+        "SELECTOR_MODEL", "deepseek-r1"
+    )  #  Model used for content routing
+    SELECTOR_MODEL_TAG = os.environ.get(
+        "SELECTOR_MODEL_TAG", "8b"
+    )  #  Size/tag of the selector model
 
     # Media settings
     MAX_MEDIA_SIZE = int(os.environ.get("MAX_MEDIA_SIZE", 10 * 1024 * 1024))  #  10 MB

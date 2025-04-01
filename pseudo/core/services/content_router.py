@@ -5,7 +5,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List
 
 # Import apicenter from sibling directory
 # First, get parent directory of pseudo project
@@ -113,14 +113,14 @@ class ContentRouter:
 
     def select_mode_and_clean_content(self, user_input: str) -> tuple[str, str]:
         """Determine content type and extract cleaned content from user input.
-        
+
         Returns a tuple of (mode, cleaned_content) where mode is one of 'text', 'image', 'audio'
         and cleaned_content is the extracted actual content the user wants to process.
         """
         try:
             # System prompt for content classification and extraction
             system_prompt = """You are a content analyzer that determines both the type of content requested and extracts the actual content to be processed.
-            
+
 Based on the user's input, you must respond with EXACTLY this format:
 ```
 mode: <mode>
@@ -186,27 +186,30 @@ Always maintain the meaning of the original request while removing only the part
                             else:
                                 logger.warning(f"Unexpected response format: {response}")
                                 continue  #  Try next provider in queue
-                            
+
                             # Parse the response to extract mode and cleaned content
                             mode = None
                             cleaned_content = None
-                            
+
                             # Look for the mode and content pattern
-                            for line in response_content.split('\n'):
+                            for line in response_content.split("\n"):
                                 line = line.strip()
                                 if line.startswith("mode:"):
                                     mode = line.replace("mode:", "").strip().lower()
                                 elif line.startswith("content:"):
                                     cleaned_content = line.replace("content:", "").strip()
-                            
+
                             # If response is in code block format, try to extract from that
                             if not mode or not cleaned_content:
                                 import re
+
                                 # Try to extract content between ```
-                                code_block_match = re.search(r'```(.*?)```', response_content, re.DOTALL)
+                                code_block_match = re.search(
+                                    r"```(.*?)```", response_content, re.DOTALL
+                                )
                                 if code_block_match:
                                     code_block = code_block_match.group(1)
-                                    for line in code_block.split('\n'):
+                                    for line in code_block.split("\n"):
                                         line = line.strip()
                                         if line.startswith("mode:"):
                                             mode = line.replace("mode:", "").strip().lower()
@@ -215,7 +218,9 @@ Always maintain the meaning of the original request while removing only the part
 
                             # Validate the extracted information
                             if mode in ["text", "image", "audio"] and cleaned_content:
-                                logger.info(f"Mode detected: {mode}, Cleaned content: '{cleaned_content}'")
+                                logger.info(
+                                    f"Mode detected: {mode}, Cleaned content: '{cleaned_content}'"
+                                )
                                 return mode, cleaned_content
                             else:
                                 logger.warning(
@@ -229,7 +234,9 @@ Always maintain the meaning of the original request while removing only the part
                             continue  #  Try next provider in queue
 
             # If all providers failed or none configured, default to text with original input
-            logger.warning("All attempts to detect mode and clean content failed, defaulting to text mode with original input")
+            logger.warning(
+                "All attempts to detect mode and clean content failed, defaulting to text mode with original input"
+            )
             return "text", user_input
 
         except Exception as e:
