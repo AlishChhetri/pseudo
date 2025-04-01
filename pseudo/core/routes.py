@@ -95,19 +95,30 @@ def chat():
         if not chat_id or not chat_manager.get_chat(chat_id):
             chat_id = chat_manager.create_new_chat(save=False)
 
-        # Save user message to chat history
+        # Save original user message to chat history
         user_message = {"role": "user", "content": message}
         chat_manager.add_message(chat_id, user_message)
 
-        # Determine mode for message
-        mode = router.select_mode(message)
+        # Determine mode and clean content in one step
+        mode, cleaned_content = router.select_mode_and_clean_content(message)
+        
+        # For debugging
+        logger.info(f"Original input: '{message}'")
+        logger.info(f"Detected mode: {mode}")
+        logger.info(f"Cleaned content: '{cleaned_content}'")
 
-        # Process the message based on detected mode
-        response = router.process_content(mode, message)
+        # Process the message based on detected mode and cleaned content
+        response = router.process_content(mode, cleaned_content)
 
         # Handle media if needed
         media_path = None
-        response_obj = {"response": response, "selected_mode": mode, "chat_id": chat_id}
+        response_obj = {
+            "response": response, 
+            "selected_mode": mode, 
+            "chat_id": chat_id,
+            "original_input": message,
+            "cleaned_content": cleaned_content
+        }
 
         if mode in ["image", "audio"]:
             # Get chat-specific media directory
@@ -131,10 +142,17 @@ def chat():
                     "selected_mode": mode,
                     "chat_id": chat_id,
                     "response": "Generated content",  #  Just a placeholder for text display
+                    "original_input": message,
+                    "cleaned_content": cleaned_content
                 }
 
         # Save assistant response to chat history
-        assistant_message = {"role": "assistant", "mode": mode}
+        assistant_message = {
+            "role": "assistant", 
+            "mode": mode,
+            "original_input": message,
+            "cleaned_content": cleaned_content
+        }
 
         # Handle content based on type
         if isinstance(response, bytes):
