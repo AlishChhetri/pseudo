@@ -30,6 +30,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 100);
     }
 
+    // Scroll to bottom when page loads
+    setTimeout(scrollToBottom, 100);
+
+    /**
+     * Scroll chat container to bottom
+     */
+    function scrollToBottom() {
+        if (chatContainer) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            // Also scroll the window to ensure the input container is visible
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+    }
+
     /**
      * Set up all event listeners
      */
@@ -305,10 +319,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message assistant-message';
                 
-                const avatarDiv = document.createElement('div');
-                avatarDiv.className = 'avatar';
-                
-                messageDiv.appendChild(avatarDiv);
                 messageDiv.appendChild(contentDiv);
                 
                 chatContainer.appendChild(messageDiv);
@@ -380,10 +390,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message assistant-message';
                 
-                const avatarDiv = document.createElement('div');
-                avatarDiv.className = 'avatar';
-                
-                messageDiv.appendChild(avatarDiv);
                 messageDiv.appendChild(contentDiv);
                 
                 chatContainer.appendChild(messageDiv);
@@ -434,99 +440,62 @@ document.addEventListener('DOMContentLoaded', function () {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${role}-message`;
 
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'avatar';
-
+        // Create content container
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content';
-        contentDiv.textContent = content;
+        
+        // Add the message content
+        if (typeof content === 'string') {
+            contentDiv.textContent = content;
+        } else if (content instanceof HTMLElement) {
+            contentDiv.appendChild(content);
+        }
 
-        // Add model attribution for assistant messages
-        if (role === 'assistant' && (metadata.model || metadata.mode)) {
+        // Add model attribution if available
+        if (metadata.provider && metadata.model) {
             const attributionDiv = document.createElement('div');
             attributionDiv.className = 'model-attribution';
             
-            // Create attribution text
-            const attributionTextSpan = document.createElement('span');
-            attributionTextSpan.className = 'model-attribution-text';
+            const attributionText = document.createElement('span');
+            attributionText.className = 'model-attribution-text';
+            attributionText.textContent = `${metadata.provider} | ${metadata.model}`;
             
-            let modeText = metadata.mode ? metadata.mode.charAt(0).toUpperCase() + metadata.mode.slice(1) : 'Text';
-            let providerModel = '';
-            
-            if (metadata.provider && metadata.model) {
-                providerModel = `${metadata.provider} - ${metadata.model}`;
-            } else if (metadata.model) {
-                providerModel = metadata.model;
-            } else {
-                providerModel = 'Unknown';
-            }
-            
-            attributionTextSpan.textContent = `${modeText} | ${providerModel}`;
-            
-            attributionDiv.appendChild(attributionTextSpan);
-            
-            // Create action buttons based on content type
             const actionsDiv = document.createElement('div');
             actionsDiv.className = 'message-actions';
             
-            if (metadata.mode === 'text' || !metadata.mode) {
-                // Copy button for text
-                const copyButton = document.createElement('button');
-                copyButton.className = 'message-action-button copy-button';
-                copyButton.setAttribute('aria-label', 'Copy text');
-                copyButton.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
-                `;
-                copyButton.addEventListener('click', () => {
-                    navigator.clipboard.writeText(content)
-                        .then(() => createToastNotification('Text copied to clipboard'))
-                        .catch(err => console.error('Could not copy text: ', err));
-                });
-                actionsDiv.appendChild(copyButton);
-            } else if (metadata.mode === 'image') {
-                // Download button for image
+            // Copy button
+            const copyButton = document.createElement('button');
+            copyButton.className = 'message-action-button';
+            copyButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+            copyButton.title = 'Copy text';
+            copyButton.onclick = () => {
+                navigator.clipboard.writeText(content);
+                createToastNotification('Text copied to clipboard');
+            };
+            
+            // Download button for media
+            if (metadata.type === 'image' || metadata.type === 'audio') {
                 const downloadButton = document.createElement('button');
-                downloadButton.className = 'message-action-button download-button';
-                downloadButton.setAttribute('aria-label', 'Download image');
-                downloadButton.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                `;
-                actionsDiv.appendChild(downloadButton);
-            } else if (metadata.mode === 'audio') {
-                // Download button for audio
-                const downloadButton = document.createElement('button');
-                downloadButton.className = 'message-action-button download-button';
-                downloadButton.setAttribute('aria-label', 'Download audio');
-                downloadButton.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                `;
+                downloadButton.className = 'message-action-button';
+                downloadButton.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>';
+                downloadButton.title = 'Download';
+                downloadButton.onclick = () => {
+                    window.open(metadata.url, '_blank');
+                };
                 actionsDiv.appendChild(downloadButton);
             }
             
+            actionsDiv.appendChild(copyButton);
+            attributionDiv.appendChild(attributionText);
             attributionDiv.appendChild(actionsDiv);
             contentDiv.appendChild(attributionDiv);
         }
 
-        messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
-
         chatContainer.appendChild(messageDiv);
-
-        // Scroll to bottom
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-
-        return messageDiv;
+        
+        // Scroll to bottom after adding message
+        setTimeout(scrollToBottom, 100);
     }
 
     /**
@@ -538,9 +507,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const messageDiv = document.createElement('div');
         messageDiv.className = 'message assistant-message thinking';
 
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'avatar';
-
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content';
 
@@ -549,7 +515,6 @@ document.addEventListener('DOMContentLoaded', function () {
         thinkingDiv.innerHTML = '<span></span><span></span><span></span>';
 
         contentDiv.appendChild(thinkingDiv);
-        messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
 
         chatContainer.appendChild(messageDiv);
@@ -684,10 +649,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         const messageDiv = document.createElement('div');
                         messageDiv.className = 'message assistant-message';
                         
-                        const avatarDiv = document.createElement('div');
-                        avatarDiv.className = 'avatar';
-                        
-                        messageDiv.appendChild(avatarDiv);
                         messageDiv.appendChild(contentDiv);
                         
                         chatContainer.appendChild(messageDiv);
@@ -758,10 +719,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         const messageDiv = document.createElement('div');
                         messageDiv.className = 'message assistant-message';
                         
-                        const avatarDiv = document.createElement('div');
-                        avatarDiv.className = 'avatar';
-                        
-                        messageDiv.appendChild(avatarDiv);
                         messageDiv.appendChild(contentDiv);
                         
                         chatContainer.appendChild(messageDiv);
