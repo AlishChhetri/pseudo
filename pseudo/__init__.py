@@ -4,8 +4,8 @@ __version__ = "0.1.0"
 
 
 # Entry point for poetry script
-def main():
-    """Entry point for the application."""
+def main() -> None:
+    """Run the application using the core app module."""
     from pseudo.core.app import main as app_main
 
     app_main()

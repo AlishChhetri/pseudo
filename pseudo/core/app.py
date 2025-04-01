@@ -18,11 +18,11 @@ def create_app() -> Flask:
     )
 
     # Load configuration from config module
-    app.config.from_object("pseudo.core.config")
+    app.config.from_object(Config)
 
     # Ensure required directories exist for storage
     chat_history_dir = Path(app.config["CHAT_HISTORY_DIR"])
-    chat_history_dir.mkdir(exist_ok=True, parents=True)
+    chat_history_dir.mkdir(exist_ok=True, parents=True)  #  Create directory if it doesn't exist
 
     # Register all routes from routes module
     register_routes(app)
@@ -43,9 +43,9 @@ def main() -> None:
     app = create_app()
 
     # Get server configuration from environment variables
-    host = os.environ.get("FLASK_HOST", "0.0.0.0")
-    port = int(os.environ.get("FLASK_PORT", 5000))
-    debug = os.environ.get("FLASK_DEBUG", "True").lower() in ("true", "1", "t")
+    host = os.environ.get("FLASK_HOST", "0.0.0.0")  #  Default host to all interfaces
+    port = int(os.environ.get("FLASK_PORT", 5000))  #  Default port for development
+    debug = os.environ.get("FLASK_DEBUG", "True").lower() in ("true", "1", "t")  #  Debug mode toggle
 
     # Display startup information
     print(f"Starting Pseudo application on http://{host}:{port}")

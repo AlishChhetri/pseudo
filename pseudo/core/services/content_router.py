@@ -46,7 +46,7 @@ class ContentRouter:
         self.credentials_path = ""
 
     def _load_credentials(self) -> Dict[str, Any]:
-        """Load credentials from available credentials file locations."""
+        """Load credentials from available file locations and return credential dictionary."""
         try:
             # Search for credentials file in common locations
             search_paths = [
@@ -92,7 +92,7 @@ class ContentRouter:
             }
 
     def save_credentials(self, credentials: Dict[str, Any]) -> bool:
-        """Save credentials to the credentials.json file."""
+        """Save credentials to disk and return success status."""
         try:
             # Create directory if it doesn't exist
             directory = os.path.dirname(self.credentials_path)
@@ -112,7 +112,7 @@ class ContentRouter:
             raise e
 
     def select_mode(self, user_input: str) -> str:
-        """Determine content type (text, image, audio) using the queue-based provider approach."""
+        """Determine content type (text, image, audio) and return mode string."""
         try:
             # System prompt for content classification
             system_prompt = "You are a content type classifier. Based on the user's input, respond with a single word: 'text', 'image', or 'audio'. Nothing else."
@@ -176,15 +176,7 @@ class ContentRouter:
             return "text"  # Default to text mode on error
 
     def process_content(self, mode: str, prompt: str) -> Any:
-        """Process content using provider/model queue from credentials.json.
-
-        This method implements a strict queue-based approach where:
-        1. Providers are tried in the exact order they appear in credentials.json
-        2. Models for each provider are tried in the exact order of their array
-        3. The system moves to the next option only if the current one fails
-
-        No default providers or models are used - only those in credentials.json.
-        """
+        """Process content using provider queue and return response of appropriate type."""
         try:
             # Check for valid mode configuration
             if mode not in self.credentials["modes"]:

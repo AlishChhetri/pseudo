@@ -29,8 +29,8 @@ settings_bp = Blueprint("settings", __name__, url_prefix="/settings")
 chats_bp = Blueprint("chats", __name__, url_prefix="/chats")
 
 
-# Ensure chat manager is available in app context
 def get_chat_manager():
+    """Get or create chat manager instance from flask application context."""
     if "chat_manager" not in g:
         g.chat_manager = ChatManager()
     return g.chat_manager
@@ -77,10 +77,11 @@ def download_chat_history_media(chat_id, filename):
 # API routes for chat
 @api_bp.route("/chat", methods=["POST"])
 def chat():
+    """Process incoming chat message, route to appropriate AI provider, and return response."""
     try:
         data = request.json
         message = data.get("message")
-        model_selection = data.get("model", "Auto")
+        model_selection = data.get("model", "Auto")  #  Default to automatic model selection
         chat_id = data.get("chat_id")
 
         if not message:
@@ -129,7 +130,7 @@ def chat():
                     "filename": filename,
                     "selected_mode": mode,
                     "chat_id": chat_id,
-                    "response": "Generated content",  # Just a placeholder for text display
+                    "response": "Generated content",  #  Just a placeholder for text display
                 }
 
         # Save assistant response to chat history

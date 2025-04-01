@@ -24,7 +24,7 @@ class MediaManager:
         media_type: str,
         target_dir: Union[str, Path],
     ) -> Optional[Path]:
-        """Save media content to the specified directory with appropriate format."""
+        """Save media content to file and return the path if successful."""
         try:
             # Validate media type
             if media_type not in ["image", "audio"]:
@@ -35,9 +35,9 @@ class MediaManager:
 
             # Determine appropriate file extension based on media type
             if media_type == "image":
-                extension = ".png"
-            else:  # audio
-                extension = ".mp3"
+                extension = ".png"  #  Default format for images
+            else:  #  audio
+                extension = ".mp3"  #  Default format for audio
 
             filename = f"{unique_id}{extension}"
 
@@ -68,9 +68,9 @@ class MediaManager:
                 # Content is base64 encoded - decode and save
                 import base64
 
-                imgdata = base64.b64decode(content["base64"])
+                img_data = base64.b64decode(content["base64"])
                 with open(target_path, "wb") as f:
-                    f.write(imgdata)
+                    f.write(img_data)
             else:
                 # Unsupported content format
                 logger.error(f"Unsupported content format: {type(content)}")
