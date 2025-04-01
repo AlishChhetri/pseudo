@@ -10,33 +10,27 @@
 </head>
 
 <body>
-    <aside class="sidebar">
-        <div class="sidebar-top">
-            <button class="sidebar-toggle" aria-label="Toggle sidebar">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-                </svg>
-            </button>
-        </div>
+    <aside class="sidebar expanded">
         <div class="sidebar-content">
-            <div class="sidebar-actions">
+            <div class="sidebar-top-section">
                 <button class="new-chat-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5v14M5 12h14"></path>
                     </svg>
                     <span class="btn-text">New chat</span>
                 </button>
             </div>
-            <div class="chat-history">
-                <!-- Chat history items will be added here dynamically -->
+            <div class="chat-history-section">
+                <div class="chat-history">
+                    <!-- Chat history items will be added here dynamically -->
+                </div>
             </div>
         </div>
         <div class="sidebar-bottom">
             <button class="settings-btn" onclick="window.location.href='/settings'">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" />
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                 </svg>
                 <span class="btn-text">Settings</span>
             </button>
@@ -49,16 +43,16 @@
                 <div class="model-dropdown-header">
                     <div class="header-title">
                         Pseudo
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M7 10l5 5 5-5z" />
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </div>
                     <div class="selected-model-wrapper">
-                        <span class="selected-model">Auto</span>
+                        <span class="selected-model" id="selected-model">Auto</span>
                     </div>
                 </div>
             </button>
-            <div class="model-dropdown-content" role="menu">
+            <div class="model-dropdown-content" id="model-dropdown-content" role="menu">
                 <div class="model-option selected" data-model="Auto" role="menuitem">
                     <span class="model-title">Auto</span>
                     <span class="model-subtitle">Automatically select best model</span>
@@ -113,14 +107,16 @@
         </div>
 
         <div class="welcome-screen">
-            <h1 class="welcome-title">Welcome to Pseudo</h1>
-            <p class="welcome-subtitle">Your intelligent content router that automatically selects the best AI model for
-                your needs</p>
+            <div class="welcome-content">
+                <h1 class="welcome-title">Welcome to Pseudo</h1>
+                <p class="welcome-subtitle">Your intelligent content router that automatically selects the best AI model for
+                    your needs</p>
 
-            <div class="suggestion-chips">
-                <button class="suggestion-chip">Write a short story</button>
-                <button class="suggestion-chip">Draw a sunset over mountains</button>
-                <button class="suggestion-chip">Generate audio narration</button>
+                <div class="suggestion-chips">
+                    <button class="suggestion-chip">Write a short story</button>
+                    <button class="suggestion-chip">Draw a sunset over mountains</button>
+                    <button class="suggestion-chip">Generate audio narration</button>
+                </div>
             </div>
         </div>
 
@@ -130,9 +126,9 @@
                     oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"
                     aria-label="Enter a prompt"></textarea>
                 <button class="send-button" aria-label="Send message">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path
-                            d="M3.4 20.4l17.45-7.48a1 1 0 000-1.84L3.4 3.6a.993.993 0 00-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z" />
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                     </svg>
                 </button>
             </div>
@@ -142,6 +138,7 @@
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/model_select.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/demo.js') }}"></script>
 </body>
 
 </html>

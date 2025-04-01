@@ -1,34 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Sidebar elements
-    const sidebarToggle = document.querySelector('.sidebar-toggle');
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
 
-    // Check localStorage for saved sidebar state
-    let isSidebarExpanded = localStorage.getItem('sidebarExpanded') === 'true';
-
-    // Apply initial state
-    updateSidebarState();
-
-    // Toggle sidebar on button click
-    sidebarToggle.addEventListener('click', function () {
-        isSidebarExpanded = !isSidebarExpanded;
-        updateSidebarState();
-
-        // Save state to localStorage
-        localStorage.setItem('sidebarExpanded', isSidebarExpanded);
-    });
-
-    /**
-     * Update the sidebar and main content based on expanded state
-     */
-    function updateSidebarState() {
-        if (isSidebarExpanded) {
-            sidebar.classList.add('expanded');
-        } else {
-            sidebar.classList.remove('expanded');
-        }
-    }
+    // Always keep sidebar expanded
+    sidebar.classList.add('expanded');
 
     /**
      * Add a chat history item
@@ -58,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-chat-btn';
-        deleteBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
+        deleteBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
         deleteBtn.title = 'Delete chat';
 
         // Handle click to switch to this chat

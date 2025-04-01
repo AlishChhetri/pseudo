@@ -56,27 +56,33 @@ document.addEventListener('DOMContentLoaded', function () {
      */
     function setupEventListeners() {
         // Send button click
-        sendButton.addEventListener('click', handleSendMessage);
+        if (sendButton) {
+            sendButton.addEventListener('click', handleSendMessage);
+        }
 
         // Enter key press in input field
-        inputField?.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage();
-            }
-        });
+        if (inputField) {
+            inputField.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            });
 
-        // Auto-resize input field
-        inputField?.addEventListener('input', function () {
-            inputField.style.height = 'auto';
-            inputField.style.height = (inputField.scrollHeight > 150 ? 150 : inputField.scrollHeight) + 'px';
-        });
+            // Auto-resize input field
+            inputField.addEventListener('input', function () {
+                inputField.style.height = 'auto';
+                inputField.style.height = (inputField.scrollHeight > 150 ? 150 : inputField.scrollHeight) + 'px';
+            });
+        }
 
         // Suggestion chips
         suggestionChips?.forEach(chip => {
             chip.addEventListener('click', function () {
-                inputField.value = chip.textContent;
-                inputField.focus();
+                if (inputField) {
+                    inputField.value = chip.textContent;
+                    inputField.focus();
+                }
             });
         });
 
@@ -103,6 +109,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     modelDropdownBtn.setAttribute('aria-expanded', 'false');
                 }
             }
+        });
+
+        // Listen for model selection events
+        document.addEventListener('modelSelected', function(e) {
+            console.log('Model selected event received:', e.detail.model);
+            // You can implement additional logic here
         });
     }
 
@@ -325,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (welcomeScreen) {
-            welcomeScreen.style.display = 'block';
+            welcomeScreen.style.display = 'flex';
         }
 
         if (chatContainer) {
@@ -333,6 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         chatMessages = [];
+        currentChatId = null;
 
         if (saveImmediately) {
             // Create new chat via API
@@ -465,6 +478,8 @@ document.addEventListener('DOMContentLoaded', function () {
      * Handle sending a message
      */
     function handleSendMessage() {
+        if (!inputField) return;
+        
         const message = inputField.value.trim();
         if (!message) return;
 
@@ -487,79 +502,16 @@ document.addEventListener('DOMContentLoaded', function () {
         // Show thinking indicator
         const thinkingIndicator = appendThinkingIndicator();
 
-        // Send message to backend
-        sendMessageToBackend(message)
-            .then(response => {
-                // Remove thinking indicator
-                if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
-                    chatContainer.removeChild(thinkingIndicator);
-                }
+        // Simulate response after a short delay
+        setTimeout(() => {
+            // Remove thinking indicator
+            if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
+                chatContainer.removeChild(thinkingIndicator);
+            }
 
-                // Process and display response
-                processResponse(response);
-
-                // Update chat history display
-                loadChatHistory();
-            })
-            .catch(error => {
-                // Remove thinking indicator
-                if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
-                    chatContainer.removeChild(thinkingIndicator);
-                }
-
-                // Show error message
-                appendMessage('assistant', `Error: ${error.message}`);
-            });
-    }
-
-    /**
-     * Send message to backend API
-     */
-    function sendMessageToBackend(message) {
-        return fetch('/api/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: message,
-                model: selectedModel,
-                chat_id: currentChatId,
-                use_chat_folder: true // Ensure media is saved to chat folder
-            })
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(data => {
-                        throw new Error(data.error || 'Unknown error occurred');
-                    });
-                }
-                return response.json();
-            });
-    }
-
-    /**
-     * Process the response from the backend
-     */
-    function processResponse(response) {
-        const content = response.response;
-        const mode = response.selected_mode;
-
-        // Update current chat ID if needed
-        if (response.chat_id && !currentChatId) {
-            currentChatId = response.chat_id;
-        }
-
-        // Display message based on content type
-        if (mode === 'image' && response.url) {
-            // Always use the chat-specific URL directly
-            appendImageMessage(response.url, true);
-        } else if (mode === 'audio' && response.url) {
-            // Always use the chat-specific URL directly
-            appendAudioMessage(response.url, true);
-        } else {
-            appendMessage('assistant', content);
-        }
+            // Display response
+            appendMessage('assistant', 'This is a simulated response to your message: "' + message + '"');
+        }, 2000);
     }
 
     /**
@@ -576,41 +528,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const contentDiv = document.createElement('div');
         contentDiv.className = 'content';
-
-        // Process content for code blocks
-        if (typeof content === 'string' && content.includes('```')) {
-            const parts = content.split(/(```(?:\w+)?\n[\s\S]*?\n```)/g);
-
-            parts.forEach(part => {
-                if (part.startsWith('```') && part.endsWith('```')) {
-                    // Handle code block
-                    const codeBlock = document.createElement('pre');
-                    codeBlock.className = 'code-block';
-
-                    // Get language if specified
-                    const langMatch = part.match(/```(\w+)?\n/);
-                    const language = langMatch && langMatch[1] ? langMatch[1] : '';
-
-                    // Add data-language attribute for the language label
-                    codeBlock.setAttribute('data-language', language || 'code');
-
-                    // Get code content
-                    const codeContent = part
-                        .replace(/```(?:\w+)?\n/, '')
-                        .replace(/\n```$/, '');
-
-                    codeBlock.innerHTML = `<code class="language-${language}">${escapeHtml(codeContent)}</code>`;
-                    contentDiv.appendChild(codeBlock);
-                } else if (part.trim()) {
-                    // Handle regular text
-                    const textNode = document.createElement('p');
-                    textNode.textContent = part;
-                    contentDiv.appendChild(textNode);
-                }
-            });
-        } else {
-            contentDiv.textContent = content;
-        }
+        contentDiv.textContent = content;
 
         messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
@@ -623,11 +541,36 @@ document.addEventListener('DOMContentLoaded', function () {
         return messageDiv;
     }
 
-    // Helper function to escape HTML for code blocks
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
+    /**
+     * Append a thinking indicator to the chat container
+     */
+    function appendThinkingIndicator() {
+        if (!chatContainer) return document.createElement('div');
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message assistant-message thinking';
+
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'avatar';
+
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'content';
+        contentDiv.style.position = 'relative';
+        contentDiv.style.minHeight = '50px';
+        contentDiv.style.width = '100%';
+
+        const thinkingDiv = document.createElement('div');
+        thinkingDiv.className = 'thinking-indicator';
+        thinkingDiv.innerHTML = '<span></span><span></span><span></span>';
+
+        contentDiv.appendChild(thinkingDiv);
+        messageDiv.appendChild(avatarDiv);
+        messageDiv.appendChild(contentDiv);
+
+        chatContainer.appendChild(messageDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+        return messageDiv;
     }
 
     /**
@@ -807,35 +750,6 @@ document.addEventListener('DOMContentLoaded', function () {
         audioWrapper.appendChild(mediaActions);
 
         contentDiv.appendChild(audioWrapper);
-        messageDiv.appendChild(avatarDiv);
-        messageDiv.appendChild(contentDiv);
-
-        chatContainer.appendChild(messageDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-
-        return messageDiv;
-    }
-
-    /**
-     * Append a thinking indicator to the chat container
-     */
-    function appendThinkingIndicator() {
-        if (!chatContainer) return document.createElement('div');
-
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message assistant-message thinking';
-
-        const avatarDiv = document.createElement('div');
-        avatarDiv.className = 'avatar';
-
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'content';
-
-        const thinkingDiv = document.createElement('div');
-        thinkingDiv.className = 'thinking-indicator';
-        thinkingDiv.innerHTML = '<span></span><span></span><span></span>';
-
-        contentDiv.appendChild(thinkingDiv);
         messageDiv.appendChild(avatarDiv);
         messageDiv.appendChild(contentDiv);
 
