@@ -163,6 +163,13 @@ document.addEventListener('DOMContentLoaded', function () {
      * @param {string} chatId - ID of chat to switch to
      */
     function switchToChat(chatId) {
+        // Map chatId if it's in our mapping table
+        if (window.chatIdMap && window.chatIdMap[chatId]) {
+            const mappedId = window.chatIdMap[chatId];
+            console.log(`Using mapped ID: ${mappedId} instead of ${chatId}`);
+            chatId = mappedId;
+        }
+        
         // If this is a temporary chat ID, just highlight it and don't try to load from server
         if (chatId.startsWith('temp-')) {
             // Highlight the selected chat in the sidebar
@@ -182,6 +189,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 welcomeScreen.style.display = 'flex';
             }
             
+            // Notify chat.js that we've switched to an empty chat
+            document.dispatchEvent(new CustomEvent('chatLoaded', {
+                detail: { 
+                    chatId: chatId,
+                    chatData: {
+                        id: chatId,
+                        title: "New Chat",
+                        messages: []
+                    }
+                }
+            }));
+            
             // Focus the input field
             const inputField = document.querySelector('.input-field');
             if (inputField) {
@@ -200,7 +219,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(chatData => {
             if (!chatData.error) {
                 console.log('Loaded chat data:', chatData);
@@ -231,10 +255,42 @@ document.addEventListener('DOMContentLoaded', function () {
                 }));
             } else {
                 console.error('Failed to load chat:', chatData.error);
+                // If the chat doesn't exist anymore, create a new one
+                if (chatData.error === "Chat not found") {
+                    if (window.sidebarFunctions && typeof window.sidebarFunctions.createNewChat === 'function') {
+                        window.sidebarFunctions.createNewChat();
+                    }
+                }
             }
         })
         .catch(error => {
             console.error('Error loading chat:', error);
+            
+            // Try to handle common errors like chat not found
+            // Check if the chat item still exists in the UI
+            const chatItem = document.querySelector(`.chat-history-item[data-id="${chatId}"]`);
+            if (chatItem) {
+                chatItem.classList.add('error');
+                
+                // Add error tooltip
+                const errorTooltip = document.createElement('div');
+                errorTooltip.className = 'chat-error-tooltip';
+                errorTooltip.textContent = 'Failed to load chat';
+                chatItem.appendChild(errorTooltip);
+                
+                // Remove after a few seconds
+                setTimeout(() => {
+                    chatItem.classList.remove('error');
+                    if (errorTooltip.parentNode === chatItem) {
+                        chatItem.removeChild(errorTooltip);
+                    }
+                }, 3000);
+            }
+            
+            // Switch to a new chat as fallback
+            if (window.sidebarFunctions && typeof window.sidebarFunctions.createNewChat === 'function') {
+                window.sidebarFunctions.createNewChat();
+            }
         });
     }
 
@@ -513,6 +569,18 @@ document.addEventListener('DOMContentLoaded', function () {
         deleteChat,
         updateChatInSidebar,
         refreshChats: loadChats,
-        removeExistingTempChat
+        removeExistingTempChat,
+        createNewChat: function() {
+            // This is a bridge function to allow chat.js to create a new chat from sidebar.js
+            // First, get the createNewChat function from chat.js
+            if (window.chatFunctions && typeof window.chatFunctions.createNewChat === 'function') {
+                window.chatFunctions.createNewChat(true);
+            } else {
+                // Fallback implementation if chat.js function is not available
+                const tempId = 'temp-' + Date.now();
+                addChatHistoryItem('New Chat', tempId, new Date().toLocaleDateString());
+                switchToChat(tempId);
+            }
+        }
     };
 }); 

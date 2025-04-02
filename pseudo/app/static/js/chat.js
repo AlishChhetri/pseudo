@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // State variables
     let currentChatId = null;
     let chatMessages = [];
+    let tempChatId = null; // Add this to track temporary chat ID
 
     // Initialize
     setupEventListeners();
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // We'll create a chat ID in memory but won't save it to the server until a message is sent
         // This prevents empty chats from being saved
-            currentChatId = null;
+        currentChatId = null;
         
         // Remove any existing temporary chat first
         if (window.sidebarFunctions && typeof window.sidebarFunctions.removeExistingTempChat === 'function') {
@@ -143,11 +144,11 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // Create a new temporary chat
         if (window.sidebarFunctions && typeof window.sidebarFunctions.addChatHistoryItem === 'function') {
-            const tempId = 'temp-' + Date.now(); // Temporary ID for UI only
+            tempChatId = 'temp-' + Date.now(); // Temporary ID for UI only
             
             // Add the temporary chat to the sidebar - it will be automatically
             // inserted at the top and marked as active by the addChatHistoryItem function
-            window.sidebarFunctions.addChatHistoryItem('New Chat', tempId, new Date().toLocaleDateString());
+            window.sidebarFunctions.addChatHistoryItem('New Chat', tempChatId, new Date().toLocaleDateString());
             
             // When user focuses on input, we'll prepare for them to type
             if (inputField) {
@@ -176,9 +177,9 @@ document.addEventListener('DOMContentLoaded', function () {
             chatContainer.style.display = 'flex';
         }
 
-        // Get the currently active temp chat if it exists
+        // Get the currently active temp chat
         const activeTempChat = document.querySelector('.chat-history-item.active[data-id^="temp-"]');
-        const tempChatId = activeTempChat ? activeTempChat.dataset.id : null;
+        const activeTempChatId = activeTempChat ? activeTempChat.dataset.id : tempChatId;
 
         // Check if we need to create a new chat first
         if (!currentChatId) {
@@ -195,8 +196,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     currentChatId = data.chat_id;
                     
                     // If we had a temp chat in the UI, update it with the real ID
-                    if (tempChatId && activeTempChat) {
-                        activeTempChat.dataset.id = currentChatId;
+                    if (activeTempChatId) {
+                        const tempChatElement = document.querySelector(`.chat-history-item[data-id="${activeTempChatId}"]`);
+                        if (tempChatElement) {
+                            tempChatElement.dataset.id = currentChatId;
+                            
+                            // Also store this mapping for future reference
+                            if (!window.chatIdMap) window.chatIdMap = {};
+                            window.chatIdMap[activeTempChatId] = currentChatId;
+                            
+                            console.log(`Updated temp chat ID ${activeTempChatId} to real ID ${currentChatId}`);
+                        }
                     }
                     
                     // Now send the message
@@ -425,6 +435,12 @@ document.addEventListener('DOMContentLoaded', function () {
      * Load an existing chat
      */
     function loadChat(chatId, chatData) {
+        // Detect if this is a new chat that hasn't been fully loaded yet
+        if (window.chatIdMap && window.chatIdMap[chatId]) {
+            console.log(`Using mapped ID: ${window.chatIdMap[chatId]} instead of ${chatId}`);
+            chatId = window.chatIdMap[chatId];
+        }
+        
         // Set the current chat ID
         currentChatId = chatId;
         
@@ -851,6 +867,16 @@ document.addEventListener('DOMContentLoaded', function () {
         
         chatContainer.appendChild(messageDiv);
     }
+
+    // Expose functions for the sidebar to use
+    window.chatFunctions = {
+        createNewChat,
+        loadChat,
+        appendMessage,
+        appendImageMessage,
+        appendAudioMessage,
+        scrollToBottom
+    };
 });
 
 /**

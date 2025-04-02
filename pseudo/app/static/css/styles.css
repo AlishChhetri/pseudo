@@ -1536,3 +1536,46 @@ select:focus {
         transform: rotate(360deg);
     }
 }
+
+/* Chat error states */
+.chat-history-item.error {
+    border: 1px solid var(--danger);
+    animation: pulse 2s infinite;
+}
+
+.chat-error-tooltip {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--danger);
+    color: white;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    z-index: 100;
+    white-space: nowrap;
+}
+
+.chat-error-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: var(--danger) transparent transparent transparent;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 5px rgba(220, 53, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
