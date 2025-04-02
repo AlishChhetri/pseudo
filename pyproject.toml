@@ -19,6 +19,10 @@ requests = "^2.32.0"
 pillow = "^11.1.0"
 python-dotenv = "^1.0.1"
 
+# Local dependency on apicenter
+# Using a relative path means it will work when cloned as sibling directories
+apicenter = { path = "../apicenter", develop = true }
+
 # Dependencies for various providers
 openai = "^1.69.0"
 anthropic = "^0.49.0"

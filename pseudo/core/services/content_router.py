@@ -5,32 +5,34 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-# Import apicenter from sibling directory
-# First, get parent directory of pseudo project
-parent_dir = Path(__file__).parent.parent.parent.parent.parent
-# Path to apicenter directory (sibling to pseudo)
-apicenter_dir = parent_dir / "apicenter"
-
-# Check if apicenter directory exists
-if not apicenter_dir.exists() or not apicenter_dir.is_dir():
-    raise ImportError(
-        "Could not find apicenter directory. "
-        "Please ensure apicenter is cloned as a sibling directory to pseudo."
-    )
-
-# Add parent directory to sys.path so both packages are available
-sys.path.append(str(parent_dir))
+# Add parent directory to sys.path so apicenter is available
+# This expects apicenter to be in a sibling directory
+parent_dir = str(Path(__file__).resolve().parent.parent.parent.parent.parent)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 
 # Import apicenter
 try:
     from apicenter import apicenter
-except ImportError:
-    raise ImportError(
-        "Could not import apicenter. "
-        "Please ensure the apicenter package is properly installed in the sibling directory."
-    )
+except ImportError as e:
+    message = f"""
+Error importing apicenter: {e}
+    
+Please ensure the directory structure is:
+parent-directory/
+  ├── apicenter/
+  └── pseudo/
+    
+To fix this:
+1. Create a parent directory
+2. Clone both repositories side by side
+3. Install using Poetry:
+   cd pseudo
+   poetry install
+"""
+    raise ImportError(message)
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -42,8 +44,8 @@ class ContentRouter:
     def __init__(self) -> None:
         """Initialize content router with API center and credentials."""
         self.api_center = apicenter  # Use the singleton instance
-        self.credentials = self._load_credentials()
         self.credentials_path = ""
+        self.credentials = self._load_credentials()
 
     def _load_credentials(self) -> Dict[str, Any]:
         """Load credentials from available file locations and return credential dictionary."""
@@ -51,9 +53,43 @@ class ContentRouter:
             # Define the default structure for empty credentials
             default_credentials = {
                 "modes": {
-                    "text": {"providers": {}},
-                    "image": {"providers": {}},
-                    "audio": {"providers": {}},
+                    "text": {
+                        "providers": {
+                            "openai": {
+                                "api_key": "",
+                                "organization": "",
+                                "models": ["gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"]
+                            },
+                            "anthropic": {
+                                "api_key": "",
+                                "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
+                            },
+                            "ollama": {
+                                "models": ["llama3", "mistral", "phi3"]
+                            }
+                        }
+                    },
+                    "image": {
+                        "providers": {
+                            "openai": {
+                                "api_key": "",
+                                "organization": "",
+                                "models": ["dall-e-3", "dall-e-2"]
+                            },
+                            "stability": {
+                                "api_key": "",
+                                "models": ["stable-diffusion-xl", "stable-diffusion-v1-5"]
+                            }
+                        }
+                    },
+                    "audio": {
+                        "providers": {
+                            "elevenlabs": {
+                                "api_key": "",
+                                "models": ["eleven_multilingual_v2", "eleven_monolingual_v1"]
+                            }
+                        }
+                    },
                 }
             }
             
@@ -61,9 +97,8 @@ class ContentRouter:
             search_paths = [
                 "credentials.json",  # Current directory
                 str(Path.home() / ".pseudo" / "credentials.json"),  # User home
-                str(
-                    Path(__file__).parent.parent.parent.parent / "credentials.json"
-                ),  # Project root
+                str(Path(__file__).parent.parent.parent.parent / "credentials.json"),  # Project root
+                str(Path.cwd() / "credentials.json"),  # Working directory
             ]
 
             # Check if custom path is set in environment
@@ -75,8 +110,23 @@ class ContentRouter:
             for path in search_paths:
                 if os.path.exists(path):
                     with open(path, "r") as f:
+                        credentials = json.load(f)
                         self.credentials_path = path
-                        return json.load(f)
+                        
+                        # Ensure the credentials have the right structure
+                        if "modes" not in credentials:
+                            logger.warning(f"Invalid credentials format at {path}. Adding modes key.")
+                            credentials["modes"] = default_credentials["modes"]
+                        
+                        for mode in ["text", "image", "audio"]:
+                            if mode not in credentials["modes"]:
+                                logger.warning(f"Missing {mode} mode in credentials. Adding default.")
+                                credentials["modes"][mode] = default_credentials["modes"][mode]
+                            elif "providers" not in credentials["modes"][mode]:
+                                logger.warning(f"Missing providers in {mode} mode. Adding default.")
+                                credentials["modes"][mode]["providers"] = default_credentials["modes"][mode]["providers"]
+                        
+                        return credentials
 
             # No credentials found - use project root as default location
             project_root = Path(__file__).parent.parent.parent.parent
@@ -286,16 +336,51 @@ Always maintain the meaning of the original request while removing only the part
         try:
             # Check for valid mode configuration
             if mode not in self.credentials["modes"]:
-                raise ValueError(f"No providers configured for {mode} mode")
+                logger.error(f"No providers configured for {mode} mode")
+                return {
+                    "content": f"The '{mode}' mode is not configured in credentials.json. Please add providers for this mode.",
+                    "provider": "system",
+                    "model": "none"
+                }
 
             providers = self.credentials["modes"][mode]["providers"]
             if not providers:
-                raise ValueError(f"No providers available for {mode} mode")
+                logger.error(f"No providers available for {mode} mode")
+                return {
+                    "content": f"No providers are configured for the '{mode}' mode in credentials.json. Please add at least one provider.",
+                    "provider": "system",
+                    "model": "none"
+                }
+
+            # Check if any providers have API keys
+            has_configured_provider = False
+            for provider_name, provider_config in providers.items():
+                # For non-local providers, check API keys
+                if provider_name != "ollama" and "api_key" in provider_config and provider_config["api_key"]:
+                    has_configured_provider = True
+                    break
+                # For local providers like ollama, just check if it exists
+                elif provider_name == "ollama":
+                    has_configured_provider = True
+                    break
+            
+            if not has_configured_provider:
+                logger.error(f"No providers with API keys configured for {mode} mode")
+                return {
+                    "content": f"No API keys are configured for any providers in '{mode}' mode. Please add your API keys to credentials.json.",
+                    "provider": "system",
+                    "model": "none"
+                }
 
             errors = []
 
             # Try each provider in strict order from credentials.json (queue)
             for provider_name, provider_config in providers.items():
+                # Skip providers without API keys (except for ollama which is local)
+                if provider_name != "ollama" and "api_key" in provider_config and not provider_config["api_key"]:
+                    logger.warning(f"Skipping {provider_name} - no API key provided")
+                    continue
+
                 # Check if the provider has models defined
                 if "models" not in provider_config or not provider_config["models"]:
                     logger.warning(f"No models defined for {provider_name} in {mode} mode")
@@ -353,11 +438,20 @@ Always maintain the meaning of the original request while removing only the part
 
             # All queue options exhausted with no success
             error_details = "\n".join(errors)
-            raise Exception(f"All attempts to process {mode} content failed:\n{error_details}")
+            logger.error(f"All attempts to process {mode} content failed:\n{error_details}")
+            return {
+                "content": f"Unable to process {mode} content. Please check your API keys in credentials.json.\n\nErrors:\n{error_details}",
+                "provider": "system",
+                "model": "none"
+            }
 
         except Exception as e:
             logger.error(f"Error processing content: {e}")
-            raise Exception(f"Error processing {mode} content: {e}")
+            return {
+                "content": f"Error processing {mode} content: {e}. Please check your configuration.",
+                "provider": "system",
+                "model": "none"
+            }
 
     def get_available_providers(self, mode: str) -> List[str]:
         """Get list of available providers for a specific mode."""

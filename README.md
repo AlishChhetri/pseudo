@@ -64,12 +64,12 @@ This integration decouples Pseudo's core routing logic from provider-specific im
 ### Prerequisites
 
 - Python 3.12+
-- [APICenter](https://github.com/alishchhetri/apicenter) (required as a sibling directory)
+- [Poetry](https://python-poetry.org/docs/#installation) for dependency management
 - API keys for desired AI services
 
 ### Installation
 
-Pseudo requires APICenter to be installed as a sibling directory since it's not available on PyPI. This means both repositories must be cloned into the same parent directory.
+Pseudo requires APICenter to be installed as a sibling directory since it's not available on PyPI. The setup is simple:
 
 1. Create a directory to contain both projects:
 ```bash
@@ -98,12 +98,12 @@ poetry install
 
 4. Configure your API credentials in `credentials.json` (see Configuration section)
 
-5. Start the application:
+5. Run the application:
 ```bash
 poetry run pseudo
 ```
 
-This command will launch the application with default settings. The Flask server will start automatically, and you can access the web interface by opening your browser and navigating to `http://0.0.0.0:5000`.
+The application will be available at http://localhost:5000
 
 ## Configuration
 
