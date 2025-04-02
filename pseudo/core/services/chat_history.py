@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import logging
+from flask import current_app
 
 logger = logging.getLogger(__name__)
 
@@ -19,12 +20,18 @@ class ChatManager:
         if base_dir:
             self.base_dir = Path(base_dir)
         else:
-            # Default to a subdirectory in the project
-            self.base_dir = Path(os.environ.get("CHAT_HISTORY_DIR", 
-                               Path(__file__).parent.parent.parent / "chat_history"))
+            # Try to get the directory from Flask app config
+            try:
+                self.base_dir = Path(current_app.config["CHAT_HISTORY_DIR"])
+            except RuntimeError:
+                # We're not in a Flask context, use environment variable or default
+                self.base_dir = Path(os.environ.get("CHAT_HISTORY_DIR", 
+                                   Path(__file__).parent.parent.parent.parent / "chat_history"))
+                logger.info(f"Not in Flask context, using chat history dir: {self.base_dir}")
         
         # Create base directory if it doesn't exist
         self.base_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Chat history directory set to: {self.base_dir}")
         
         # Initialize or load the global history tracker
         self.history_file = self.base_dir / "history.json"
@@ -35,14 +42,24 @@ class ChatManager:
         if self.history_file.exists():
             try:
                 with open(self.history_file, "r") as f:
-                    return json.load(f)
+                    history = json.load(f)
+                    
+                    # Remove global updated_at if it exists
+                    if "updated_at" in history:
+                        del history["updated_at"]
+                    
+                    # Remove message_count from each chat entry
+                    for chat in history.get("chats", []):
+                        if "message_count" in chat:
+                            del chat["message_count"]
+                    
+                    return history
             except Exception as e:
                 logger.error(f"Error loading history: {str(e)}")
         
-        # Create default history structure
+        # Create default history structure (without updated_at)
         default_history = {
-            "chats": [],
-            "updated_at": datetime.now().isoformat()
+            "chats": []
         }
         
         # Save default history
@@ -54,8 +71,9 @@ class ChatManager:
     def _save_history(self) -> bool:
         """Save the current history to disk."""
         try:
-            # Update the last updated timestamp
-            self.history["updated_at"] = datetime.now().isoformat()
+            # Remove global updated_at if it exists
+            if "updated_at" in self.history:
+                del self.history["updated_at"]
             
             with open(self.history_file, "w") as f:
                 json.dump(self.history, f, indent=2)
@@ -86,8 +104,7 @@ class ChatManager:
                 "title": "New Chat",  # Default title
                 "created_at": timestamp,
                 "updated_at": timestamp,
-                "messages": [],
-                "message_count": 0
+                "messages": []
             }
             
             # Add to global history
@@ -95,8 +112,7 @@ class ChatManager:
                 "id": chat_id,
                 "title": "New Chat",
                 "created_at": timestamp,
-                "updated_at": timestamp,
-                "message_count": 0
+                "updated_at": timestamp
             }
             
             # Add to the beginning (most recent first)
@@ -163,8 +179,7 @@ class ChatManager:
                                 "id": chat_id,
                                 "title": metadata.get("title", "Untitled Chat"),
                                 "created_at": metadata.get("created_at", datetime.now().isoformat()),
-                                "updated_at": metadata.get("updated_at", datetime.now().isoformat()),
-                                "message_count": len(metadata.get("messages", []))
+                                "updated_at": metadata.get("updated_at", datetime.now().isoformat())
                             }
                             self.history["chats"].append(chat_summary)
                             updated = True
@@ -172,7 +187,6 @@ class ChatManager:
                         elif chat_in_history and metadata.get("updated_at", "") > chat_in_history.get("updated_at", ""):
                             chat_in_history["title"] = metadata.get("title", "Untitled Chat")
                             chat_in_history["updated_at"] = metadata.get("updated_at")
-                            chat_in_history["message_count"] = len(metadata.get("messages", []))
                             updated = True
                     except Exception as e:
                         logger.error(f"Error syncing chat {chat_id}: {str(e)}")
@@ -230,7 +244,6 @@ class ChatManager:
         
         metadata["messages"].append(message)
         metadata["updated_at"] = message["timestamp"]
-        metadata["message_count"] = len(metadata["messages"])
         
         # Update title based on first message content if we haven't set a custom title
         if (metadata["title"] == "New Chat" or metadata["title"] == "Untitled Chat") and message.get("content"):
@@ -265,15 +278,13 @@ class ChatManager:
         if chat_in_history:
             chat_in_history["title"] = metadata.get("title", "Untitled Chat")
             chat_in_history["updated_at"] = metadata.get("updated_at", datetime.now().isoformat())
-            chat_in_history["message_count"] = len(metadata.get("messages", []))
         else:
             # Otherwise, add it
             chat_summary = {
                 "id": chat_id,
                 "title": metadata.get("title", "Untitled Chat"),
                 "created_at": metadata.get("created_at", datetime.now().isoformat()),
-                "updated_at": metadata.get("updated_at", datetime.now().isoformat()),
-                "message_count": len(metadata.get("messages", []))
+                "updated_at": metadata.get("updated_at", datetime.now().isoformat())
             }
             self.history["chats"].append(chat_summary)
         

@@ -14,6 +14,7 @@ from flask import (
     request,
     send_file,
     send_from_directory,
+    current_app,
 )
 
 from pseudo.core.services.chat_history import ChatManager
@@ -33,7 +34,10 @@ chats_bp = Blueprint("chats", __name__, url_prefix="/chats")
 def get_chat_manager():
     """Get or create chat manager instance from flask application context."""
     if "chat_manager" not in g:
-        g.chat_manager = ChatManager()
+        # Use the chat history directory from Flask app config
+        chat_history_dir = current_app.config.get("CHAT_HISTORY_DIR")
+        logger.info(f"Creating ChatManager with directory: {chat_history_dir}")
+        g.chat_manager = ChatManager(base_dir=chat_history_dir)
     return g.chat_manager
 
 
