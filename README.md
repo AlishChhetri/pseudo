@@ -5,7 +5,7 @@
 
 ## Overview
 
-Pseudo is an intelligent request classification and routing system that dynamically directs user inputs to appropriate AI models based on content analysis. Its foundational premise is the "anything in, anything out" paradigm—though the current implementation processes text inputs and produces text, image, or audio outputs.
+Pseudo is an intelligent request classification and routing system that dynamically directs user inputs to appropriate AI models based on content analysis. Its foundational premise is the "anything in, anything out", however the current implementation is still limited to processesing text inputs and produces text, image, or audio outputs.
 
 Developed as an application of [APICenter](https://github.com/alishchhetri/apicenter), Pseudo demonstrates how a standardized API abstraction layer can significantly reduce integration complexity when working with multiple AI service providers.
 

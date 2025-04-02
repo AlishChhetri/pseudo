@@ -1,30 +1,13 @@
-"""Chat history management system for Pseudo.
-
-This module handles the persistent storage and retrieval of chat history, including:
-- Storing chat metadata and messages
-- Managing media files (images, audio)
-- Organizing chats by creation/update time
-- Migrating chats between storage locations
-- Cleaning up unused fields and data
-
-The chat history follows a directory structure:
-    chat_history/
-    ├── history.json                     # Global index of all chats
-    └── [chat-uuid]/                     # Individual chat directory
-        ├── metadata.json                # Chat metadata and messages
-        └── media/                       # Media files directory
-            ├── image_[timestamp].png    # Image files
-            └── audio_[timestamp].mp3    # Audio files
-"""
+"""Chat history management system for Pseudo."""
 
 import json
+import logging
 import os
 import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-import logging
 from flask import current_app
 
 logger = logging.getLogger(__name__)
