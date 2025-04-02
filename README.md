@@ -69,16 +69,25 @@ This integration decouples Pseudo's core routing logic from provider-specific im
 
 ### Installation
 
-1. Create a parent directory for both projects:
+Pseudo requires APICenter to be installed as a sibling directory since it's not available on PyPI. This means both repositories must be cloned into the same parent directory.
+
+1. Create a directory to contain both projects:
 ```bash
-mkdir ai-projects
-cd ai-projects
+mkdir pseudo-project
+cd pseudo-project
 ```
 
-2. Clone both repositories as siblings:
+2. Clone both repositories side by side:
 ```bash
 git clone https://github.com/alishchhetri/apicenter.git
 git clone https://github.com/alishchhetri/pseudo.git
+```
+
+The resulting directory structure should look like this:
+```
+pseudo-project/
+├── apicenter/        # APICenter repository
+└── pseudo/           # Pseudo repository
 ```
 
 3. Install Pseudo dependencies:
@@ -94,7 +103,7 @@ poetry install
 poetry run pseudo
 ```
 
-6. Open your browser and navigate to `http://0.0.0.0:5000`
+This command will launch the application with default settings. The Flask server will start automatically, and you can access the web interface by opening your browser and navigating to `http://0.0.0.0:5000`.
 
 ## Configuration
 
@@ -153,20 +162,6 @@ Pseudo implements a deterministic selection algorithm:
 3. If a provider or model is unavailable or returns an error, the system proceeds to the next candidate
 
 This approach ensures consistent, predictable behavior while providing graceful degradation capabilities.
-
-### Environment Variables
-
-Runtime configuration can be modified using environment variables:
-
-- `FLASK_HOST`: Host binding address (default: `0.0.0.0`)
-- `FLASK_PORT`: Listening port (default: `5000`)
-- `FLASK_DEBUG`: Debug mode toggle (`True`/`False`, default: `True`)
-- `PSEUDO_CREDENTIALS_PATH`: Alternative credentials file location
-
-Example:
-```bash
-FLASK_HOST=localhost FLASK_PORT=8000 FLASK_DEBUG=False poetry run pseudo
-```
 
 ## Usage Examples
 
