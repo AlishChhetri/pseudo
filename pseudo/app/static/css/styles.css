@@ -409,23 +409,43 @@ select:focus {
 }
 
 .chat-history-item {
+    padding: var(--spacing-md) var(--spacing-lg);
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 8px 16px;
-    margin: 4px 0;
-    border-radius: var(--radius-md);
+    justify-content: space-between;
+    margin-bottom: 2px;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-fast);
     cursor: pointer;
-    transition: background-color 0.2s ease;
 }
 
 .chat-history-item:hover {
-    background-color: var(--hover-subtle);
+    background-color: var(--bg-hover);
 }
 
 .chat-history-item.active {
-    background-color: var(--hover-subtle);
-    border-left: 3px solid var(--accent);
+    background-color: var(--bg-active);
+    color: var(--accent-primary);
+}
+
+/* Delete state styles */
+.chat-history-item.deleting {
+    opacity: 0.5;
+    pointer-events: none;
+    background-color: var(--bg-hover);
+    transition: all var(--transition-normal);
+}
+
+.chat-history-item.delete-error {
+    background-color: rgba(220, 53, 69, 0.2); /* Red with transparency */
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(0); }
+    75% { transform: translateX(4px); }
 }
 
 .chat-item-content {
@@ -1463,4 +1483,56 @@ select:focus {
     margin: 8px 0;
     border-radius: var(--radius-md);
     padding: 8px;
+}
+
+/* Image handling styles */
+.loading-image {
+    position: relative;
+    min-height: 150px;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.loading-image::before {
+    content: "";
+    position: absolute;
+    top: calc(50% - 20px);
+    left: calc(50% - 20px);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--accent-primary);
+    animation: spin 1s linear infinite;
+}
+
+.error-image {
+    position: relative;
+    min-height: 150px;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--danger);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.image-error-text {
+    color: var(--danger);
+    font-size: var(--font-size-sm);
+    margin-top: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.image-error-text:hover {
+    text-decoration: underline;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

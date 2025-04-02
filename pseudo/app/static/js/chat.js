@@ -249,194 +249,41 @@ document.addEventListener('DOMContentLoaded', function () {
                 currentChatId = data.chat_id;
             }
 
+            // Update chat title in sidebar
+            if (data.title && window.sidebarFunctions && typeof window.sidebarFunctions.updateChatInSidebar === 'function') {
+                window.sidebarFunctions.updateChatInSidebar(currentChatId, data.title);
+            }
+
             // Handle different types of responses
-            if (data.type === 'image') {
-                // For image responses, create an image element
-                const imageElement = document.createElement('img');
-                imageElement.src = data.url;
-                imageElement.alt = 'Generated image';
-                imageElement.style.maxWidth = '100%';
-                imageElement.style.borderRadius = 'var(--radius-md)';
-                
-                // Create content div
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'content';
-                contentDiv.appendChild(imageElement);
-                
-                // Add model attribution
-                const attributionDiv = document.createElement('div');
-                attributionDiv.className = 'model-attribution';
-                
-                // Create attribution text
-                const attributionTextSpan = document.createElement('span');
-                attributionTextSpan.className = 'model-attribution-text';
-                
-                // Format the attribution text with mode, provider, and model
-                const mode = data.selected_mode ? data.selected_mode.charAt(0).toUpperCase() + data.selected_mode.slice(1) : 'Image';
-                let providerModel = '';
-                if (data.provider && data.model) {
-                    providerModel = `${data.provider} - ${data.model}`;
-                } else if (data.model) {
-                    providerModel = data.model;
-                } else {
-                    providerModel = 'Unknown';
-                }
-                
-                attributionTextSpan.textContent = `${mode} | ${providerModel}`;
-                
-                attributionDiv.appendChild(attributionTextSpan);
-                
-                // Create action buttons for image
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'message-actions';
-                
-                // Download button
-                const downloadButton = document.createElement('button');
-                downloadButton.className = 'message-action-button download-button';
-                downloadButton.setAttribute('aria-label', 'Download image');
-                downloadButton.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                `;
-                
-                // Add download functionality
-                downloadButton.addEventListener('click', () => {
-                    const a = document.createElement('a');
-                    a.href = data.url;
-                    a.download = `image-${Date.now()}.png`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    createToastNotification('Image download started');
-                });
-                
-                actionsDiv.appendChild(downloadButton);
-                attributionDiv.appendChild(actionsDiv);
-                contentDiv.appendChild(attributionDiv);
-                
-                // Create message div
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message assistant-message';
-                
-                const avatarDiv = document.createElement('div');
-                avatarDiv.className = 'avatar';
-                
-                messageDiv.appendChild(avatarDiv);
-                messageDiv.appendChild(contentDiv);
-                
-                chatContainer.appendChild(messageDiv);
-                
-            } else if (data.type === 'audio') {
-                // For audio responses, create an audio element
-                const audioElement = document.createElement('audio');
-                audioElement.src = data.url;
-                audioElement.controls = true;
-                
-                // Create content div
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'content';
-                contentDiv.appendChild(audioElement);
-                
-                // Add model attribution
-                const attributionDiv = document.createElement('div');
-                attributionDiv.className = 'model-attribution';
-                
-                // Create attribution text
-                const attributionTextSpan = document.createElement('span');
-                attributionTextSpan.className = 'model-attribution-text';
-                
-                // Format the attribution text with mode, provider, and model
-                const mode = data.selected_mode ? data.selected_mode.charAt(0).toUpperCase() + data.selected_mode.slice(1) : 'Audio';
-                let providerModel = '';
-                if (data.provider && data.model) {
-                    providerModel = `${data.provider} - ${data.model}`;
-                } else if (data.model) {
-                    providerModel = data.model;
-                } else {
-                    providerModel = 'Unknown';
-                }
-                
-                attributionTextSpan.textContent = `${mode} | ${providerModel}`;
-                
-                attributionDiv.appendChild(attributionTextSpan);
-                
-                // Create action buttons for audio
-                const actionsDiv = document.createElement('div');
-                actionsDiv.className = 'message-actions';
-                
-                // Download button
-                const downloadButton = document.createElement('button');
-                downloadButton.className = 'message-action-button download-button';
-                downloadButton.setAttribute('aria-label', 'Download audio');
-                downloadButton.innerHTML = `
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                `;
-                
-                // Add download functionality
-                downloadButton.addEventListener('click', () => {
-                    const a = document.createElement('a');
-                    a.href = data.url;
-                    a.download = `audio-${Date.now()}.mp3`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    createToastNotification('Audio download started');
-                });
-                
-                actionsDiv.appendChild(downloadButton);
-                attributionDiv.appendChild(actionsDiv);
-                contentDiv.appendChild(attributionDiv);
-                
-                // Create message div
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'message assistant-message';
-                
-                const avatarDiv = document.createElement('div');
-                avatarDiv.className = 'avatar';
-                
-                messageDiv.appendChild(avatarDiv);
-                messageDiv.appendChild(contentDiv);
-                
-                chatContainer.appendChild(messageDiv);
-                
+            if (data.type === 'image' && data.url) {
+                appendImageMessage(data.url, data);
+            } else if (data.type === 'audio' && data.url) {
+                appendAudioMessage(data.url, data);
             } else {
-                // Regular text response with metadata
+                // Regular text response
                 const metadata = {
                     mode: data.selected_mode || 'text',
                     model: data.model || 'Unknown',
                     provider: data.provider || null
                 };
+                
                 appendMessage('assistant', data.response, metadata);
             }
-            
-            // Scroll to bottom
-            chatContainer.scrollTop = chatContainer.scrollHeight;
 
-            // Update chat in sidebar
-            // Get the title from either the first user message or the default
-            const chatTitle = message || 'New Chat';
-            
-            // Update the chat in the sidebar to reflect its new position as most recent
-            if (window.sidebarFunctions && typeof window.sidebarFunctions.updateChatInSidebar === 'function') {
-                window.sidebarFunctions.updateChatInSidebar(currentChatId, chatTitle);
-            }
+            // Scroll to bottom
+            scrollToBottom();
         })
         .catch(error => {
+            console.error('Error sending message:', error);
+            
             // Remove thinking indicator
             if (thinkingIndicator && chatContainer.contains(thinkingIndicator)) {
                 chatContainer.removeChild(thinkingIndicator);
             }
-            
-            // Show error message
-            console.error('Error sending message:', error);
-            createToastNotification('Error sending message. Please try again.', 5000);
+
+            // Append error message
+            appendMessage('assistant', 'Sorry, there was an error processing your request. Please try again.', { isError: true });
+            scrollToBottom();
         });
     }
 
@@ -605,13 +452,34 @@ document.addEventListener('DOMContentLoaded', function () {
                     appendMessage('user', message.content);
                 } else if (message.role === 'assistant') {
                     // Handle different types of assistant messages
-                    if (message.mode === 'image' && message.media_path) {
+                    if (message.mode === 'image' && message.media) {
                         // Create image element
                         const imageElement = document.createElement('img');
-                        imageElement.src = `/chat_history/${chatId}/media/${message.media_path.split('/').pop()}`;
+                        imageElement.src = `/chat_history/${chatId}/media/${message.media}`;
                         imageElement.alt = 'Generated image';
                         imageElement.style.maxWidth = '100%';
                         imageElement.style.borderRadius = 'var(--radius-md)';
+                        
+                        // Add loading spinner and error handling
+                        imageElement.classList.add('loading-image');
+                        imageElement.onload = function() {
+                            imageElement.classList.remove('loading-image');
+                        };
+                        imageElement.onerror = function() {
+                            imageElement.classList.remove('loading-image');
+                            imageElement.classList.add('error-image');
+                            imageElement.alt = 'Image failed to load';
+                            imageElement.title = 'Image failed to load';
+                            
+                            // Add error text below the image
+                            const errorText = document.createElement('div');
+                            errorText.className = 'image-error-text';
+                            errorText.textContent = 'Failed to load image. Click to retry.';
+                            errorText.onclick = function() {
+                                imageElement.src = `/chat_history/${chatId}/media/${message.media}?t=${new Date().getTime()}`; // Add cache-busting
+                            };
+                            imageElement.parentNode.appendChild(errorText);
+                        };
                         
                         // Create content div
                         const contentDiv = document.createElement('div');
@@ -658,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Add download functionality
                         downloadButton.addEventListener('click', () => {
                             const a = document.createElement('a');
-                            a.href = `/chat_history/${chatId}/media/${message.media_path.split('/').pop()}`;
+                            a.href = `/download/chat_history/${chatId}/media/${message.media}`;
                             a.download = `image-${Date.now()}.png`;
                             document.body.appendChild(a);
                             a.click();
@@ -681,10 +549,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         messageDiv.appendChild(contentDiv);
                         
                         chatContainer.appendChild(messageDiv);
-                    } else if (message.mode === 'audio' && message.media_path) {
+                    } else if (message.mode === 'audio' && message.media) {
                         // Create audio element
                         const audioElement = document.createElement('audio');
-                        audioElement.src = `/chat_history/${chatId}/media/${message.media_path.split('/').pop()}`;
+                        audioElement.src = `/chat_history/${chatId}/media/${message.media}`;
                         audioElement.controls = true;
                         
                         // Create content div
@@ -732,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Add download functionality
                         downloadButton.addEventListener('click', () => {
                             const a = document.createElement('a');
-                            a.href = `/chat_history/${chatId}/media/${message.media_path.split('/').pop()}`;
+                            a.href = `/download/chat_history/${chatId}/media/${message.media}`;
                             a.download = `audio-${Date.now()}.mp3`;
                             document.body.appendChild(a);
                             a.click();
@@ -770,6 +638,218 @@ document.addEventListener('DOMContentLoaded', function () {
             // Scroll to bottom
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
+    }
+
+    /**
+     * Append an image message to the chat
+     * @param {string} url - URL to the image
+     * @param {object} data - Additional data about the message
+     */
+    function appendImageMessage(url, data) {
+        // Extract the filename from the URL
+        const urlParts = url.split('/');
+        const filename = urlParts[urlParts.length - 1];
+        
+        // Create image element
+        const imageElement = document.createElement('img');
+        
+        // Add loading spinner
+        imageElement.classList.add('loading-image');
+        imageElement.onload = function() {
+            imageElement.classList.remove('loading-image');
+        };
+        imageElement.onerror = function() {
+            imageElement.classList.remove('loading-image');
+            imageElement.classList.add('error-image');
+            imageElement.alt = 'Image failed to load';
+            imageElement.title = 'Image failed to load';
+            
+            // Add error text below the image
+            const errorText = document.createElement('div');
+            errorText.className = 'image-error-text';
+            errorText.textContent = 'Failed to load image. Click to retry.';
+            errorText.onclick = function() {
+                imageElement.src = url + '?t=' + new Date().getTime(); // Add cache-busting query parameter
+            };
+            imageElement.parentNode.appendChild(errorText);
+        };
+        
+        imageElement.src = url;
+        imageElement.alt = 'Generated image';
+        imageElement.style.maxWidth = '100%';
+        imageElement.style.borderRadius = 'var(--radius-md)';
+        
+        // Create content div
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'content';
+        contentDiv.appendChild(imageElement);
+        
+        // Add model attribution
+        const attributionDiv = document.createElement('div');
+        attributionDiv.className = 'model-attribution';
+        
+        // Create attribution text
+        const attributionTextSpan = document.createElement('span');
+        attributionTextSpan.className = 'model-attribution-text';
+        
+        // Format the attribution text with mode, provider, and model
+        const mode = data.selected_mode ? data.selected_mode.charAt(0).toUpperCase() + data.selected_mode.slice(1) : 'Image';
+        let providerModel = '';
+        if (data.provider && data.model) {
+            providerModel = `${data.provider} - ${data.model}`;
+        } else if (data.model) {
+            providerModel = data.model;
+        } else {
+            providerModel = 'Unknown';
+        }
+        
+        attributionTextSpan.textContent = `${mode} | ${providerModel}`;
+        
+        attributionDiv.appendChild(attributionTextSpan);
+        
+        // Create action buttons for image
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'message-actions';
+        
+        // Download button
+        const downloadButton = document.createElement('button');
+        downloadButton.className = 'message-action-button download-button';
+        downloadButton.setAttribute('aria-label', 'Download image');
+        downloadButton.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+        `;
+        
+        // Add download functionality
+        downloadButton.addEventListener('click', () => {
+            // Convert the URL to a download URL
+            let downloadUrl = url;
+            if (downloadUrl.startsWith('/chat_history/')) {
+                // It's already a local URL, use the download endpoint
+                downloadUrl = downloadUrl.replace('/chat_history/', '/download/chat_history/');
+            }
+            
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = `image-${Date.now()}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            createToastNotification('Image download started');
+        });
+        
+        actionsDiv.appendChild(downloadButton);
+        attributionDiv.appendChild(actionsDiv);
+        contentDiv.appendChild(attributionDiv);
+        
+        // Create message div
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message assistant-message';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'avatar';
+        
+        messageDiv.appendChild(avatarDiv);
+        messageDiv.appendChild(contentDiv);
+        
+        chatContainer.appendChild(messageDiv);
+    }
+    
+    /**
+     * Append an audio message to the chat
+     * @param {string} url - URL to the audio file
+     * @param {object} data - Additional data about the message
+     */
+    function appendAudioMessage(url, data) {
+        // Extract the filename from the URL
+        const urlParts = url.split('/');
+        const filename = urlParts[urlParts.length - 1];
+        
+        // Create audio element
+        const audioElement = document.createElement('audio');
+        audioElement.src = url;
+        audioElement.controls = true;
+        
+        // Create content div
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'content';
+        contentDiv.appendChild(audioElement);
+        
+        // Add model attribution
+        const attributionDiv = document.createElement('div');
+        attributionDiv.className = 'model-attribution';
+        
+        // Create attribution text
+        const attributionTextSpan = document.createElement('span');
+        attributionTextSpan.className = 'model-attribution-text';
+        
+        // Format the attribution text with mode, provider, and model
+        const mode = data.selected_mode ? data.selected_mode.charAt(0).toUpperCase() + data.selected_mode.slice(1) : 'Audio';
+        let providerModel = '';
+        if (data.provider && data.model) {
+            providerModel = `${data.provider} - ${data.model}`;
+        } else if (data.model) {
+            providerModel = data.model;
+        } else {
+            providerModel = 'Unknown';
+        }
+        
+        attributionTextSpan.textContent = `${mode} | ${providerModel}`;
+        
+        attributionDiv.appendChild(attributionTextSpan);
+        
+        // Create action buttons for audio
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'message-actions';
+        
+        // Download button
+        const downloadButton = document.createElement('button');
+        downloadButton.className = 'message-action-button download-button';
+        downloadButton.setAttribute('aria-label', 'Download audio');
+        downloadButton.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+        `;
+        
+        // Add download functionality
+        downloadButton.addEventListener('click', () => {
+            // Convert the URL to a download URL
+            let downloadUrl = url;
+            if (downloadUrl.startsWith('/chat_history/')) {
+                // It's already a local URL, use the download endpoint
+                downloadUrl = downloadUrl.replace('/chat_history/', '/download/chat_history/');
+            }
+            
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = `audio-${Date.now()}.mp3`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            createToastNotification('Audio download started');
+        });
+        
+        actionsDiv.appendChild(downloadButton);
+        attributionDiv.appendChild(actionsDiv);
+        contentDiv.appendChild(attributionDiv);
+        
+        // Create message div
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message assistant-message';
+        
+        const avatarDiv = document.createElement('div');
+        avatarDiv.className = 'avatar';
+        
+        messageDiv.appendChild(avatarDiv);
+        messageDiv.appendChild(contentDiv);
+        
+        chatContainer.appendChild(messageDiv);
     }
 });
 

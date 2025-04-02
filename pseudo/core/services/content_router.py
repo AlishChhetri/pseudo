@@ -409,6 +409,15 @@ Always maintain the meaning of the original request while removing only the part
                         # If we got a response, return it immediately without trying further options
                         if response:
                             logger.info(f"Successfully processed with {provider_name}/{model_name}")
+                            
+                            # For debugging
+                            if mode == "image":
+                                logger.info(f"Image response type: {type(response)}")
+                                if isinstance(response, dict):
+                                    logger.info(f"Image response keys: {list(response.keys())}")
+                                    if "url" in response:
+                                        logger.info(f"Image URL: {response['url']}")
+                            
                             # Return a dictionary with the response and provider/model info
                             if isinstance(response, (str, bytes)):
                                 return {

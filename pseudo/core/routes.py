@@ -16,6 +16,7 @@ from flask import (
     send_from_directory,
 )
 
+from pseudo.core.services.chat_history import ChatManager
 from pseudo.core.services.content_router import ContentRouter
 from pseudo.core.services.media_manager import MediaManager
 
@@ -27,140 +28,6 @@ logger.setLevel(logging.INFO)
 main_bp = Blueprint("main", __name__)
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 chats_bp = Blueprint("chats", __name__, url_prefix="/chats")
-
-
-class ChatManager:
-    """Manages chat history storage and retrieval."""
-
-    def __init__(self, base_dir: Optional[Path] = None):
-        """Initialize chat manager with base directory for storage."""
-        if base_dir:
-            self.base_dir = Path(base_dir)
-        else:
-            # Default to a subdirectory in the project
-            self.base_dir = Path(os.environ.get("CHAT_HISTORY_DIR", 
-                               Path(__file__).parent.parent.parent / "chat_history"))
-        
-        # Create base directory if it doesn't exist
-        self.base_dir.mkdir(parents=True, exist_ok=True)
-    
-    def create_new_chat(self, save: bool = True) -> str:
-        """Create a new chat with a unique ID."""
-        # Generate a unique ID for the chat
-        chat_id = str(uuid.uuid4())
-        
-        # Create chat directory if needed
-        if save:
-            chat_dir = self.base_dir / chat_id
-            chat_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Create media subdirectory
-            media_dir = chat_dir / "media"
-            media_dir.mkdir(exist_ok=True)
-            
-            # Initialize metadata
-            metadata = {
-                "id": chat_id,
-                "created_at": datetime.now().isoformat(),
-                "updated_at": datetime.now().isoformat(),
-                "messages": []
-            }
-            
-            # Save metadata
-            with open(chat_dir / "metadata.json", "w") as f:
-                json.dump(metadata, f, indent=2)
-        
-        return chat_id
-    
-    def get_chat(self, chat_id: str) -> Optional[Dict]:
-        """Get chat data for a specific chat ID."""
-        chat_dir = self.base_dir / chat_id
-        metadata_file = chat_dir / "metadata.json"
-        
-        if not metadata_file.exists():
-            return None
-            
-        try:
-            with open(metadata_file, "r") as f:
-                return json.load(f)
-        except Exception as e:
-            logger.error(f"Error loading chat {chat_id}: {str(e)}")
-            return None
-    
-    def get_all_chats(self) -> List[Dict]:
-        """Get metadata for all available chats."""
-        chats = []
-        
-        # Iterate through all subdirectories in the base directory
-        for chat_dir in self.base_dir.iterdir():
-            if chat_dir.is_dir():
-                metadata_file = chat_dir / "metadata.json"
-                if metadata_file.exists():
-                    try:
-                        with open(metadata_file, "r") as f:
-                            metadata = json.load(f)
-                        
-                        # Add basic info
-                        chats.append({
-                            "id": metadata["id"],
-                            "created_at": metadata["created_at"],
-                            "updated_at": metadata["updated_at"],
-                            "message_count": len(metadata.get("messages", []))
-                        })
-                    except Exception as e:
-                        logger.error(f"Error loading chat metadata: {str(e)}")
-        
-        # Sort by updated_at, most recent first
-        chats.sort(key=lambda x: x.get("updated_at", ""), reverse=True)
-        return chats
-    
-    def add_message(self, chat_id: str, message: Dict, media_path: Optional[str] = None) -> bool:
-        """Add a message to the chat history."""
-        chat_dir = self.base_dir / chat_id
-        metadata_file = chat_dir / "metadata.json"
-        
-        # Create directories if needed
-        chat_dir.mkdir(parents=True, exist_ok=True)
-        (chat_dir / "media").mkdir(exist_ok=True)
-        
-        # Load or create metadata
-        metadata = {"id": chat_id, "created_at": datetime.now().isoformat(), "messages": []}
-        if metadata_file.exists():
-            try:
-                with open(metadata_file, "r") as f:
-                    metadata = json.load(f)
-            except Exception:
-                pass
-        
-        # Add message data
-        message["timestamp"] = datetime.now().isoformat()
-        if media_path:
-            message["media"] = os.path.basename(media_path)
-        
-        metadata["messages"].append(message)
-        metadata["updated_at"] = datetime.now().isoformat()
-        
-        # Save updated metadata
-        try:
-            with open(metadata_file, "w") as f:
-                json.dump(metadata, f, indent=2)
-            return True
-        except Exception as e:
-            logger.error(f"Error saving message: {str(e)}")
-            return False
-    
-    def save_media(self, content: Union[bytes, str, Path], 
-                  media_type: str, 
-                  media_dir: Path) -> Optional[str]:
-        """Save media content to the chat's media directory."""
-        media_manager = MediaManager()
-        try:
-            # Use media manager to handle saving
-            filepath = media_manager.save_media(content, media_type, media_dir)
-            return str(filepath) if filepath else None
-        except Exception as e:
-            logger.error(f"Error saving media: {str(e)}")
-            return None
 
 
 def get_chat_manager():
@@ -227,7 +94,7 @@ def chat():
 
         # Initialize chat if needed
         if not chat_id or not chat_manager.get_chat(chat_id):
-            chat_id = chat_manager.create_new_chat(save=False)
+            chat_id = chat_manager.create_new_chat(save=True)
 
         # Save original user message to chat history
         user_message = {"role": "user", "content": message}
@@ -330,7 +197,21 @@ def chat():
                 assistant_message["content"] = str(response)
 
         # Pass media path for saving in chat history
+        # This will save the media filename in the message object
         chat_manager.add_message(chat_id, assistant_message, media_path)
+        
+        # Get the chat metadata to extract the title
+        chat_data = chat_manager.get_chat(chat_id)
+        if chat_data and "title" in chat_data:
+            response_obj["title"] = chat_data["title"]
+        
+        # Update the title in the response
+        if "title" not in response_obj or not response_obj["title"]:
+            # Use the first few words of the user message as the title
+            title = message.strip()
+            if len(title) > 30:
+                title = title[:30] + "..."
+            response_obj["title"] = title
 
         # Return appropriate response format
         return jsonify(response_obj)
