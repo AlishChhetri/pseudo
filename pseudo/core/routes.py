@@ -114,16 +114,16 @@ def chat():
 
         # Process the message based on detected mode and cleaned content
         response_data = router.process_content(mode, cleaned_content)
-        
+
         # Extract response, provider and model information
         provider = None
         model = None
-        
+
         if isinstance(response_data, dict):
             # New format with provider and model included
             provider = response_data.get("provider")
             model = response_data.get("model")
-            
+
             # Extract the actual response content
             if "content" in response_data:
                 response = response_data["content"]
@@ -133,7 +133,7 @@ def chat():
         else:
             # Legacy format, response is directly returned
             response = response_data
-            
+
         # Handle media if needed
         media_path = None
         response_obj = {
@@ -143,7 +143,7 @@ def chat():
             "original_input": message,
             "cleaned_content": cleaned_content,
             "provider": provider,
-            "model": model
+            "model": model,
         }
 
         if mode in ["image", "audio"]:
@@ -153,9 +153,13 @@ def chat():
 
             # Save media directly to chat-specific directory only
             # Extract the actual response content for media
-            media_content = response if not isinstance(response_data, dict) or "content" not in response_data else response_data["content"]
+            media_content = (
+                response
+                if not isinstance(response_data, dict) or "content" not in response_data
+                else response_data["content"]
+            )
             media_path = chat_manager.save_media(media_content, mode, chat_media_dir)
-            
+
             if media_path:
                 # Get filename for the URL
                 filename = os.path.basename(media_path)
@@ -174,7 +178,7 @@ def chat():
                     "original_input": message,
                     "cleaned_content": cleaned_content,
                     "provider": provider,
-                    "model": model
+                    "model": model,
                 }
 
         # Save assistant response to chat history
@@ -184,7 +188,7 @@ def chat():
             "original_input": message,
             "cleaned_content": cleaned_content,
             "provider": provider,
-            "model": model
+            "model": model,
         }
 
         # Handle content based on type
@@ -203,12 +207,12 @@ def chat():
         # Pass media path for saving in chat history
         # This will save the media filename in the message object
         chat_manager.add_message(chat_id, assistant_message, media_path)
-        
+
         # Get the chat metadata to extract the title
         chat_data = chat_manager.get_chat(chat_id)
         if chat_data and "title" in chat_data:
             response_obj["title"] = chat_data["title"]
-        
+
         # Update the title in the response
         if "title" not in response_obj or not response_obj["title"]:
             # Use the first few words of the user message as the title

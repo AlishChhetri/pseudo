@@ -58,15 +58,13 @@ class ContentRouter:
                             "openai": {
                                 "api_key": "",
                                 "organization": "",
-                                "models": ["gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"]
+                                "models": ["gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"],
                             },
                             "anthropic": {
                                 "api_key": "",
-                                "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
+                                "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"],
                             },
-                            "ollama": {
-                                "models": ["llama3", "mistral", "phi3"]
-                            }
+                            "ollama": {"models": ["llama3", "mistral", "phi3"]},
                         }
                     },
                     "image": {
@@ -74,30 +72,32 @@ class ContentRouter:
                             "openai": {
                                 "api_key": "",
                                 "organization": "",
-                                "models": ["dall-e-3", "dall-e-2"]
+                                "models": ["dall-e-3", "dall-e-2"],
                             },
                             "stability": {
                                 "api_key": "",
-                                "models": ["stable-diffusion-xl", "stable-diffusion-v1-5"]
-                            }
+                                "models": ["stable-diffusion-xl", "stable-diffusion-v1-5"],
+                            },
                         }
                     },
                     "audio": {
                         "providers": {
                             "elevenlabs": {
                                 "api_key": "",
-                                "models": ["eleven_multilingual_v2", "eleven_monolingual_v1"]
+                                "models": ["eleven_multilingual_v2", "eleven_monolingual_v1"],
                             }
                         }
                     },
                 }
             }
-            
+
             # Search for credentials file in common locations
             search_paths = [
                 "credentials.json",  # Current directory
                 str(Path.home() / ".pseudo" / "credentials.json"),  # User home
-                str(Path(__file__).parent.parent.parent.parent / "credentials.json"),  # Project root
+                str(
+                    Path(__file__).parent.parent.parent.parent / "credentials.json"
+                ),  # Project root
                 str(Path.cwd() / "credentials.json"),  # Working directory
             ]
 
@@ -112,45 +112,51 @@ class ContentRouter:
                     with open(path, "r") as f:
                         credentials = json.load(f)
                         self.credentials_path = path
-                        
+
                         # Ensure the credentials have the right structure
                         if "modes" not in credentials:
-                            logger.warning(f"Invalid credentials format at {path}. Adding modes key.")
+                            logger.warning(
+                                f"Invalid credentials format at {path}. Adding modes key."
+                            )
                             credentials["modes"] = default_credentials["modes"]
-                        
+
                         for mode in ["text", "image", "audio"]:
                             if mode not in credentials["modes"]:
-                                logger.warning(f"Missing {mode} mode in credentials. Adding default.")
+                                logger.warning(
+                                    f"Missing {mode} mode in credentials. Adding default."
+                                )
                                 credentials["modes"][mode] = default_credentials["modes"][mode]
                             elif "providers" not in credentials["modes"][mode]:
                                 logger.warning(f"Missing providers in {mode} mode. Adding default.")
-                                credentials["modes"][mode]["providers"] = default_credentials["modes"][mode]["providers"]
-                        
+                                credentials["modes"][mode]["providers"] = default_credentials[
+                                    "modes"
+                                ][mode]["providers"]
+
                         return credentials
 
             # No credentials found - use project root as default location
             project_root = Path(__file__).parent.parent.parent.parent
             default_path = project_root / "credentials.json"
             self.credentials_path = str(default_path.absolute())
-            
+
             logger.warning(f"No credentials found. Creating default at: {self.credentials_path}")
-            
+
             # Create default credentials file
             with open(self.credentials_path, "w") as f:
                 json.dump(default_credentials, f, indent=2)
-            
+
             return default_credentials
 
         except Exception as e:
             logger.error(f"Error loading credentials: {e}")
-            
+
             # Ensure we have a valid path even in case of errors
             project_root = Path(__file__).parent.parent.parent.parent
             default_path = project_root / "credentials.json"
             self.credentials_path = str(default_path.absolute())
-            
+
             logger.warning(f"Using fallback credentials path: {self.credentials_path}")
-            
+
             return {
                 "modes": {
                     "text": {"providers": {}},
@@ -168,7 +174,7 @@ class ContentRouter:
                 project_root = Path(__file__).parent.parent.parent.parent
                 self.credentials_path = str((project_root / "credentials.json").absolute())
                 logger.warning(f"Empty credentials path. Using default: {self.credentials_path}")
-            
+
             # Create directory if it doesn't exist
             directory = os.path.dirname(self.credentials_path)
             if directory and not os.path.exists(directory):
@@ -180,7 +186,7 @@ class ContentRouter:
 
             # Update the credentials in memory
             self.credentials = credentials
-            
+
             logger.info(f"Successfully saved credentials to {self.credentials_path}")
             return True
         except Exception as e:
@@ -340,7 +346,7 @@ Always maintain the meaning of the original request while removing only the part
                 return {
                     "content": f"The '{mode}' mode is not configured in credentials.json. Please add providers for this mode.",
                     "provider": "system",
-                    "model": "none"
+                    "model": "none",
                 }
 
             providers = self.credentials["modes"][mode]["providers"]
@@ -349,27 +355,31 @@ Always maintain the meaning of the original request while removing only the part
                 return {
                     "content": f"No providers are configured for the '{mode}' mode in credentials.json. Please add at least one provider.",
                     "provider": "system",
-                    "model": "none"
+                    "model": "none",
                 }
 
             # Check if any providers have API keys
             has_configured_provider = False
             for provider_name, provider_config in providers.items():
                 # For non-local providers, check API keys
-                if provider_name != "ollama" and "api_key" in provider_config and provider_config["api_key"]:
+                if (
+                    provider_name != "ollama"
+                    and "api_key" in provider_config
+                    and provider_config["api_key"]
+                ):
                     has_configured_provider = True
                     break
                 # For local providers like ollama, just check if it exists
                 elif provider_name == "ollama":
                     has_configured_provider = True
                     break
-            
+
             if not has_configured_provider:
                 logger.error(f"No providers with API keys configured for {mode} mode")
                 return {
                     "content": f"No API keys are configured for any providers in '{mode}' mode. Please add your API keys to credentials.json.",
                     "provider": "system",
-                    "model": "none"
+                    "model": "none",
                 }
 
             errors = []
@@ -377,7 +387,11 @@ Always maintain the meaning of the original request while removing only the part
             # Try each provider in strict order from credentials.json (queue)
             for provider_name, provider_config in providers.items():
                 # Skip providers without API keys (except for ollama which is local)
-                if provider_name != "ollama" and "api_key" in provider_config and not provider_config["api_key"]:
+                if (
+                    provider_name != "ollama"
+                    and "api_key" in provider_config
+                    and not provider_config["api_key"]
+                ):
                     logger.warning(f"Skipping {provider_name} - no API key provided")
                     continue
 
@@ -409,7 +423,7 @@ Always maintain the meaning of the original request while removing only the part
                         # If we got a response, return it immediately without trying further options
                         if response:
                             logger.info(f"Successfully processed with {provider_name}/{model_name}")
-                            
+
                             # For debugging
                             if mode == "image":
                                 logger.info(f"Image response type: {type(response)}")
@@ -417,27 +431,24 @@ Always maintain the meaning of the original request while removing only the part
                                     logger.info(f"Image response keys: {list(response.keys())}")
                                     if "url" in response:
                                         logger.info(f"Image URL: {response['url']}")
-                            
+
                             # Return a dictionary with the response and provider/model info
                             if isinstance(response, (str, bytes)):
                                 return {
                                     "content": response,
                                     "provider": provider_name,
-                                    "model": model_name
+                                    "model": model_name,
                                 }
                             elif isinstance(response, dict):
                                 # If response is already a dict, add provider/model info
-                                response.update({
-                                    "provider": provider_name,
-                                    "model": model_name
-                                })
+                                response.update({"provider": provider_name, "model": model_name})
                                 return response
                             else:
                                 # For any other type, wrap it
                                 return {
                                     "content": response,
                                     "provider": provider_name,
-                                    "model": model_name
+                                    "model": model_name,
                                 }
                     except Exception as e:
                         error_msg = f"Error with {provider_name}/{model_name}: {e}"
@@ -451,7 +462,7 @@ Always maintain the meaning of the original request while removing only the part
             return {
                 "content": f"Unable to process {mode} content. Please check your API keys in credentials.json.\n\nErrors:\n{error_details}",
                 "provider": "system",
-                "model": "none"
+                "model": "none",
             }
 
         except Exception as e:
@@ -459,7 +470,7 @@ Always maintain the meaning of the original request while removing only the part
             return {
                 "content": f"Error processing {mode} content: {e}. Please check your configuration.",
                 "provider": "system",
-                "model": "none"
+                "model": "none",
             }
 
     def get_available_providers(self, mode: str) -> List[str]:
