@@ -1,10 +1,73 @@
-# Pseudo - Smart AI Content Router
+# Pseudo: Simulation of Omni Model Behavior
 
-Pseudo is a smart content router for AI-generated text, images, and audio. It provides a consistent interface for working with different AI providers.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 
-## 🚀 Quick Start
+## Overview
 
-Pseudo requires APICenter to be available as a sibling directory, since APICenter is not published to PyPI.
+Pseudo is an intelligent request classification and routing system that dynamically directs user inputs to appropriate AI models based on content analysis. Its foundational premise is the "anything in, anything out" paradigm—though the current implementation processes text inputs and produces text, image, or audio outputs.
+
+Developed as an application of [APICenter](https://github.com/alishchhetri/apicenter), Pseudo demonstrates how a standardized API abstraction layer can significantly reduce integration complexity when working with multiple AI service providers.
+
+## Core Functionality
+
+Pseudo implements a multi-stage processing pipeline:
+
+1. **Intent Classification**: Analyzes natural language inputs to determine the intended output modality (text, image, or audio)
+2. **Content Normalization**: Extracts the semantically relevant content by removing modality-specific instructions
+3. **Gateway Routing**: Directs normalized inputs to appropriate AI services via a deterministic selection algorithm
+4. **Response Normalization**: Standardizes diverse response formats into consistent user-facing presentations
+
+## Architecture
+
+Pseudo employs a three-tier architecture:
+
+1. **Gateway Subsystem**: Implements classification, normalization, and routing logic to direct requests to appropriate services
+2. **Persistence Layer**: Manages conversation state, media artifacts, and provider metadata across sessions
+3. **Presentation Layer**: Provides a unified interface for interacting with multiple underlying AI capabilities
+
+Pseudo utilizes APICenter as an abstraction layer, enabling modality-specific functionality while maintaining independence from provider-specific implementation details.
+
+## Project Structure
+
+```
+pseudo/
+├── pseudo/                   # Main package
+│   ├── app/                  # Frontend components
+│   │   ├── static/           # Static assets (CSS, JS)
+│   │   └── templates/        # HTML templates
+│   └── core/                 # Backend implementation
+│       ├── services/         # Service modules
+│       │   ├── chat_history/ # Chat history management
+│       │   ├── content_router.py  # Gateway routing logic
+│       │   └── media_manager.py   # Media file handling
+│       ├── app.py            # Flask application entry point
+│       ├── config.py         # Configuration settings
+│       └── routes.py         # API endpoints
+├── chat_history/             # Stored chat sessions
+├── credentials.json          # API credentials configuration
+└── pyproject.toml            # Poetry project configuration
+```
+
+## APICenter Integration
+
+Pseudo leverages APICenter's unified interface to interact with heterogeneous AI providers:
+
+- **Text Generation**: OpenAI, Anthropic, Ollama (local models)
+- **Image Generation**: OpenAI DALL-E, Stability AI
+- **Audio Generation**: ElevenLabs
+
+This integration decouples Pseudo's core routing logic from provider-specific implementations, allowing the system to focus on content classification and appropriate service selection while APICenter manages the complexities of different API specifications.
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.12+
+- [APICenter](https://github.com/alishchhetri/apicenter) (required as a sibling directory)
+- API keys for desired AI services
+
+### Installation
 
 1. Create a parent directory for both projects:
 ```bash
@@ -15,7 +78,7 @@ cd ai-projects
 2. Clone both repositories as siblings:
 ```bash
 git clone https://github.com/alishchhetri/apicenter.git
-git clone https://github.com/yourusername/pseudo.git
+git clone https://github.com/alishchhetri/pseudo.git
 ```
 
 3. Install Pseudo dependencies:
@@ -24,60 +87,18 @@ cd pseudo
 poetry install
 ```
 
-4. Run the application:
+4. Configure your API credentials in `credentials.json` (see Configuration section)
+
+5. Start the application:
 ```bash
 poetry run pseudo
 ```
 
-5. Open your browser and navigate to `http://0.0.0.0:5000`
+6. Open your browser and navigate to `http://0.0.0.0:5000`
 
-## 🔄 APICenter Integration
+## Configuration
 
-Pseudo uses the APICenter library to communicate with AI providers. Since APICenter is not published to PyPI, you must set up both projects as sibling directories:
-
-```
-parent-directory/
-├── apicenter/        # APICenter repository
-└── pseudo/           # Pseudo repository
-```
-
-Pseudo automatically detects and uses the APICenter package from the sibling directory. The import system will look for the apicenter directory at the same level as the pseudo directory.
-
-## ⚙️ Configuration
-
-You can configure the application using environment variables:
-
-- `FLASK_HOST`: The host to bind to (default: `0.0.0.0`)
-- `FLASK_PORT`: The port to listen on (default: `5000`)
-- `FLASK_DEBUG`: Enable debug mode (`True`/`False`, default: `True`)
-
-Example:
-```bash
-FLASK_HOST=localhost FLASK_PORT=8000 FLASK_DEBUG=False poetry run pseudo
-```
-
-## Development
-
-The application is built using Flask and leverages the APICenter library for interfacing with various AI providers.
-
-## How It Works
-
-Pseudo uses a smart content routing system that:
-
-1. **Analyzes Input**: Determines whether the user's input is requesting text, image, or audio content
-2. **Routes to Providers**: Uses a strict queue-based system to select the appropriate provider and model
-3. **Handles Responses**: Processes and displays the responses in a unified interface
-
-## Architecture
-
-- **Smart Mode Detection**: Uses a language model to classify user inputs as text, image, or audio requests
-- **Queue-Based Selection**: Providers and models are tried in the exact order they appear in credentials.json
-- **APICenter Integration**: All API calls are made through APICenter for standardized access
-- **Modern Web Interface**: Clean and responsive UI for interacting with various AI models
-
-## Credentials System
-
-Pseudo uses a credentials.json file that follows this structure:
+Pseudo utilizes a `credentials.json` file to define available AI providers and their associated models. The hierarchical structure of this file determines the priority sequence for provider and model selection.
 
 ```json
 {
@@ -87,11 +108,14 @@ Pseudo uses a credentials.json file that follows this structure:
         "openai": {
           "api_key": "YOUR_OPENAI_API_KEY",
           "organization": "YOUR_ORG_ID",
-          "models": ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"]
+          "models": ["gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"]
         },
         "anthropic": {
           "api_key": "YOUR_ANTHROPIC_API_KEY",
-          "models": ["claude-2", "claude-3-opus", "claude-3-sonnet"]
+          "models": ["claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
+        },
+        "ollama": {
+          "models": ["llama3", "mistral", "phi3"]
         }
       }
     },
@@ -100,11 +124,11 @@ Pseudo uses a credentials.json file that follows this structure:
         "openai": {
           "api_key": "YOUR_OPENAI_API_KEY",
           "organization": "YOUR_ORG_ID",
-          "models": ["dall-e-2", "dall-e-3"]
+          "models": ["dall-e-3", "dall-e-2"]
         },
         "stability": {
           "api_key": "YOUR_STABILITY_API_KEY",
-          "models": ["stable-diffusion-v1-5", "stable-diffusion-xl"]
+          "models": ["stable-diffusion-xl", "stable-diffusion-v1-5"]
         }
       }
     },
@@ -112,7 +136,7 @@ Pseudo uses a credentials.json file that follows this structure:
       "providers": {
         "elevenlabs": {
           "api_key": "YOUR_ELEVENLABS_API_KEY",
-          "models": ["eleven_monolingual_v1", "eleven_multilingual_v2"]
+          "models": ["eleven_multilingual_v2", "eleven_monolingual_v1"]
         }
       }
     }
@@ -120,158 +144,56 @@ Pseudo uses a credentials.json file that follows this structure:
 }
 ```
 
-The system strictly follows a queue-based approach:
-- Providers are tried in exactly the order they appear in the JSON (top to bottom)
-- Models within each provider are tried in exactly the order they appear in the array (left to right)
-- If a provider or model fails, the system automatically tries the next one in the queue
-- No default providers or models are used - only those specified in credentials.json
+### Deterministic Provider Selection
 
-### Queue Order Matters
+Pseudo implements a deterministic selection algorithm:
 
-The order of providers and models in your credentials.json is critical:
-- The first provider listed for each mode will be tried first
-- The first model listed for each provider will be tried first
-- Rearranging the order changes the priority of which services are used
+1. Providers are evaluated sequentially according to their order in the configuration hierarchy
+2. Models within each provider are evaluated according to their array position
+3. If a provider or model is unavailable or returns an error, the system proceeds to the next candidate
 
-## Example Usage
+This approach ensures consistent, predictable behavior while providing graceful degradation capabilities.
 
-- Type "Tell me about quantum physics" to get a text response
-- Type "Generate an image of a sunset over mountains" to get an image
-- Type "Convert to speech: Welcome to the future of AI" to get audio
+### Environment Variables
 
-## APICenter Integration
+Runtime configuration can be modified using environment variables:
 
-Pseudo uses APICenter for all AI provider interactions:
+- `FLASK_HOST`: Host binding address (default: `0.0.0.0`)
+- `FLASK_PORT`: Listening port (default: `5000`)
+- `FLASK_DEBUG`: Debug mode toggle (`True`/`False`, default: `True`)
+- `PSEUDO_CREDENTIALS_PATH`: Alternative credentials file location
 
-1. **Content Type Detection**: Uses the first available text provider to determine if input requires text, image, or audio
-2. **Provider Queue Processing**: Tries each provider and model in the exact order specified in credentials.json
-3. **Standardized Response Handling**: Processes different response formats from various providers
-4. **Automatic Fallback**: If one provider fails, automatically tries the next in the queue
-
-No default providers are hardcoded - the system strictly follows the queue as defined in credentials.json.
-
-## Technical Details
-
-### Directory Structure
-
-```
-pseudo/
-├── pseudo/                 # Main package
-│   ├── app/                # Frontend components
-│   │   ├── static/         # Static assets
-│   │   └── templates/      # HTML templates
-│   └── core/               # Backend code
-│       ├── services/       # Service modules
-│       │   ├── chat_history/   # Chat history management
-│       │   ├── content_router.py  # Content routing logic
-│       │   └── media_manager.py   # Media file handling
-│       ├── app.py          # Flask application
-│       ├── config.py       # Configuration
-│       └── routes.py       # API routes
-├── chat_history/           # Stored chat histories
-├── credentials.json        # API credentials
-└── pyproject.toml          # Poetry configuration
+Example:
+```bash
+FLASK_HOST=localhost FLASK_PORT=8000 FLASK_DEBUG=False poetry run pseudo
 ```
 
-### Chat History
+## Usage Examples
 
-Pseudo keeps a record of all conversations, including:
-- Text messages between user and AI
-- Generated images and audio files
-- Metadata about each chat session
+- **Text Generation**: "Explain the concept of quantum entanglement in simple terms"
+- **Image Creation**: "Generate an image of a futuristic city with flying cars"
+- **Audio Synthesis**: "Convert to speech: Welcome to the future of artificial intelligence"
 
-Users can:
-- Start new chat sessions
-- Resume previous conversations
-- Download generated media
-- Delete chat history entries
+## Conversation Persistence
 
-### Media Handling
+Pseudo maintains a persistent record of all interactions, including:
+- Complete dialogue exchanges between user and AI
+- Generated media artifacts (images, audio)
+- Provider and model selection metadata
 
-Media files (images and audio) are:
-- Saved to the media directory
-- Associated with specific chat sessions
-- Easily downloadable via the UI
-- Preserved between application restarts
+Users can initiate new conversation sessions, resume existing ones, and download generated media artifacts.
 
-## 🚀 Overview
+## Technical Implementation
 
-Pseudo is a web application that:
+Pseudo's integration with APICenter follows a structured four-phase process:
 
-1. Takes natural language input from a user
-2. Automatically determines the appropriate content type (text, image, or audio)
-3. Routes the request to the right AI model
-4. Returns the generated content
+1. **Modality Classification**: Employs natural language understanding to analyze and classify inputs according to intended output modality
+2. **Provider Resolution**: Traverses the provider hierarchy according to the deterministic selection algorithm
+3. **Response Normalization**: Processes heterogeneous response formats into standardized representations
+4. **Exception Handling**: Implements graceful degradation by sequentially attempting alternative providers when errors occur
 
-This allows users to interact with a single unified interface while Pseudo intelligently selects the best tool for the job.
+This methodology enables Pseudo to abstract the complexities of multiple AI services while providing users with a unified interface that automatically selects appropriate modalities and providers based on natural language inputs.
 
-## ✨ Features
+## License
 
-- **Smart Content Detection**: Automatically detects whether the user wants text, image, or audio generation
-- **Multiple AI Providers**: Supports multiple AI providers through the APICenter library:
-  - **Text**: OpenAI, Anthropic, Ollama (local models)
-  - **Image**: OpenAI DALL-E, Stability AI
-  - **Audio**: ElevenLabs
-- **Model Selection**: Automatically selects appropriate models based on content type
-- **Credential Management**: Simple JSON file configuration for API keys
-- **Modern UI**: Clean, responsive interface with light/dark mode support
-
-## 🔧 Technology Stack
-
-- **Backend**: Python with Flask
-- **Frontend**: HTML, CSS, JavaScript
-- **AI Integration**: [APICenter](https://github.com/alishchhetri/apicenter) for universal API access
-- **Local Models**: Ollama for running models locally
-
-## 📋 Requirements
-
-- Python 3.12+
-- Ollama (for local model support and content type detection)
-- API keys for desired services
-
-## 📝 Configuration
-
-Pseudo uses a `credentials.json` file to store API keys. You need to manually edit this file to add your API keys:
-
-```json
-{
-    "modes": {
-        "text": {
-            "providers": {
-                "openai": {
-                    "api_key": "your-openai-api-key",
-                    "models": ["gpt-4", "gpt-3.5-turbo"]
-                },
-                "anthropic": {
-                    "api_key": "your-anthropic-api-key",
-                    "models": ["claude-3-opus", "claude-3-sonnet"]
-                }
-            }
-        },
-        "image": {
-            "providers": {
-                "openai": {
-                    "api_key": "your-openai-api-key",
-                    "models": ["dall-e-3"]
-                }
-            }
-        }
-    }
-}
-```
-
-The order of providers and models in the file determines the priority in which they are used:
-- Providers are tried from top to bottom
-- Models within a provider are tried from left to right
-- If one fails, the next in line is automatically tried
-
-## 🧠 How It Works
-
-1. When a user enters a prompt, it's sent to the first available text provider in credentials.json (using APICenter)
-2. The system uses this provider to classify the intent as text, image, or audio generation
-3. Based on this classification, the prompt is routed to the appropriate AI services via APICenter, trying providers and models in the order they appear in credentials.json
-4. The response is displayed to the user in the appropriate format
-
-## 📄 License
-
-MIT License
+This project is licensed under the MIT License - see the LICENSE file for details.
