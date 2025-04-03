@@ -1,0 +1,401 @@
+run_number,prompt,expected_mode,detected_mode,cleaned_content,category,explicitness,test_id,matches_expected
+1,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+2,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+3,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+4,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+5,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+6,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+7,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+8,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+9,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+10,write text about quantum physics,text,text,write text about quantum physics,explicit_text,very,et-v1,True
+1,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+2,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+3,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+4,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+5,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+6,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+7,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+8,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+9,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+10,generate a paragraph about climate change,text,text,generate a paragraph about climate change,explicit_text,very,et-v2,True
+1,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+2,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+3,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+4,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+5,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+6,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+7,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+8,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+9,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+10,create a sentence about artificial intelligence,text,text,create a sentence about artificial intelligence,explicit_text,very,et-v3,True
+1,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+2,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+3,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+4,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+5,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+6,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+7,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+8,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+9,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+10,write an essay about renewable energy,text,text,write an essay about renewable energy,explicit_text,very,et-v4,True
+1,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+2,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+3,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+4,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+5,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+6,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+7,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+8,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+9,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+10,compose a story about space exploration,text,text,compose a story about space exploration,explicit_text,moderate,et-m1,True
+1,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+2,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+3,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+4,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+5,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+6,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+7,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+8,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+9,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+10,draft a report about global warming,text,text,draft a report about global warming,explicit_text,moderate,et-m2,True
+1,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+2,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+3,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+4,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+5,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+6,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+7,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+8,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+9,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+10,summarize the history of computers,text,text,summarize the history of computers,explicit_text,moderate,et-m3,True
+1,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+2,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+3,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+4,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+5,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+6,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+7,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+8,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+9,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+10,explain the concept of machine learning,text,text,explain the concept of machine learning,explicit_text,less,et-l1,True
+1,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+2,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+3,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+4,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+5,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+6,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+7,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+8,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+9,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+10,describe the process of photosynthesis,text,text,describe the process of photosynthesis,explicit_text,less,et-l2,True
+1,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+2,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+3,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+4,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+5,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+6,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+7,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+8,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+9,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+10,tell me about the solar system,text,text,tell me about the solar system,explicit_text,less,et-l3,True
+1,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+2,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+3,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+4,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+5,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+6,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+7,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+8,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+9,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+10,generate an image of a red cat,image,image,a red cat,explicit_image,very,ei-v1,True
+1,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+2,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+3,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+4,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+5,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+6,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+7,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+8,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+9,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+10,create a picture of a sunset,image,image,a sunset,explicit_image,very,ei-v2,True
+1,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+2,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+3,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+4,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+5,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+6,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+7,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+8,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+9,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+10,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
+1,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+2,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+3,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+4,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+5,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+6,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+7,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+8,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+9,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+10,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
+1,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+2,design a logo for a tech company,image,image,logo for a tech company,explicit_image,moderate,ei-m1,True
+3,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+4,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+5,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+6,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+7,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+8,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+9,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+10,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+1,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+2,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+3,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+4,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+5,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+6,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+7,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+8,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+9,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+10,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
+1,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+2,render a 3D model of a car,image,image,a 3D model of a car,explicit_image,moderate,ei-m3,True
+3,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+4,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+5,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+6,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+7,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+8,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+9,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+10,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+1,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+2,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+3,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+4,sketch a portrait of a person,image,image,sketch a portrait of a person,explicit_image,less,ei-l1,True
+5,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+6,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+7,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+8,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+9,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+10,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
+1,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+2,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+3,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+4,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+5,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+6,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+7,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+8,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+9,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+10,paint a landscape of a forest,image,image,a landscape of a forest,explicit_image,less,ei-l2,True
+1,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+2,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+3,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+4,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+5,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+6,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+7,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+8,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+9,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+10,visualize the concept of time,image,image,the concept of time,explicit_image,less,ei-l3,True
+1,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+2,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+3,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+4,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+5,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+6,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+7,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+8,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+9,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+10,convert this text to speech: hello world,audio,audio,hello world,explicit_audio,very,ea-v1,True
+1,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+2,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+3,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+4,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+5,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+6,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+7,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+8,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+9,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+10,read this text aloud: the quick brown fox,audio,audio,the quick brown fox,explicit_audio,very,ea-v2,True
+1,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+2,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+3,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+4,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+5,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+6,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+7,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+8,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+9,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+10,speak this text: welcome to the future,audio,audio,welcome to the future,explicit_audio,very,ea-v3,True
+1,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+2,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+3,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+4,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+5,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+6,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+7,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+8,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+9,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+10,narrate this text: once upon a time,audio,audio,once upon a time,explicit_audio,very,ea-v4,True
+1,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+2,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+3,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+4,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+5,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+6,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+7,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+8,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+9,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
+10,recite this text: the story begins,audio,text,the story begins,explicit_audio,moderate,ea-m1,False
+1,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+2,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+3,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+4,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+5,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+6,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+7,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+8,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+9,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+10,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
+1,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+2,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+3,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+4,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+5,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+6,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+7,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+8,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+9,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+10,pronounce this text: the journey begins,audio,audio,the journey begins,explicit_audio,moderate,ea-m3,True
+1,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+2,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+3,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+4,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+5,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+6,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+7,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+8,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+9,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+10,utter this text: the mystery unfolds,audio,audio,the mystery unfolds,explicit_audio,less,ea-l1,True
+1,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+2,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+3,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+4,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+5,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+6,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+7,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+8,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+9,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+10,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
+1,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+2,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+3,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+4,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+5,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+6,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+7,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+8,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+9,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+10,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
+1,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+2,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+3,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+4,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+5,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+6,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+7,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+8,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+9,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+10,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
+1,create content about space exploration,,text,about space exploration,vague,none,v2,True
+2,create content about space exploration,,text,about space exploration,vague,none,v2,True
+3,create content about space exploration,,text,about space exploration,vague,none,v2,True
+4,create content about space exploration,,text,create content about space exploration,vague,none,v2,True
+5,create content about space exploration,,text,about space exploration,vague,none,v2,True
+6,create content about space exploration,,text,create content about space exploration,vague,none,v2,True
+7,create content about space exploration,,text,create content about space exploration,vague,none,v2,True
+8,create content about space exploration,,text,about space exploration,vague,none,v2,True
+9,create content about space exploration,,text,about space exploration,vague,none,v2,True
+10,create content about space exploration,,text,about space exploration,vague,none,v2,True
+1,show me something about nature,,text,show me something about nature,vague,none,v3,True
+2,show me something about nature,,text,show me something about nature,vague,none,v3,True
+3,show me something about nature,,text,show me something about nature,vague,none,v3,True
+4,show me something about nature,,text,show me something about nature,vague,none,v3,True
+5,show me something about nature,,text,show me something about nature,vague,none,v3,True
+6,show me something about nature,,text,show me something about nature,vague,none,v3,True
+7,show me something about nature,,text,show me something about nature,vague,none,v3,True
+8,show me something about nature,,text,show me something about nature,vague,none,v3,True
+9,show me something about nature,,text,show me something about nature,vague,none,v3,True
+10,show me something about nature,,text,show me something about nature,vague,none,v3,True
+1,make something about technology,,text,make something about technology,vague,none,v4,True
+2,make something about technology,,text,make something about technology,vague,none,v4,True
+3,make something about technology,,text,make something about technology,vague,none,v4,True
+4,make something about technology,,text,make something about technology,vague,none,v4,True
+5,make something about technology,,text,make something about technology,vague,none,v4,True
+6,make something about technology,,text,make something about technology,vague,none,v4,True
+7,make something about technology,,text,make something about technology,vague,none,v4,True
+8,make something about technology,,text,make something about technology,vague,none,v4,True
+9,make something about technology,,text,make something about technology,vague,none,v4,True
+10,make something about technology,,text,make something about technology,vague,none,v4,True
+1,produce something about art,,text,produce something about art,vague,none,v5,True
+2,produce something about art,,text,produce something about art,vague,none,v5,True
+3,produce something about art,,text,produce something about art,vague,none,v5,True
+4,produce something about art,,text,produce something about art,vague,none,v5,True
+5,produce something about art,,text,produce something about art,vague,none,v5,True
+6,produce something about art,,text,produce something about art,vague,none,v5,True
+7,produce something about art,,text,produce something about art,vague,none,v5,True
+8,produce something about art,,text,produce something about art,vague,none,v5,True
+9,produce something about art,,text,produce something about art,vague,none,v5,True
+10,produce something about art,,text,produce something about art,vague,none,v5,True
+1,create something about history,,text,create something about history,vague,none,v6,True
+2,create something about history,,text,create something about history,vague,none,v6,True
+3,create something about history,,text,something about history,vague,none,v6,True
+4,create something about history,,text,create something about history,vague,none,v6,True
+5,create something about history,,text,create something about history,vague,none,v6,True
+6,create something about history,,text,create something about history,vague,none,v6,True
+7,create something about history,,text,create something about history,vague,none,v6,True
+8,create something about history,,text,something about history,vague,none,v6,True
+9,create something about history,,text,create something about history,vague,none,v6,True
+10,create something about history,,text,create something about history,vague,none,v6,True
+1,generate something about science,,text,generate something about science,vague,none,v7,True
+2,generate something about science,,text,generate something about science,vague,none,v7,True
+3,generate something about science,,text,generate something about science,vague,none,v7,True
+4,generate something about science,,text,generate something about science,vague,none,v7,True
+5,generate something about science,,text,generate something about science,vague,none,v7,True
+6,generate something about science,,text,generate something about science,vague,none,v7,True
+7,generate something about science,,text,generate something about science,vague,none,v7,True
+8,generate something about science,,text,generate something about science,vague,none,v7,True
+9,generate something about science,,text,generate something about science,vague,none,v7,True
+10,generate something about science,,text,generate something about science,vague,none,v7,True
+1,make something about culture,,text,make something about culture,vague,none,v8,True
+2,make something about culture,,text,make something about culture,vague,none,v8,True
+3,make something about culture,,text,make something about culture,vague,none,v8,True
+4,make something about culture,,text,make something about culture,vague,none,v8,True
+5,make something about culture,,text,make something about culture,vague,none,v8,True
+6,make something about culture,,text,make something about culture,vague,none,v8,True
+7,make something about culture,,text,make something about culture,vague,none,v8,True
+8,make something about culture,,text,make something about culture,vague,none,v8,True
+9,make something about culture,,text,make something about culture,vague,none,v8,True
+10,make something about culture,,text,make something about culture,vague,none,v8,True
+1,produce something about sports,,text,produce something about sports,vague,none,v9,True
+2,produce something about sports,,text,produce something about sports,vague,none,v9,True
+3,produce something about sports,,text,something about sports,vague,none,v9,True
+4,produce something about sports,,text,produce something about sports,vague,none,v9,True
+5,produce something about sports,,text,produce something about sports,vague,none,v9,True
+6,produce something about sports,,text,produce something about sports,vague,none,v9,True
+7,produce something about sports,,text,produce something about sports,vague,none,v9,True
+8,produce something about sports,,text,produce something about sports,vague,none,v9,True
+9,produce something about sports,,text,produce something about sports,vague,none,v9,True
+10,produce something about sports,,text,produce something about sports,vague,none,v9,True
+1,create something about food,,text,create something about food,vague,none,v10,True
+2,create something about food,,text,create something about food,vague,none,v10,True
+3,create something about food,,text,create something about food,vague,none,v10,True
+4,create something about food,,text,create something about food,vague,none,v10,True
+5,create something about food,,text,create something about food,vague,none,v10,True
+6,create something about food,,text,create something about food,vague,none,v10,True
+7,create something about food,,text,create something about food,vague,none,v10,True
+8,create something about food,,text,create something about food,vague,none,v10,True
+9,create something about food,,text,create something about food,vague,none,v10,True
+10,create something about food,,text,create something about food,vague,none,v10,True

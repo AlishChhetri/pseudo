@@ -1,0 +1,42 @@
+Test ID Reference:
+
+et-v1: write text about quantum physics
+et-v2: generate a paragraph about climate change
+et-v3: create a sentence about artificial intelligence
+et-v4: write an essay about renewable energy
+et-m1: compose a story about space exploration
+et-m2: draft a report about global warming
+et-m3: summarize the history of computers
+et-l1: explain the concept of machine learning
+et-l2: describe the process of photosynthesis
+et-l3: tell me about the solar system
+ei-v1: generate an image of a red cat
+ei-v2: create a picture of a sunset
+ei-v3: draw a diagram of the water cycle
+ei-v4: make a photograph of mountains
+ei-m1: design a logo for a tech company
+ei-m2: illustrate a scene from a fairy tale
+ei-m3: render a 3D model of a car
+ei-l1: sketch a portrait of a person
+ei-l2: paint a landscape of a forest
+ei-l3: visualize the concept of time
+ea-v1: convert this text to speech: hello world
+ea-v2: read this text aloud: the quick brown fox
+ea-v3: speak this text: welcome to the future
+ea-v4: narrate this text: once upon a time
+ea-m1: recite this text: the story begins
+ea-m2: voice this text: the adventure awaits
+ea-m3: pronounce this text: the journey begins
+ea-l1: utter this text: the mystery unfolds
+ea-l2: verbalize this text: the legend continues
+ea-l3: articulate this text: the tale unfolds
+v1: generate media about flowers
+v2: create content about space exploration
+v3: show me something about nature
+v4: make something about technology
+v5: produce something about art
+v6: create something about history
+v7: generate something about science
+v8: make something about culture
+v9: produce something about sports
+v10: create something about food

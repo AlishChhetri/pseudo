@@ -1,0 +1,13 @@
+Expected,Case,Text,Image,Audio,Total
+Audio,1,0,0,10,10
+Audio,2,0,0,10,10
+Audio,3,0,0,10,10
+Audio,4,0,0,10,10
+Image,1,0,10,0,10
+Image,2,0,10,0,10
+Image,3,0,10,0,10
+Image,4,0,10,0,10
+Text,1,10,0,0,10
+Text,2,10,0,0,10
+Text,3,10,0,0,10
+Text,4,10,0,0,10
