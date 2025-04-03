@@ -2,15 +2,16 @@
 
 import csv
 import logging
-from pathlib import Path
-from typing import Dict, List
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
 
 # Add parent directory to sys.path so we can import pseudo
 import sys
+from pathlib import Path
+from typing import Dict, List
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 parent_dir = str(Path(__file__).resolve().parent.parent.parent)
 if parent_dir not in sys.path:

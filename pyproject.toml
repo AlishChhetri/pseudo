@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pseudo"
-version = "0.1.0"
-description = "Smart content router for AI-generated text, images, and audio"
+version = "1.0.0"
+description = "Pseudo is an intelligent request classification and routing system that dynamically directs user inputs to appropriate AI models based on content analysis."
 authors = ["Alish Chhetri <chhetri01@allegheny.edu>"]
 readme = "README.md"
 license = "MIT"
