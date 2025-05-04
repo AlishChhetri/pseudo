@@ -129,26 +129,26 @@ run_number,prompt,expected_mode,detected_mode,cleaned_content,category,explicitn
 8,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
 9,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
 10,draw a diagram of the water cycle,image,image,a diagram of the water cycle,explicit_image,very,ei-v3,True
-1,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-2,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-3,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-4,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-5,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-6,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-7,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-8,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-9,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-10,make a photograph of mountains,image,image,mountains,explicit_image,very,ei-v4,True
-1,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
-2,design a logo for a tech company,image,image,logo for a tech company,explicit_image,moderate,ei-m1,True
-3,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+1,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+2,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+3,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+4,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+5,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+6,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+7,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+8,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+9,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+10,make a photograph of mountains,image,image,a photograph of mountains,explicit_image,very,ei-v4,True
+1,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
+2,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
+3,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
 4,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
-5,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
-6,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
-7,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
-8,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
-9,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
-10,design a logo for a tech company,image,image,a logo for a tech company,explicit_image,moderate,ei-m1,True
+5,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
+6,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
+7,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
+8,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
+9,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
+10,design a logo for a tech company,image,image,design a logo for a tech company,explicit_image,moderate,ei-m1,True
 1,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
 2,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
 3,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
@@ -159,20 +159,20 @@ run_number,prompt,expected_mode,detected_mode,cleaned_content,category,explicitn
 8,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
 9,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
 10,illustrate a scene from a fairy tale,image,image,a scene from a fairy tale,explicit_image,moderate,ei-m2,True
-1,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
-2,render a 3D model of a car,image,image,a 3D model of a car,explicit_image,moderate,ei-m3,True
-3,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
-4,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
-5,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
-6,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
-7,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
-8,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
-9,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
-10,render a 3D model of a car,image,image,3D model of a car,explicit_image,moderate,ei-m3,True
+1,render a 3D model of a car,image,image,render a 3D model of a car,explicit_image,moderate,ei-m3,True
+2,render a 3D model of a car,image,image,render a 3D model of a car,explicit_image,moderate,ei-m3,True
+3,render a 3D model of a car,image,image,render a 3D model of a car,explicit_image,moderate,ei-m3,True
+4,render a 3D model of a car,image,image,render a 3D model of a car,explicit_image,moderate,ei-m3,True
+5,render a 3D model of a car,image,image,a 3D model of a car,explicit_image,moderate,ei-m3,True
+6,render a 3D model of a car,image,image,render a 3D model of a car,explicit_image,moderate,ei-m3,True
+7,render a 3D model of a car,image,image,render a 3D model of a car,explicit_image,moderate,ei-m3,True
+8,render a 3D model of a car,image,image,render a 3D model of a car,explicit_image,moderate,ei-m3,True
+9,render a 3D model of a car,image,image,render a 3D model of a car,explicit_image,moderate,ei-m3,True
+10,render a 3D model of a car,image,image,a 3D model of a car,explicit_image,moderate,ei-m3,True
 1,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
 2,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
 3,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
-4,sketch a portrait of a person,image,image,sketch a portrait of a person,explicit_image,less,ei-l1,True
+4,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
 5,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
 6,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
 7,sketch a portrait of a person,image,image,a portrait of a person,explicit_image,less,ei-l1,True
@@ -248,7 +248,7 @@ run_number,prompt,expected_mode,detected_mode,cleaned_content,category,explicitn
 7,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
 8,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
 9,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
-10,recite this text: the story begins,audio,text,the story begins,explicit_audio,moderate,ea-m1,False
+10,recite this text: the story begins,audio,audio,the story begins,explicit_audio,moderate,ea-m1,True
 1,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
 2,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
 3,voice this text: the adventure awaits,audio,audio,the adventure awaits,explicit_audio,moderate,ea-m2,True
@@ -289,113 +289,113 @@ run_number,prompt,expected_mode,detected_mode,cleaned_content,category,explicitn
 8,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
 9,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
 10,verbalize this text: the legend continues,audio,audio,the legend continues,explicit_audio,less,ea-l2,True
-1,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-2,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-3,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-4,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-5,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-6,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-7,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-8,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-9,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-10,articulate this text: the tale unfolds,audio,text,the tale unfolds,explicit_audio,less,ea-l3,False
-1,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-2,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-3,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-4,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-5,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-6,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-7,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-8,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-9,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-10,generate media about flowers,,text,generate media about flowers,vague,none,v1,True
-1,create content about space exploration,,text,about space exploration,vague,none,v2,True
-2,create content about space exploration,,text,about space exploration,vague,none,v2,True
-3,create content about space exploration,,text,about space exploration,vague,none,v2,True
-4,create content about space exploration,,text,create content about space exploration,vague,none,v2,True
-5,create content about space exploration,,text,about space exploration,vague,none,v2,True
-6,create content about space exploration,,text,create content about space exploration,vague,none,v2,True
-7,create content about space exploration,,text,create content about space exploration,vague,none,v2,True
-8,create content about space exploration,,text,about space exploration,vague,none,v2,True
-9,create content about space exploration,,text,about space exploration,vague,none,v2,True
-10,create content about space exploration,,text,about space exploration,vague,none,v2,True
-1,show me something about nature,,text,show me something about nature,vague,none,v3,True
-2,show me something about nature,,text,show me something about nature,vague,none,v3,True
-3,show me something about nature,,text,show me something about nature,vague,none,v3,True
-4,show me something about nature,,text,show me something about nature,vague,none,v3,True
-5,show me something about nature,,text,show me something about nature,vague,none,v3,True
-6,show me something about nature,,text,show me something about nature,vague,none,v3,True
-7,show me something about nature,,text,show me something about nature,vague,none,v3,True
-8,show me something about nature,,text,show me something about nature,vague,none,v3,True
-9,show me something about nature,,text,show me something about nature,vague,none,v3,True
-10,show me something about nature,,text,show me something about nature,vague,none,v3,True
-1,make something about technology,,text,make something about technology,vague,none,v4,True
-2,make something about technology,,text,make something about technology,vague,none,v4,True
-3,make something about technology,,text,make something about technology,vague,none,v4,True
-4,make something about technology,,text,make something about technology,vague,none,v4,True
-5,make something about technology,,text,make something about technology,vague,none,v4,True
-6,make something about technology,,text,make something about technology,vague,none,v4,True
-7,make something about technology,,text,make something about technology,vague,none,v4,True
-8,make something about technology,,text,make something about technology,vague,none,v4,True
-9,make something about technology,,text,make something about technology,vague,none,v4,True
-10,make something about technology,,text,make something about technology,vague,none,v4,True
-1,produce something about art,,text,produce something about art,vague,none,v5,True
-2,produce something about art,,text,produce something about art,vague,none,v5,True
-3,produce something about art,,text,produce something about art,vague,none,v5,True
-4,produce something about art,,text,produce something about art,vague,none,v5,True
-5,produce something about art,,text,produce something about art,vague,none,v5,True
-6,produce something about art,,text,produce something about art,vague,none,v5,True
-7,produce something about art,,text,produce something about art,vague,none,v5,True
-8,produce something about art,,text,produce something about art,vague,none,v5,True
-9,produce something about art,,text,produce something about art,vague,none,v5,True
-10,produce something about art,,text,produce something about art,vague,none,v5,True
-1,create something about history,,text,create something about history,vague,none,v6,True
-2,create something about history,,text,create something about history,vague,none,v6,True
-3,create something about history,,text,something about history,vague,none,v6,True
-4,create something about history,,text,create something about history,vague,none,v6,True
-5,create something about history,,text,create something about history,vague,none,v6,True
-6,create something about history,,text,create something about history,vague,none,v6,True
-7,create something about history,,text,create something about history,vague,none,v6,True
-8,create something about history,,text,something about history,vague,none,v6,True
-9,create something about history,,text,create something about history,vague,none,v6,True
-10,create something about history,,text,create something about history,vague,none,v6,True
-1,generate something about science,,text,generate something about science,vague,none,v7,True
-2,generate something about science,,text,generate something about science,vague,none,v7,True
-3,generate something about science,,text,generate something about science,vague,none,v7,True
-4,generate something about science,,text,generate something about science,vague,none,v7,True
-5,generate something about science,,text,generate something about science,vague,none,v7,True
-6,generate something about science,,text,generate something about science,vague,none,v7,True
-7,generate something about science,,text,generate something about science,vague,none,v7,True
-8,generate something about science,,text,generate something about science,vague,none,v7,True
-9,generate something about science,,text,generate something about science,vague,none,v7,True
-10,generate something about science,,text,generate something about science,vague,none,v7,True
-1,make something about culture,,text,make something about culture,vague,none,v8,True
-2,make something about culture,,text,make something about culture,vague,none,v8,True
-3,make something about culture,,text,make something about culture,vague,none,v8,True
-4,make something about culture,,text,make something about culture,vague,none,v8,True
-5,make something about culture,,text,make something about culture,vague,none,v8,True
-6,make something about culture,,text,make something about culture,vague,none,v8,True
-7,make something about culture,,text,make something about culture,vague,none,v8,True
-8,make something about culture,,text,make something about culture,vague,none,v8,True
-9,make something about culture,,text,make something about culture,vague,none,v8,True
-10,make something about culture,,text,make something about culture,vague,none,v8,True
-1,produce something about sports,,text,produce something about sports,vague,none,v9,True
-2,produce something about sports,,text,produce something about sports,vague,none,v9,True
-3,produce something about sports,,text,something about sports,vague,none,v9,True
-4,produce something about sports,,text,produce something about sports,vague,none,v9,True
-5,produce something about sports,,text,produce something about sports,vague,none,v9,True
-6,produce something about sports,,text,produce something about sports,vague,none,v9,True
-7,produce something about sports,,text,produce something about sports,vague,none,v9,True
-8,produce something about sports,,text,produce something about sports,vague,none,v9,True
-9,produce something about sports,,text,produce something about sports,vague,none,v9,True
-10,produce something about sports,,text,produce something about sports,vague,none,v9,True
-1,create something about food,,text,create something about food,vague,none,v10,True
-2,create something about food,,text,create something about food,vague,none,v10,True
-3,create something about food,,text,create something about food,vague,none,v10,True
-4,create something about food,,text,create something about food,vague,none,v10,True
-5,create something about food,,text,create something about food,vague,none,v10,True
-6,create something about food,,text,create something about food,vague,none,v10,True
-7,create something about food,,text,create something about food,vague,none,v10,True
-8,create something about food,,text,create something about food,vague,none,v10,True
-9,create something about food,,text,create something about food,vague,none,v10,True
-10,create something about food,,text,create something about food,vague,none,v10,True
+1,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+2,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+3,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+4,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+5,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+6,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+7,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+8,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+9,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+10,articulate this text: the tale unfolds,audio,audio,the tale unfolds,explicit_audio,less,ea-l3,True
+1,create content about mountains,,text,create content about mountains,vague,none,v1,False
+2,create content about mountains,,text,create content about mountains,vague,none,v1,False
+3,create content about mountains,,text,create content about mountains,vague,none,v1,False
+4,create content about mountains,,text,create content about mountains,vague,none,v1,False
+5,create content about mountains,,text,create content about mountains,vague,none,v1,False
+6,create content about mountains,,text,create content about mountains,vague,none,v1,False
+7,create content about mountains,,text,create content about mountains,vague,none,v1,False
+8,create content about mountains,,text,create content about mountains,vague,none,v1,False
+9,create content about mountains,,text,create content about mountains,vague,none,v1,False
+10,create content about mountains,,text,create content about mountains,vague,none,v1,False
+1,show me space exploration,,image,space exploration,vague,none,v2,False
+2,show me space exploration,,image,space exploration,vague,none,v2,False
+3,show me space exploration,,image,space exploration,vague,none,v2,False
+4,show me space exploration,,image,space exploration,vague,none,v2,False
+5,show me space exploration,,image,space exploration,vague,none,v2,False
+6,show me space exploration,,image,space exploration,vague,none,v2,False
+7,show me space exploration,,image,space exploration,vague,none,v2,False
+8,show me space exploration,,image,space exploration,vague,none,v2,False
+9,show me space exploration,,image,space exploration,vague,none,v2,False
+10,show me space exploration,,image,space exploration,vague,none,v2,False
+1,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+2,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+3,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+4,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+5,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+6,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+7,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+8,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+9,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+10,compose a scene by the lake,,text,compose a scene by the lake,vague,none,v3,False
+1,generate something about technology,,text,generate something about technology,vague,none,v4,False
+2,generate something about technology,,text,generate something about technology,vague,none,v4,False
+3,generate something about technology,,text,generate something about technology,vague,none,v4,False
+4,generate something about technology,,text,generate something about technology,vague,none,v4,False
+5,generate something about technology,,text,generate something about technology,vague,none,v4,False
+6,generate something about technology,,text,generate something about technology,vague,none,v4,False
+7,generate something about technology,,text,generate something about technology,vague,none,v4,False
+8,generate something about technology,,text,generate something about technology,vague,none,v4,False
+9,generate something about technology,,text,generate something about technology,vague,none,v4,False
+10,generate something about technology,,text,generate something about technology,vague,none,v4,False
+1,make art,,text,make art,vague,none,v5,False
+2,make art,,text,make art,vague,none,v5,False
+3,make art,,text,make art,vague,none,v5,False
+4,make art,,text,make art,vague,none,v5,False
+5,make art,,text,make art,vague,none,v5,False
+6,make art,,text,make art,vague,none,v5,False
+7,make art,,text,make art,vague,none,v5,False
+8,make art,,text,make art,vague,none,v5,False
+9,make art,,text,make art,vague,none,v5,False
+10,make art,,text,make art,vague,none,v5,False
+1,present information about Rome,,text,present information about Rome,vague,none,v6,False
+2,present information about Rome,,text,present information about Rome,vague,none,v6,False
+3,present information about Rome,,text,present information about Rome,vague,none,v6,False
+4,present information about Rome,,text,present information about Rome,vague,none,v6,False
+5,present information about Rome,,text,present information about Rome,vague,none,v6,False
+6,present information about Rome,,text,present information about Rome,vague,none,v6,False
+7,present information about Rome,,text,present information about Rome,vague,none,v6,False
+8,present information about Rome,,text,present information about Rome,vague,none,v6,False
+9,present information about Rome,,text,present information about Rome,vague,none,v6,False
+10,present information about Rome,,text,present information about Rome,vague,none,v6,False
+1,something about science,,text,something about science,vague,none,v7,False
+2,something about science,,text,something about science,vague,none,v7,False
+3,something about science,,text,something about science,vague,none,v7,False
+4,something about science,,text,something about science,vague,none,v7,False
+5,something about science,,text,something about science,vague,none,v7,False
+6,something about science,,text,something about science,vague,none,v7,False
+7,something about science,,text,something about science,vague,none,v7,False
+8,something about science,,text,something about science,vague,none,v7,False
+9,something about science,,text,something about science,vague,none,v7,False
+10,something about science,,text,something about science,vague,none,v7,False
+1,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+2,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+3,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+4,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+5,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+6,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+7,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+8,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+9,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+10,produce content on cultural traditions,,text,produce content on cultural traditions,vague,none,v8,False
+1,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+2,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+3,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+4,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+5,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+6,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+7,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+8,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+9,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+10,"To be, or not to be, that is the question",,text,"To be, or not to be, that is the question",vague,none,v9,False
+1,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+2,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+3,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+4,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+5,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+6,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+7,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+8,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+9,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False
+10,Climate change is the defining crisis of our time,,text,Climate change is the defining crisis of our time,vague,none,v10,False

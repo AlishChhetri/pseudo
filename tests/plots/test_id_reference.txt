@@ -30,13 +30,13 @@ ea-m3: pronounce this text: the journey begins
 ea-l1: utter this text: the mystery unfolds
 ea-l2: verbalize this text: the legend continues
 ea-l3: articulate this text: the tale unfolds
-v1: generate media about flowers
-v2: create content about space exploration
-v3: show me something about nature
-v4: make something about technology
-v5: produce something about art
-v6: create something about history
-v7: generate something about science
-v8: make something about culture
-v9: produce something about sports
-v10: create something about food
+v1: create content about mountains
+v2: show me space exploration
+v3: compose a scene by the lake
+v4: generate something about technology
+v5: make art
+v6: present information about Rome
+v7: something about science
+v8: produce content on cultural traditions
+v9: To be, or not to be, that is the question
+v10: Climate change is the defining crisis of our time

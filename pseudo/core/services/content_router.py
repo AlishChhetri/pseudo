@@ -212,26 +212,66 @@ content: <cleaned content>
 Where <mode> is one of: 'text', 'image', or 'audio'
 And <cleaned content> is the actual content to be processed (removing meta-instructions).
 
-For example:
-- If input is "give me an image of a red cat", respond with:
-```
-mode: image
-content: a red cat
-```
+Rules for determining mode:
+1. For IMAGE requests - Detect when the user clearly wants a visual representation:
+   - Look for explicit visual keywords: image, picture, photo, drawing, illustration, render, visual, diagram, sketch
+   - Consider requests about visually-oriented subjects: landscapes, scenes, portraits, designs, logos
 
-- If input is "create audio saying hello world", respond with:
-```
-mode: audio
-content: hello world
-```
+2. For AUDIO requests - Strictly for text-to-speech conversion only:
+   - IMPORTANT: Audio mode ONLY converts text to spoken speech, it cannot create music or sound effects
+   - Only choose audio when the user explicitly wants text spoken aloud
+   - Look for audio keywords: speak, read aloud, narrate, voice, speech, pronounce, recite, say this, verbalize
+   - The intent should be to have specific text converted to spoken audio
+   - MUST have clear indication of speech intent - just providing a quote or sentence is NOT enough
 
-- If input is "tell me about quantum physics", respond with:
-```
-mode: text
-content: tell me about quantum physics
-```
+3. For TEXT requests - This is the primary generative content mode:
+   - Any requests for information, explanations, stories, essays, paragraphs
+   - Content that is meant to be read rather than seen or heard
+   - Requests using writing verbs: write, explain, tell me, describe, summarize, compose
+   - Any ambiguous requests about creating content (when not clearly visual)
+   - Standalone quotes or sentences without speech indicators should be treated as text
 
-Always maintain the meaning of the original request while removing only the parts that are instructions about the mode.
+4. For VAGUE requests - When the intent is unclear:
+   - If the request contains an equal mix of indicators, prefer text over other modes
+   - Words like "create," "generate," "make," "produce" without clear visual/audio context → text
+   - Requests about "sound" or "music" should be text, as audio is only for text-to-speech
+   - When truly ambiguous, default to text mode as it's the most general-purpose
+   - "Compose a scene" → text (unless explicitly asking for a visual)
+   - Standalone quotes or sentences → text (unless explicitly asked to be spoken)
+
+For content cleaning:
+- IMPORTANT: For TEXT mode - KEEP THE ORIGINAL QUERY INTACT with minimal to no cleaning
+  - Do NOT remove phrases like "write text about" or "tell me about" from text requests
+  - The text mode should receive the full original query to process
+  
+- For IMAGE requests: 
+  - Moderate cleaning - KEEP THE ORIGINAL QUERY INTACT with minimal to no cleaning
+  - Keep all descriptive details intact
+
+- For AUDIO requests ONLY: 
+  - Aggressive cleaning - Extract ONLY the specific text to be converted to speech
+  - If there's text after a colon (e.g., "read this aloud: hello world"), extract only "hello world"
+  - If there's no colon, try to extract only the text that should be spoken
+
+- For VAGUE requests: Minimal to no cleaning - keep the full query intact
+
+Examples:
+- "generate an image of a red cat" → mode: image, content: a red cat
+- "draw a landscape with mountains" → mode: image, content: a landscape with mountains
+
+- "write text about quantum physics" → mode: text, content: write text about quantum physics
+- "explain the theory of relativity" → mode: text, content: explain the theory of relativity
+- "tell me about the solar system" → mode: text, content: tell me about the solar system
+- "generate a paragraph about climate change" → mode: text, content: generate a paragraph about climate change
+
+- "convert this text to speech: hello world" → mode: audio, content: hello world
+- "read this aloud: welcome to the future" → mode: audio, content: welcome to the future
+- "say this sentence: I'm having a great day" → mode: audio, content: I'm having a great day
+
+- "create content about space exploration" → mode: text, content: create content about space exploration
+- "compose a scene by the pond" → mode: text, content: compose a scene by the pond
+- "To be, or not to be, that is the question" → mode: text, content: To be, or not to be, that is the question
+- "Climate change is the defining crisis of our time" → mode: text, content: Climate change is the defining crisis of our time
 """
 
             # Use queue-based approach from credentials.json - try providers in strict order

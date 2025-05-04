@@ -258,71 +258,71 @@ def load_test_cases() -> List[Dict]:
         },
         # Vague Cases (10)
         {
-            "prompt": "generate media about flowers",
-            "expected_mode": None,
+            "prompt": "create content about mountains",
+            "expected_mode": None, # Could be text or image
             "category": "vague",
             "explicitness": "none",
             "test_id": "v1",
         },
         {
-            "prompt": "create content about space exploration",
-            "expected_mode": None,
+            "prompt": "show me space exploration",
+            "expected_mode": None, # Could be text or image
             "category": "vague",
             "explicitness": "none",
             "test_id": "v2",
         },
         {
-            "prompt": "show me something about nature",
-            "expected_mode": None,
+            "prompt": "compose a scene by the lake",
+            "expected_mode": None, # Could be text or image
             "category": "vague",
             "explicitness": "none",
             "test_id": "v3",
         },
         {
-            "prompt": "make something about technology",
-            "expected_mode": None,
+            "prompt": "generate something about technology",
+            "expected_mode": None, # Truly ambiguous
             "category": "vague",
             "explicitness": "none",
             "test_id": "v4",
         },
         {
-            "prompt": "produce something about art",
-            "expected_mode": None,
+            "prompt": "make art",
+            "expected_mode": None, # Truly ambiguous
             "category": "vague",
             "explicitness": "none",
             "test_id": "v5",
         },
         {
-            "prompt": "create something about history",
-            "expected_mode": None,
+            "prompt": "present information about Rome",
+            "expected_mode": None, # Could be text or image
             "category": "vague",
             "explicitness": "none",
             "test_id": "v6",
         },
         {
-            "prompt": "generate something about science",
-            "expected_mode": None,
+            "prompt": "something about science",
+            "expected_mode": None, # Truly ambiguous
             "category": "vague",
             "explicitness": "none",
             "test_id": "v7",
         },
         {
-            "prompt": "make something about culture",
-            "expected_mode": None,
+            "prompt": "produce content on cultural traditions",
+            "expected_mode": None, # Truly ambiguous
             "category": "vague",
             "explicitness": "none",
             "test_id": "v8",
         },
         {
-            "prompt": "produce something about sports",
-            "expected_mode": None,
+            "prompt": "To be, or not to be, that is the question",
+            "expected_mode": None, # Could be text or audio - actual quote that could be spoken
             "category": "vague",
             "explicitness": "none",
             "test_id": "v9",
         },
         {
-            "prompt": "create something about food",
-            "expected_mode": None,
+            "prompt": "Climate change is the defining crisis of our time",
+            "expected_mode": None, # Could be text or audio - complete sentence that could be spoken
             "category": "vague",
             "explicitness": "none",
             "test_id": "v10",
@@ -351,7 +351,7 @@ def run_test_case(router: ContentRouter, test_case: Dict, run_number: int) -> Di
         "category": category,
         "explicitness": explicitness,
         "test_id": test_id,
-        "matches_expected": detected_mode == expected_mode if expected_mode else True,
+        "matches_expected": detected_mode == expected_mode,
     }
 
 
